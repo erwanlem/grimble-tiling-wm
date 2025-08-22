@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "sourceMap": false,
+    "strict": true,
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
+  },
+   "include": [
+    "src/ambient.d.ts"
+  ],
+  "files": [
+    "src/extension.ts",
+    "src/position.ts",
+    "src/theme.ts",
+    "src/tile.ts",
+    "src/tileWindowManager.ts"
+  ],
+}

@@ -1,0 +1,26 @@
+{
+  "name": "gtile",
+  "version": "0.0.0",
+  "author": "Erwan Lemattre <erwan.lemattre@hotmail.com",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/example/my-extension.git"
+  },
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/example/my-extension/issues"
+  },
+  "homepage": "https://github.com/example/my-extension#readme",
+  "sideEffects": false,
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-plugin-jsdoc": "^53.0.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@girs/gjs": "^4.0.0-beta.25",
+    "@girs/gnome-shell": "^48.0.4"
+  }
+}

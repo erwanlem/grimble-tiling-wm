@@ -1,0 +1,11 @@
+{
+  "uuid": "gtile@lmt.github.io",
+  "name": "GTile",
+  "description": "Tiling Window Manager for GNOME",
+  "url": "",
+  "version": 1,
+  "settings-schema": "org.gnome.shell.extensions.tiling-wm",
+  "shell-version": [
+    "46"
+  ]
+}
