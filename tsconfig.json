@@ -19,6 +19,8 @@
     "src/theme.ts",
     "src/tile.ts",
     "src/tileWindowManager.ts",
-    "src/resize.ts"
+    "src/resize.ts",
+    "src/prefs.ts",
+    "src/prefs/shortcutListener.ts"
   ],
 }

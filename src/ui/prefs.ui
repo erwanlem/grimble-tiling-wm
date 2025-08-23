@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="gtile@lmt.github.io">
+
+<object class="AdwPreferencesPage" id="general">
+    <property name="title" translatable="yes" comments="Translators: This is the name of a tab in the prefs window">General</property>
+    <property name="icon-name">view-app-grid-symbolic</property>
+    <!-- ======================================================================================== -->
+    <!-- = Group: General ======================================================================= -->
+    <!-- ======================================================================================== -->
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is the header for a preference group in the 'General' tab">Appearance</property>
+        
+        <child>
+          <object class="AdwSwitchRow" id="display_cursor">
+            <property name="title" translatable="yes" comments="Translators: This is the name of setting to enable/disable mouse cursor in the 'General' tab">Cursor</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="header_bar">
+            <property name="title" translatable="yes" comments="Translators: This is the name of setting to enable/disable window header bar in the 'General' tab">Hide window header bar</property>
+            <!-- <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property> -->
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Tile insertion</property>
+        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Tile Insertion' in the 'General' tab">Define the tile insertion behaviour.</property>
+        <child>
+          <object class="AdwActionRow" id="insertion_best_fit_row">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Best fit</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Best fit' option for the 'Tile insertion' in the 'General' tab">Insert tiles at the best place. It reduces the depth of the tiles on the screen.</property>
+            <property name="activatable-widget">insertion_best_fit_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="insertion_best_fit_button"/>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwActionRow" id="insertion_focus_row">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Focus</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Focus' option for the 'Tile insertion' in the 'General' tab">Cut the focused window to insert the new tile.</property>
+            <property name="activatable-widget">insertion_focus_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="insertion_focus_button">
+                <property name="group">insertion_best_fit_button</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+
+  </object>
+
+
+  <!-- ======================================================================================== -->
+  <!-- = Page: Keybindings ==================================================================== -->
+  <!-- ======================================================================================== -->
+  <object class="AdwPreferencesPage" id="keybindings">
+    <property name="title" translatable="yes" comments="Translators: This is the name of a tab in the prefs window">Keybindings</property>
+    <property name="icon-name">preferences-desktop-keyboard-symbolic</property>
+    <!-- ======================================================================================== -->
+    <!-- = Group: General ======================================================================= -->
+    <!-- ======================================================================================== -->
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">General</property>
+        <child>
+          <object class="ShortcutListener" id="keybinding_rotation">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation">Tile rotation</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_resize">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing">Resize tile</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_move">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile">Move tile</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_close">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to close tile">Close tile</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_search">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open search bar">Search bar</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_open_settings">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open settings">GTile settings</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_minimize">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to minimize">Minimize tile</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_maximize">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize">Maximize tile</property>
+          </object>
+        </child>
+
+        
+      </object>
+    </child>
+   
+  </object>
+
+</interface>

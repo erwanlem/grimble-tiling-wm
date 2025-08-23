@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.gtile" path="/org/gnome/shell/extensions/gtile/">
+
+    <key name="display-cursor" type="b">
+      <default>true</default>
+      <summary>Cursor</summary>
+      <description>Whether to enable/disable mouse cursor</description>
+    </key>
+
+    <key name="header-bar" type="b">
+      <default>true</default>
+      <summary>Header bar</summary>
+      <description>Whether to show or hide window header bar</description>
+    </key>
+
+    <key name="tile-insertion-behavior" type="i">
+			<!-- 0: best-fit, 1: Focus -->
+			<default>0</default>
+		</key>
+
+    <key name="keybinding-rotation" type="as">
+      <default>[]</default>
+      <summary>Tile roration</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-resize" type="as">
+      <default>[]</default>
+      <summary>Resize tile</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move" type="as">
+      <default>[]</default>
+      <summary>Move tile</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-close" type="as">
+      <default>[]</default>
+      <summary>Close tile</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-search" type="as">
+      <default>[]</default>
+      <summary>Search bar</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-open-settings" type="as">
+      <default>[]</default>
+      <summary>Gtile settings</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-minimize" type="as">
+      <default>[]</default>
+      <summary>Minimize</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-maximize" type="as">
+      <default>[]</default>
+      <summary>Maximize</summary>
+      <description>Custom shortcut</description>
+    </key>
+
+
+  </schema>
+</schemalist>

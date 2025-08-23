@@ -4,7 +4,7 @@
   "description": "Tiling Window Manager for GNOME",
   "url": "",
   "version": 1,
-  "settings-schema": "org.gnome.shell.extensions.tiling-wm",
+  "settings-schema": "org.gnome.shell.extensions.gtile",
   "shell-version": [
     "46"
   ]

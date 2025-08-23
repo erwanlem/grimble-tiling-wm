@@ -1,8 +1,5 @@
 import Meta from 'gi://Meta';
-import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
-import Shell from 'gi://Shell';
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Tile } from "./tile.js";
 import { Position } from "./position.js";
 import * as Resize from "./resize.js"
