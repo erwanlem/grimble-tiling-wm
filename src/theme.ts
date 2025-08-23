@@ -73,6 +73,6 @@ export function disableWindowTheme(metadata : ExtensionMetadata) {
         settings.set_string('button-layout', originalLayout);
 
     settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
-    if (originalTiling)
+    if (originalTiling != null)
         settings.set_boolean('edge-tiling', originalTiling);
 }

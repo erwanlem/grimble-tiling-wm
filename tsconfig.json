@@ -18,6 +18,7 @@
     "src/position.ts",
     "src/theme.ts",
     "src/tile.ts",
-    "src/tileWindowManager.ts"
+    "src/tileWindowManager.ts",
+    "src/resize.ts"
   ],
 }

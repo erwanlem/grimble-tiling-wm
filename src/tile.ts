@@ -3,7 +3,7 @@ import Meta from 'gi://Meta';
 
 
 export enum Orientation {
-    Vertical,
+    Vertical = 1,
     Horizontal,
     None
 }
@@ -136,7 +136,7 @@ export class Tile {
     public resize(position : Position) {
         this._position = position;
         if (!this._window) {
-            let newPositions = this._position.split();
+            let newPositions = this._position.split(this._orientation);
             this._child1?.resize(newPositions[0]);
             this._child2?.resize(newPositions[1]);
         }
@@ -144,6 +144,10 @@ export class Tile {
 
     public set parent(p: Tile) {
         this._parent = p;
+    }
+
+    public get parent() : Tile | null {
+        return this._parent;
     }
 
     public get maximized() {
@@ -205,6 +209,30 @@ export class Tile {
             this._child1?.update();
             this._child2?.update();
         }
+    }
+
+    public findParent(fn : (el : Tile) => boolean) : Tile | null {
+        if (fn(this)) {
+            if (!this._parent)
+                return this;
+            let res = this._parent.findParent(fn);
+            if (res)
+                return res;
+            else
+                return this;
+        } else {
+            return null;
+        }
+    }
+
+
+    public getSibling() {
+        if (this === this?._parent?._child1)
+            return this?._parent?._child2;
+        else if (this === this?._parent?._child2)
+            return this?._parent?._child1;
+        else
+            return null;
     }
 
 }

@@ -3,19 +3,19 @@ import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import Shell from 'gi://Shell';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import { Tile } from "./tile.js"
-import { Position } from "./position.js"
-import Mtk from 'gi://Mtk';
+import { Tile } from "./tile.js";
+import { Position } from "./position.js";
+import * as Resize from "./resize.js"
 
 export class TileWindowManager {
-    _wrappedWindows : Map<Meta.Window, [() => void, 
-                                        (dir : Meta.MaximizeFlags | null) => void, 
-                                        number, number, number]>;
-    _windowCreatedSignal : number;
-    _windowLeftSignal : number;
-    _windowGrabSignal : number;
+    _wrappedWindows: Map<Meta.Window, [() => void,
+        (dir: Meta.MaximizeFlags | null) => void,
+        number, number, number]>;
+    _windowCreatedSignal: number;
+    _windowLeftSignal: number;
+    _windowGrabSignal: number;
 
-    root : Tile | null;
+    root: Tile | null;
 
 
     constructor() {
@@ -25,26 +25,26 @@ export class TileWindowManager {
         this._wrappedWindows = new Map();
 
         this._windowCreatedSignal = global.display.connect(
-            'window-created', 
+            'window-created',
             (display, obj) => this._onWindowCreated(display, obj)
         );
 
         this._windowLeftSignal = global.display.connect(
-            'window-left-monitor', 
+            'window-left-monitor',
             (display, obj, window) => this._removeWindow(window)
         );
 
         this._windowGrabSignal = global.display.connect(
-            'grab-op-end', 
+            'grab-op-end',
             (_, window, op) => this._onGrabBegin(window, op)
         );
 
         global.get_window_actors().forEach(
             actor => {
-                if (actor.meta_window 
+                if (actor.meta_window
                     && actor.meta_window.get_window_type() === Meta.WindowType.NORMAL) {
-                        this._onWindowCreated(null, actor.meta_window);
-                        this.root?.update();
+                    this._onWindowCreated(null, actor.meta_window);
+                    this.root?.update();
                 }
             }
         );
@@ -56,7 +56,7 @@ export class TileWindowManager {
         global.display.disconnect(this._windowGrabSignal);
     }
 
-    private _onWindowCreated(_ : Meta.Display | null, window : Meta.Window) {
+    private _onWindowCreated(_: Meta.Display | null, window: Meta.Window) {
         console.warn("Window created");
 
         if (window.get_window_type() !== Meta.WindowType.NORMAL)
@@ -68,10 +68,10 @@ export class TileWindowManager {
             }
         });
         let maximizeSignal1 = window.connect(
-            'notify::maximized-horizontally', 
+            'notify::maximized-horizontally',
             () => {
                 if ((window as any).tile.maximized) {
-                    return ;
+                    return;
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
@@ -80,10 +80,10 @@ export class TileWindowManager {
             }
         );
         let maximizeSignal2 = window.connect(
-            'notify::maximized-vertically', 
+            'notify::maximized-vertically',
             () => {
                 if ((window as any).tile.maximized) {
-                    return ;
+                    return;
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
@@ -96,12 +96,12 @@ export class TileWindowManager {
         (window as any)._originalMinimize = window.minimize;
 
         this._wrappedWindows.set(
-            window, 
+            window,
             [window.minimize, window.maximize, 0, 0, 0]
         );
 
-        window.minimize = () => {};
-        window.maximize = () => {};
+        window.minimize = () => { };
+        window.maximize = () => { };
 
         return this._addNewWindow(window);
     }
@@ -110,16 +110,17 @@ export class TileWindowManager {
         global.display.disconnect(this._windowCreatedSignal);
 
         this._wrappedWindows.forEach(
-            (value, key) => 
-                { key.minimize = value[0]; key.maximize = value[1]; 
+            (value, key) => {
+                key.minimize = value[0]; key.maximize = value[1];
                 key.disconnect(value[2]); key.disconnect(value[3]);
                 key.disconnect(value[4]);
-                this._wrappedWindows.delete(key); }
+                this._wrappedWindows.delete(key);
+            }
         );
         this._wrappedWindows.clear();
     }
 
-    private _addNewWindow(window : Meta.Window) {
+    private _addNewWindow(window: Meta.Window) {
         console.warn("New window");
         if (!this.root) {
             let tile = new Tile();
@@ -148,7 +149,7 @@ export class TileWindowManager {
         }
     }
 
-    private _removeWindow(window : Meta.Window) {
+    private _removeWindow(window: Meta.Window) {
         // get Tile from window
         let tile = (window as any).tile;
 
@@ -162,7 +163,7 @@ export class TileWindowManager {
             this.root?.update();
     }
 
-    private _onGrabBegin(window : Meta.Window, op : Meta.GrabOp) {
+    private _onGrabBegin(window: Meta.Window, op: Meta.GrabOp) {
         if (!window) return;
 
         let tile = (window as any).tile;
@@ -176,6 +177,36 @@ export class TileWindowManager {
                 console.warn("Move frame " + rect.x + " " + rect.y);
                 console.warn(tile._position.x + " " + tile._position.y);
                 window.move_resize_frame(true, tile._position.x, tile._position.y, tile._position.width, tile._position.height);
+                return GLib.SOURCE_REMOVE;
+            });
+
+        } else if (op === Meta.GrabOp.RESIZING_E) {
+            let rect = window.get_frame_rect();
+
+            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                Resize.resizeE(tile, rect);
+                return GLib.SOURCE_REMOVE;
+            });
+
+        } else if (op === Meta.GrabOp.RESIZING_W) {
+            let rect = window.get_frame_rect();
+
+            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                Resize.resizeW(tile, rect);
+                return GLib.SOURCE_REMOVE;
+            });
+        } else if (op === Meta.GrabOp.RESIZING_N) {
+            let rect = window.get_frame_rect();
+
+            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                Resize.resizeN(tile, rect);
+                return GLib.SOURCE_REMOVE;
+            });
+        } else if (op === Meta.GrabOp.RESIZING_S) {
+            let rect = window.get_frame_rect();
+
+            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                Resize.resizeS(tile, rect);
                 return GLib.SOURCE_REMOVE;
             });
         }
