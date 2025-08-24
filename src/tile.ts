@@ -8,6 +8,12 @@ export enum Orientation {
     None
 }
 
+export enum TileState {
+    DEFAULT,
+    MINIMIZED,
+    MAXIMIZED,
+    ALONE_MAXIMIZED
+}
 
 export class Tile {
     readonly id: number;
@@ -19,12 +25,13 @@ export class Tile {
 
     _position: Position;
     _window: Meta.Window | null;
-    _maximized : boolean;
+    _state : TileState;
     _orientation: Orientation;
 
     _children: number;
 
     static id_count = 0;
+    static fullscreen : number | undefined;
 
     constructor();
     constructor() {
@@ -33,7 +40,7 @@ export class Tile {
         this._position = new Position();
         this._window = null;
 
-        this._maximized = false;
+        this._state = TileState.DEFAULT;
 
         this._leaf = true;
         this._parent = null;
@@ -64,6 +71,7 @@ export class Tile {
             c1.window = this._window;
             c1.position = newPositions[0];
             c1._parent = this;
+            c1._state = this.state;
             (this._window as any).tile = c1;
 
             // console.warn("c1 " + c1._position.width + " " + c1._position.height);
@@ -142,6 +150,14 @@ export class Tile {
         }
     }
 
+    public set orientation(o : Orientation) {
+        this._orientation = o;
+    }
+
+    public get orientation() {
+        return this._orientation;
+    }
+
     public set parent(p: Tile) {
         this._parent = p;
     }
@@ -150,12 +166,16 @@ export class Tile {
         return this._parent;
     }
 
-    public get maximized() {
-        return this._maximized;
-    }
-
     public get children() {
         return this._children;
+    }
+
+    public get child1() {
+        return this._child1;
+    }
+
+    public get child2() {
+        return this._child2;
     }
 
     public set position(pos: Position) {
@@ -171,12 +191,38 @@ export class Tile {
         this._children++;
     }
 
+    public get window() : Meta.Window | null {
+        return this._window;
+    }
+
+    public set state(value : TileState) {
+        this._state = value;
+    }
+
+    public get state() {
+        return this._state;
+    }
+
+    public forEach(fn : (el : Tile) => void) {
+        fn(this);
+        this._child1?.forEach(fn);
+        this._child2?.forEach(fn);
+    }
+
     public update() {
 
         if (this._window) {
 
+            if (this._state === TileState.MAXIMIZED) {
+                (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
+                return;
+            } else if (this._state === TileState.MINIMIZED) {
+                (this._window as any)?._originalMinimize();
+                return;
+            }
+
             if (this._position.proportion == 1) {
-                this._maximized = true;
+                this.state = TileState.ALONE_MAXIMIZED;
 
                 (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
 
@@ -191,7 +237,7 @@ export class Tile {
                 this._position.height = area.height;
 
             } else {
-                this._maximized = false;
+                this.state = TileState.DEFAULT;
 
                 if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);

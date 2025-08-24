@@ -1,8 +1,11 @@
 import Meta from 'gi://Meta';
 import GLib from 'gi://GLib';
-import { Tile } from "./tile.js";
+import { Orientation, Tile, TileState } from "./tile.js";
 import { Position } from "./position.js";
-import * as Resize from "./resize.js"
+import * as Resize from "./resize.js";
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export class TileWindowManager {
     _wrappedWindows: Map<Meta.Window, [() => void,
@@ -12,12 +15,21 @@ export class TileWindowManager {
     _windowLeftSignal: number;
     _windowGrabSignal: number;
 
+    _extensionObject: Extension | null = null;
+    _settings: Gio.Settings | undefined;
+
+    _fullscreenState: boolean = false;
+
+    static rotateEven = [0, 0];
+
+    _focusHistory: Array<Meta.Window>;
     root: Tile | null;
 
-
     constructor() {
+        this._extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+        this._settings = this._extensionObject?.getSettings();
         this.root = null;
-
+        this._focusHistory = [];
 
         this._wrappedWindows = new Map();
 
@@ -47,10 +59,32 @@ export class TileWindowManager {
         );
     }
 
-    public disable() {
+    public getFocusedWindow() {
+        if (this._focusHistory.length > 0)
+            return this._focusHistory[0];
+        else
+            return null;
+    }
+
+    public destroy() {
         global.display.disconnect(this._windowCreatedSignal);
         global.display.disconnect(this._windowLeftSignal);
         global.display.disconnect(this._windowGrabSignal);
+
+        this._wrappedWindows.forEach(
+            (value, key) => {
+                key.minimize = value[0]; key.maximize = value[1];
+                key.disconnect(value[2]); key.disconnect(value[3]);
+                key.disconnect(value[4]);
+                this._wrappedWindows.delete(key);
+            }
+        );
+        this._wrappedWindows.clear();
+    }
+
+    private updateFocusHistory(window: Meta.Window, focused = true) {
+        this._focusHistory = this._focusHistory.filter((w) => w !== window)
+        if (focused) this._focusHistory.unshift(window)
     }
 
     private _onWindowCreated(_: Meta.Display | null, window: Meta.Window) {
@@ -60,6 +94,9 @@ export class TileWindowManager {
             return;
 
         let minimizeSignal = window.connect('notify::minimized', () => {
+            if ((window as any).tile.state === TileState.MINIMIZED)
+                return;
+
             if (window.minimized) {
                 window.unminimize();
             }
@@ -67,7 +104,8 @@ export class TileWindowManager {
         let maximizeSignal1 = window.connect(
             'notify::maximized-horizontally',
             () => {
-                if ((window as any).tile.maximized) {
+                if ((window as any).tile.state === TileState.MAXIMIZED 
+                || (window as any).tile.state === TileState.ALONE_MAXIMIZED) {
                     return;
                 }
 
@@ -79,13 +117,22 @@ export class TileWindowManager {
         let maximizeSignal2 = window.connect(
             'notify::maximized-vertically',
             () => {
-                if ((window as any).tile.maximized) {
+                if ((window as any).tile.state === TileState.MAXIMIZED 
+                || (window as any).tile.state === TileState.ALONE_MAXIMIZED) {
                     return;
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
                     window.unmaximize(Meta.MaximizeFlags.BOTH);
                 }
+            }
+        );
+
+        this._focusHistory.push(window);
+        let focusSignal = window.connect(
+            'focus',
+            () => {
+                this.updateFocusHistory(window);
             }
         );
 
@@ -101,20 +148,6 @@ export class TileWindowManager {
         window.maximize = () => { };
 
         return this._addNewWindow(window);
-    }
-
-    public _resetWindows() {
-        global.display.disconnect(this._windowCreatedSignal);
-
-        this._wrappedWindows.forEach(
-            (value, key) => {
-                key.minimize = value[0]; key.maximize = value[1];
-                key.disconnect(value[2]); key.disconnect(value[3]);
-                key.disconnect(value[4]);
-                this._wrappedWindows.delete(key);
-            }
-        );
-        this._wrappedWindows.clear();
     }
 
     private _addNewWindow(window: Meta.Window) {
@@ -133,11 +166,21 @@ export class TileWindowManager {
                 () => tile.update()
             );
         } else {
-            this.root.addWindowOnBlock(window);
+            if (this._settings?.get_int('tile-insertion-behavior') == 0) {
+                this.root.addWindowOnBlock(window);
+            } else {
+                let focusWindow = this.getFocusedWindow();
+                if (focusWindow) {
+                    let tile: Tile = (focusWindow as any).tile;
+                    tile.addWindowOnBlock(window);
+                } else {
+                    this.root.addWindowOnBlock(window);
+                }
+            }
 
-            console.warn("root " + this.root?._position.width + " " + this.root?._position.height);
-            console.warn("child 1 " + this.root._child1?._position.width + " " + this.root._child1?._position.height);
-            console.warn("child 2 " + this.root._child2?._position.width + " " + this.root._child2?._position.height);
+            if (this._fullscreenState) {
+                (window as any).tile.state = TileState.MINIMIZED;
+            }
 
             window.get_compositor_private().connect(
                 'first-frame',
@@ -147,6 +190,8 @@ export class TileWindowManager {
     }
 
     private _removeWindow(window: Meta.Window) {
+        this.updateFocusHistory(window, false);
+
         // get Tile from window
         let tile = (window as any).tile;
 
@@ -171,9 +216,7 @@ export class TileWindowManager {
         if (op === Meta.GrabOp.MOVING) {
             let rect = window.get_frame_rect();
             GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                console.warn("Move frame " + rect.x + " " + rect.y);
-                console.warn(tile._position.x + " " + tile._position.y);
-                window.move_resize_frame(true, tile._position.x, tile._position.y, tile._position.width, tile._position.height);
+                (window as any).tile.update();
                 return GLib.SOURCE_REMOVE;
             });
 
@@ -208,5 +251,77 @@ export class TileWindowManager {
             });
         }
     }
+
+
+    public rotateWindow(window: Meta.Window) {
+        let tile: Tile | undefined = (window as any).tile;
+
+        if (!tile)
+            return;
+
+        let parent = tile.parent;
+
+        if (!parent)
+            return;
+
+        let newPositions: Array<Position>;
+        if (parent.orientation === Orientation.Horizontal) {
+            newPositions = parent.position.split(Orientation.Vertical);
+            if (parent.child1 && parent.child2) {
+                parent.child1.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 0 : 1]);
+                parent.child2.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 1 : 0]);
+                TileWindowManager.rotateEven[0] = (TileWindowManager.rotateEven[0] + 1) % 2;
+                parent.update();
+            } else {
+                return;
+            }
+            parent.orientation = Orientation.Vertical;
+        } else if (parent.orientation === Orientation.Vertical) {
+            newPositions = parent.position.split(Orientation.Horizontal);
+            if (parent.child1 && parent.child2) {
+                parent.child1.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 1 : 0]);
+                parent.child2.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 0 : 1]);
+                TileWindowManager.rotateEven[1] = (TileWindowManager.rotateEven[1] + 1) % 2;
+                parent.update();
+            } else {
+                return;
+            }
+            parent.orientation = Orientation.Horizontal;
+        } else {
+            return;
+        }
+    }
+
+
+    public maximizeTile(window: Meta.Window) {
+        let tile: Tile | undefined = (window as any).tile;
+        if (!tile)
+            return;
+
+        if (this._fullscreenState) {
+            this._fullscreenState = false;
+
+            this.root?.forEach(el => {
+                el.state = TileState.DEFAULT;
+                if (el.id === tile.id) {
+                } else {
+                    el.window?.unminimize();
+                }
+            });
+        } else {
+            this._fullscreenState = true;
+
+            this.root?.forEach(el => {
+                if (el.id === tile.id) {
+                    el.state = TileState.MAXIMIZED;
+                } else {
+                    el.state = TileState.MINIMIZED;
+                }
+            });
+        }
+
+        this.root?.update();
+    }
+
 
 }

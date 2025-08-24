@@ -21,6 +21,9 @@
     "src/tileWindowManager.ts",
     "src/resize.ts",
     "src/prefs.ts",
-    "src/prefs/shortcutListener.ts"
+    "src/prefs/shortcutListener.ts",
+    "src/settingsHandlers/keybindingHandler.ts",
+    "src/settingsHandlers/switchHandler.ts",
+    "src/prefs/settings.ts"
   ],
 }
