@@ -1,5 +1,4 @@
 
-
 export class Shortcut {
 
     private static _shortcutList : Array<string> = [
@@ -38,6 +37,13 @@ export class Radio {
                 rowNames: [
                     'insertion_best_fit_row',
                     'insertion_focus_row'
+                ]
+            },
+            {
+                key: 'monitor-tile-insertion-behavior',
+                rowNames: [
+                    'monitors_best_fit_row',
+                    'monitors_focus_row'
                 ]
             },
         ];

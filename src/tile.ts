@@ -28,13 +28,13 @@ export class Tile {
     _state : TileState;
     _orientation: Orientation;
 
-    _children: number;
+    _nr_tiles: number;
+    _monitor : number | undefined;
 
     static id_count = 0;
     static fullscreen : number | undefined;
 
-    constructor();
-    constructor() {
+    private constructor() {
         this.id = Tile.id_count++;
 
         this._position = new Position();
@@ -47,13 +47,27 @@ export class Tile {
         this._child1 = null;
         this._child2 = null;
         this._orientation = Orientation.None;
-        this._children = 0;
+        this._nr_tiles = 0;
     }
 
-    private decrementChildren() {
-        this._children--;
+
+    public static createTileLeaf(window : Meta.Window, position : Position, monitor : number, parent : Tile | null = null) : Tile {
+        let tile = new Tile();
+        tile._window = window;
+        tile._position = position;
+        tile._monitor = monitor;
+        tile._parent = parent;
+        tile._leaf = true;
+        tile._nr_tiles = 1;
+
+        return tile;
+    }
+
+
+    private decrementTiles() {
+        this._nr_tiles--;
         if (this._parent)
-            this._parent.decrementChildren();
+            this._parent.decrementTiles();
     }
 
     public get leaf() {
@@ -61,43 +75,38 @@ export class Tile {
     }
 
     public addWindowOnBlock(window: Meta.Window) {
+        console.warn("addWindowOnBlock");
 
         if (this.leaf) {
             if (!this._window)
                 throw new Error("A leaf must have a window");
 
             let newPositions = this._position.split();
-            let c1 = new Tile();
-            c1.window = this._window;
-            c1.position = newPositions[0];
-            c1._parent = this;
-            c1._state = this.state;
+            let c1 = Tile.createTileLeaf(this._window, newPositions[0], this.monitor, this);
+            c1._state = this._state;
             (this._window as any).tile = c1;
 
-            // console.warn("c1 " + c1._position.width + " " + c1._position.height);
+            console.warn("c1 " + c1._position.width + " " + c1._position.height + " " + c1._position.proportion + " " + c1.monitor);
 
-            let c2 = new Tile();
-            c2.window = window;
-            c2.position = newPositions[1];
-            c2._parent = this;
+            let c2 = Tile.createTileLeaf(window, newPositions[1], this.monitor, this);
             (window as any).tile = c2;
 
-            // console.warn("c2 " + c2._position.width + " " + c2._position.height);
+            console.warn("c2 " + c2._position.width + " " + c2._position.height + " " + c2._position.proportion + " " + c2.monitor);
 
             this._window = null;
             this._leaf = false;
             this._child1 = c1;
             this._child2 = c2;
+            this._nr_tiles++;
             this._orientation = this._position.width > this._position.height
                 ? Orientation.Horizontal : Orientation.Vertical;
         } else if (this._child1 && this._child2) {
-            if (this._child1?.children > this._child2?._children) {
+            if (this._child1?._nr_tiles > this._child2?._nr_tiles) {
                 this._child2.addWindowOnBlock(window);
-                this._child2._children++;
             } else {
                 this._child1.addWindowOnBlock(window);
-                this._child1._children++;
             }
+            this._nr_tiles++;
         } else {
             throw new Error("Unexpected state to add window");
         }
@@ -124,7 +133,8 @@ export class Tile {
             parent._child2 = parent._child1._child2;
             parent._child1 = parent._child1._child1;
         } else {
-            throw new Error("Cannot remove window");
+            //throw new Error("Cannot remove window " + this.id);
+            return this;
         }
 
         if (parent._child1)
@@ -135,8 +145,7 @@ export class Tile {
         if (parent._window)
             (parent._window as any).tile = parent;
         parent.resize(parent._position);
-        console.warn("Resize " + parent._position.width + " " + parent._position.height);
-        parent.decrementChildren();
+        parent.decrementTiles();
 
         return parent;
     }
@@ -150,59 +159,6 @@ export class Tile {
         }
     }
 
-    public set orientation(o : Orientation) {
-        this._orientation = o;
-    }
-
-    public get orientation() {
-        return this._orientation;
-    }
-
-    public set parent(p: Tile) {
-        this._parent = p;
-    }
-
-    public get parent() : Tile | null {
-        return this._parent;
-    }
-
-    public get children() {
-        return this._children;
-    }
-
-    public get child1() {
-        return this._child1;
-    }
-
-    public get child2() {
-        return this._child2;
-    }
-
-    public set position(pos: Position) {
-        this._position = pos;
-    }
-
-    public get position() {
-        return this._position;
-    }
-
-    public set window(w: Meta.Window) {
-        this._window = w;
-        this._children++;
-    }
-
-    public get window() : Meta.Window | null {
-        return this._window;
-    }
-
-    public set state(value : TileState) {
-        this._state = value;
-    }
-
-    public get state() {
-        return this._state;
-    }
-
     public forEach(fn : (el : Tile) => void) {
         fn(this);
         this._child1?.forEach(fn);
@@ -210,6 +166,7 @@ export class Tile {
     }
 
     public update() {
+        console.warn(`Update ${this.id}`);
 
         if (this._window) {
 
@@ -224,17 +181,24 @@ export class Tile {
             if (this._position.proportion == 1) {
                 this.state = TileState.ALONE_MAXIMIZED;
 
-                (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
-
-                let rect = this._window.get_frame_rect();
+                //(this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
 
                 const workspc = this._window.get_workspace();
-                const area = workspc.get_work_area_for_monitor(this._window.get_monitor());
+                const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 
-                this._position.x = area.x;
-                this._position.y = area.y;
+                this._position.x = 0;
+                this._position.y = 0;
                 this._position.width = area.width;
                 this._position.height = area.height;
+
+                console.warn(`area.x : ${area.x}, area.y : ${area.y}, ${this._position.width} x ${this._position.height}`);
+
+                this._window.move_resize_frame(
+                    false,
+                    area.x + this._position.x,
+                    area.y + this._position.y,
+                    this._position.width,
+                    this._position.height);
 
             } else {
                 this.state = TileState.DEFAULT;
@@ -242,11 +206,16 @@ export class Tile {
                 if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
-                console.warn("Update " + this.id);
-                this._window?.move_resize_frame(
+                const workspc = this._window.get_workspace();
+                const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
+
+                console.warn(`monitor : ${this._monitor}`);
+                console.warn(`area.x : ${area.x}, area.y : ${area.y}, ${this._position.width} x ${this._position.height}`);
+
+                this._window.move_resize_frame(
                     false,
-                    this._position.x,
-                    this._position.y,
+                    area.x + this._position.x,
+                    area.y + this._position.y,
                     this._position.width,
                     this._position.height);
             }
@@ -279,6 +248,115 @@ export class Tile {
             return this?._parent?._child1;
         else
             return null;
+    }
+
+
+    public contains(window : Meta.Window) : boolean {
+        if (this._window?.get_id() === window.get_id())
+            return true;
+        return this.child1?.contains(window) || this.child2?.contains(window) 
+                ? true : false;
+    }
+
+    public addToChild() {
+        if (this._child1 && this._child2) {
+            this._child1.parent = this;
+            this._child2.parent = this;
+            this._child1.addToChild();
+            this._child2.addToChild();
+        }
+    }
+
+    public static fromObject(obj : any, parent : Tile | null = null) : Tile {
+        let tile = new Tile();
+        if (obj._child1 && obj._child2)
+            tile.setChild(Tile.fromObject(obj._child1, tile), Tile.fromObject(obj._child2, tile));
+        tile.position = Position.fromObject(obj._position);
+        tile.state = obj._state;
+        tile.leaf = obj._leaf;
+        tile.orientation = obj._orientation;
+        tile.monitor = obj._monitor;
+        tile.nr_tiles = obj._nr_tiles;
+        tile.window = obj._window;
+        if (parent)
+            tile.parent = parent;
+        if (tile.window)
+            (tile.window as any).tile = tile;
+
+        return tile;
+    }
+
+    private set leaf(b : boolean) {
+        this._leaf = b;
+    }
+
+    private setChild(child1 : Tile, child2 : Tile) {
+        this._child1 = child1;
+        this._child2 = child2;
+    }
+
+    public set orientation(o : Orientation) {
+        this._orientation = o;
+    }
+
+    public get orientation() {
+        return this._orientation;
+    }
+
+    public set parent(p: Tile) {
+        this._parent = p;
+    }
+
+    public get parent() : Tile | null {
+        return this._parent;
+    }
+
+    public get nr_tiles() {
+        return this._nr_tiles;
+    }
+
+    private set nr_tiles(n : number) {
+        this._nr_tiles = n;
+    }
+
+    public get child1() {
+        return this._child1;
+    }
+
+    public get child2() {
+        return this._child2;
+    }
+
+    public set position(pos: Position) {
+        this._position = pos;
+    }
+
+    public get position() {
+        return this._position;
+    }
+
+    public set window(w: Meta.Window) {
+        this._window = w;
+    }
+
+    public get window() : Meta.Window | null {
+        return this._window;
+    }
+
+    public set state(value : TileState) {
+        this._state = value;
+    }
+
+    public get state() {
+        return this._state;
+    }
+
+    public set monitor(m : number) {
+        this._monitor = m;
+    }
+
+    public get monitor() {
+        return this._monitor ? this._monitor : 0;
     }
 
 }

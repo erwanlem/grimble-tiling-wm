@@ -54,9 +54,36 @@
         </child>
 
       </object>
-    </child>
-
-
+  </child>
+  <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Multiple monitors</property>
+        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab">How to insert a new tile when using multiple monitors.</property>
+        <child>
+          <object class="AdwActionRow" id="monitors_best_fit_row">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Best fit</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Best fit' option for the 'Multiple monitors' in the 'General' tab">Select the less filled monitor.</property>
+            <property name="activatable-widget">monitors_best_fit_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="monitors_best_fit_button"/>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwActionRow" id="monitors_focus_row">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Focus</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Focus' option for the 'Multiple monitors' in the 'General' tab">Select the monitor with the focused window.</property>
+            <property name="activatable-widget">monitors_focus_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="monitors_focus_button">
+                <property name="group">monitors_best_fit_button</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    
+  </child>
   </object>
 
 

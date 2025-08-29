@@ -19,6 +19,11 @@
 			<default>0</default>
 		</key>
 
+    <key name="monitor-tile-insertion-behavior" type="i">
+			<!-- 0: best-fit, 1: Focus -->
+			<default>0</default>
+		</key>
+
     <key name="keybinding-rotation" type="as">
       <default>[]</default>
       <summary>Tile roration</summary>

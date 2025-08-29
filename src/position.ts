@@ -1,4 +1,4 @@
-import { Orientation, Tile } from "./tile.js"
+import { Orientation } from "./tile.js"
 
 export class Position {
     proportion: number;
@@ -62,5 +62,10 @@ export class Position {
 
         return [newPosition1, newPosition2];
     }
+
+
+    public static fromObject(obj : any) {
+        return new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height);
+    } 
 
 }

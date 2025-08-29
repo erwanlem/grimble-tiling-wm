@@ -59,6 +59,10 @@ export default class KeybindingHandler {
                 this._windowManager.maximizeTile(global.display.get_focus_window());
                 break;
 
+            case 'keybinding-search':
+                this._windowManager.createSearchBar();
+                break;
+
             default:
                 break;
         }

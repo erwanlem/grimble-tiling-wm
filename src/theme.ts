@@ -4,7 +4,7 @@ import GLib from 'gi://GLib';
 
 export var originalLayout : string;
 export var originalTiling : boolean;
-export var originalTheme : string;
+export var originalTheme : string | undefined = undefined;
 
 function writeFile(path : string, content : string) {
     let file = Gio.File.new_for_path(path);
@@ -40,17 +40,27 @@ function readFile(path : string) {
 }
 
 
-export function enableWindowTheme(metadata : ExtensionMetadata) {
-    let gtkTheme = readFile(metadata.path + "/gtktheme.css");
-    let original = readFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css");
+export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = true) {
+    if (hideHeaderBar) {
+        console.warn("Hide header bar");
+       let gtkTheme = readFile(metadata.path + "/gtktheme.css");
+        let original = readFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");
 
-    if (original)
-        originalTheme = original;
+        if (original)
+            originalTheme = original;
 
-    if (gtkTheme) {
-        writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", gtkTheme);
-        writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", gtkTheme);
+        if (gtkTheme) {
+            writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", gtkTheme);
+            writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", gtkTheme);
+        }
+    } else if (originalTheme) {
+        console.warn("show header bar");
+        writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", originalTheme);
+        writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
+        originalTheme = undefined;
     }
+
+    reload_gtk_theme();
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     originalLayout = settings.get_string('button-layout');
@@ -68,11 +78,21 @@ export function disableWindowTheme(metadata : ExtensionMetadata) {
         writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
     }
 
+    reload_gtk_theme();
+
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
-    if (originalLayout)
-        settings.set_string('button-layout', originalLayout);
+    settings.reset('button-layout');
 
     settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
-    if (originalTiling != null)
-        settings.set_boolean('edge-tiling', originalTiling);
+    settings.reset('edge-tiling');
+}
+
+
+function reload_gtk_theme() {
+    let settings = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });
+    let theme = settings.get_string('gtk-theme');
+    settings.set_string('gtk-theme', '');
+    setTimeout(() => {
+        settings.set_string('gtk-theme', theme);
+    }, 1000);
 }

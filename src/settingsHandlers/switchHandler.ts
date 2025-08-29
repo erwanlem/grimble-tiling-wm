@@ -2,6 +2,8 @@ import Gio from 'gi://Gio';
 
 import {Switches} from '../prefs/settings.js';
 import { TileWindowManager } from '../tileWindowManager.js';
+import { enableWindowTheme } from '../theme.js';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 
 export default class SwitchHandler {
@@ -23,5 +25,20 @@ export default class SwitchHandler {
 
     _onSwitchChanged(key : string, settings : Gio.Settings) {
         console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
+        switch (key) {
+            case "header-bar":
+                let extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+                let metadata = extensionObject?.metadata;
+                if (metadata && settings.get_boolean('header-bar')) {
+                    enableWindowTheme(metadata, true);
+                } else if (metadata) {
+                    enableWindowTheme(metadata, false);
+                }
+                
+                break;
+
+            default:
+                break;
+    }
     }
 }
