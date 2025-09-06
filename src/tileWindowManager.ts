@@ -10,9 +10,18 @@ import St from 'gi://St';
 import { Monitor } from './monitor.js';
 import { launchApp } from './utils.js';
 import Shell from 'gi://Shell';
-
+import Pango from 'gi://Pango';
+import Clutter from 'gi://Clutter';
 
 import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
+
+
+export enum Direction {
+    North = 1,
+    South,
+    West,
+    East
+}
 
 
 let LOCKED = false;
@@ -251,6 +260,8 @@ export class TileWindowManager {
 
         this.configureWindowSignals(window);
 
+        this.updateFocusHistory(window);
+
         let monitor: Monitor;
 
         // Select monitor
@@ -369,6 +380,12 @@ export class TileWindowManager {
     }
 
 
+    /** Clock wise windows rotation. 
+     * Rotates the parent tile (if existing).
+     * 
+     * @param window 
+     * @returns 
+     */
     public rotateWindow(window: Meta.Window) {
         let tile: Tile | undefined = (window as any).tile;
 
@@ -409,6 +426,12 @@ export class TileWindowManager {
     }
 
 
+    /** Maximize the currently focused window.
+     * Others windows are reduced using tile specific state.
+     * 
+     * @param window 
+     * @returns 
+     */
     public maximizeTile(window: Meta.Window) {
         let tile: Tile | undefined = (window as any).tile;
         if (!tile)
@@ -495,7 +518,12 @@ export class TileWindowManager {
         //             let context = this._searchEntry.clutter_text.get_pango_context();
         //             let layout = Pango.Layout.new(context);
         //             layout.set_text(current, -1);
-        //             let [strong, weak] = layout.get_cursor_pos(current.length);
+
+        //             let font_description = this._searchEntry.clutter_text.get_font_description();
+        //             if (font_description)
+        //                 layout.set_font_description(font_description);
+                    
+        //             let [strong] = layout.get_cursor_pos(current.length);
         //             if (strong) {
         //                 let cursorX = strong.x / Pango.SCALE;
 
@@ -504,8 +532,6 @@ export class TileWindowManager {
         //             }
 
         //         }
-
-
         //     } else if (this._searchSuggestion) {
         //         this._searchSuggestion.set_text('');
         //     }
@@ -530,6 +556,11 @@ export class TileWindowManager {
     }
 
 
+    public refresh() {
+        this.monitors.forEach(el => el.root ? el.root.update() : null);
+    }
+
+
     public disableSearchEntry() {
         if (this._searchButton) {
             this._searchContainer?.destroy();
@@ -544,6 +575,11 @@ export class TileWindowManager {
     }
 
 
+    /** Extension is disabled on screen lock.
+     * We save the state of the Monitors before we quit.
+     * 
+     * @returns 
+     */
     public _saveBeforeSessionLock() {
         if (!Main.sessionMode.isLocked)
             return;
@@ -577,7 +613,7 @@ export class TileWindowManager {
             }, (key, value) => {
                 if (value instanceof Meta.Window)
                     return value.get_id();
-                else if (key === "_parent")
+                else if (key === "_parent") // remove cyclic references
                     return undefined;
                 else
                     return value;
@@ -623,8 +659,34 @@ export class TileWindowManager {
 
         this.monitors = states.windows;
         this.monitors.forEach((value, index, array) => {
+            // We need to rebuild correct types from objects
             array[index] = Monitor.fromObject(value);
             array[index].root?.forEach(el => el.window ? this.configureWindowSignals(el.window) : null);
         });
+    }
+
+
+
+    public moveTile(dir : Direction) {
+        let window : Meta.Window | null = this.getFocusedWindow();
+        if (!window)
+            return;
+        
+        let tile : Tile = (window as any).tile;
+        if (!tile.window)
+            return;
+        
+        let exchangeTile = this.monitors[tile.monitor].closestTile(tile, dir);
+        if (!exchangeTile || !exchangeTile.window)
+            return;
+
+        let tmpWindow = exchangeTile.window;
+        exchangeTile.window = tile.window;
+        tile.window = tmpWindow;
+
+        (tile.window as any).tile = tile;
+        (exchangeTile.window as any).tile = exchangeTile;
+        
+        this.monitors[tile.monitor].root?.update();
     }
 }

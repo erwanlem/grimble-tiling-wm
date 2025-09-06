@@ -1,5 +1,6 @@
 DEST_FOLDER=~/.local/share/gnome-shell/extensions/gtile\@lmt.github.io/
 
+glib-compile-schemas schemas/
 make clean
 make
 cp gtktheme.css metadata.json dist/

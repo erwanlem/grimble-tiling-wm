@@ -8,8 +8,12 @@ export class Shortcut {
         'keybinding-close',
         'keybinding-search',
         'keybinding-open-settings',
-        'keybinding-minimize',
-        'keybinding-maximize'
+        'keybinding-maximize',
+        'keybinding-refresh',
+        'keybinding-move-left',
+        'keybinding-move-right',
+        'keybinding-move-top',
+        'keybinding-move-bottom'
     ];
 
     public static getShortcuts() {
@@ -20,7 +24,6 @@ export class Shortcut {
 export class Switches {
 
     private static _switchList : Array<string> = [
-        'display-cursor',
         'header-bar'
     ];
 

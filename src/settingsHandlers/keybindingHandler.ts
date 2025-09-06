@@ -4,7 +4,7 @@ import Shell from 'gi://Shell';
 import Gio from 'gi://Gio';
 
 import {Shortcut} from '../prefs/settings.js';
-import { TileWindowManager } from '../tileWindowManager.js';
+import { TileWindowManager, Direction } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 /**
@@ -61,6 +61,22 @@ export default class KeybindingHandler {
 
             case 'keybinding-search':
                 this._windowManager.createSearchBar();
+                break;
+
+            case 'keybinding-refresh':
+                this._windowManager.refresh();
+                break;
+            case 'keybinding-move-left':
+                this._windowManager.moveTile(Direction.West);
+                break;
+            case 'keybinding-move-right':
+                this._windowManager.moveTile(Direction.East);
+                break;
+            case 'keybinding-move-top':
+                this._windowManager.moveTile(Direction.North);
+                break;
+            case 'keybinding-move-bottom':
+                this._windowManager.moveTile(Direction.South);
                 break;
 
             default:

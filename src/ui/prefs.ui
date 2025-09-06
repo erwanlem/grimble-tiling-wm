@@ -12,12 +12,6 @@
         <property name="title" translatable="yes" comments="Translators: This is the header for a preference group in the 'General' tab">Appearance</property>
         
         <child>
-          <object class="AdwSwitchRow" id="display_cursor">
-            <property name="title" translatable="yes" comments="Translators: This is the name of setting to enable/disable mouse cursor in the 'General' tab">Cursor</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property>
-          </object>
-        </child>
-        <child>
           <object class="AdwSwitchRow" id="header_bar">
             <property name="title" translatable="yes" comments="Translators: This is the name of setting to enable/disable window header bar in the 'General' tab">Hide window header bar</property>
             <!-- <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property> -->
@@ -130,13 +124,33 @@
           </object>
         </child>
         <child>
-          <object class="ShortcutListener" id="keybinding_minimize">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to minimize">Minimize tile</property>
+          <object class="ShortcutListener" id="keybinding_maximize">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize">Maximize tile</property>
           </object>
         </child>
         <child>
-          <object class="ShortcutListener" id="keybinding_maximize">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize">Maximize tile</property>
+          <object class="ShortcutListener" id="keybinding_refresh">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to refresh">Refresh</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_move_left">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left">Move Left</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_move_right">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right">Move Right</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_move_top">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Top</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_move_bottom">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
           </object>
         </child>
 

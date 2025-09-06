@@ -2,12 +2,6 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.gtile" path="/org/gnome/shell/extensions/gtile/">
 
-    <key name="display-cursor" type="b">
-      <default>true</default>
-      <summary>Cursor</summary>
-      <description>Whether to enable/disable mouse cursor</description>
-    </key>
-
     <key name="header-bar" type="b">
       <default>true</default>
       <summary>Header bar</summary>
@@ -54,16 +48,37 @@
       <summary>Gtile settings</summary>
       <description>Custom shortcut</description>
     </key>
-    <key name="keybinding-minimize" type="as">
-      <default>[]</default>
-      <summary>Minimize</summary>
-      <description>Custom shortcut</description>
-    </key>
     <key name="keybinding-maximize" type="as">
       <default>[]</default>
       <summary>Maximize</summary>
       <description>Custom shortcut</description>
     </key>
+    <key name="keybinding-refresh" type="as">
+      <default>[]</default>
+      <summary>Refresh</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move-left" type="as">
+      <default>[]</default>
+      <summary>Move Left</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move-right" type="as">
+      <default>[]</default>
+      <summary>Move Right</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move-top" type="as">
+      <default>[]</default>
+      <summary>Move Top</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move-bottom" type="as">
+      <default>[]</default>
+      <summary>Move Bottom</summary>
+      <description>Custom shortcut</description>
+    </key>
+    
 
 
   </schema>

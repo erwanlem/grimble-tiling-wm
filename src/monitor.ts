@@ -1,4 +1,5 @@
 import { Tile } from './tile.js';
+import { Direction } from './tileWindowManager.js';
 
 
 export class Monitor {
@@ -35,6 +36,116 @@ export class Monitor {
             (acc, val : Monitor) => val.size() < acc.size() ? val : acc, 
             monitors[0]
         );
+    }
+
+    private static tileDistance(t1 : Tile, t2 : Tile) : number {
+        let vector = [t1.position.x - t2.position.x, t1.position.y - t2.position.y];
+
+        return Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+    }
+
+    public closestTile(source : Tile, dir : Direction) : Tile | null {
+        // Class to store the result
+        class BestTile {
+            public tile : Tile | null = null;
+            public distance : number | null = null;
+
+            public constructor(tile : Tile | null = null, distance : number | null = null) {
+                this.tile = tile;
+                this.distance = distance;
+            }
+        };
+        
+        // We search for the closest tile in a Direction. We recursively iterate the tree
+        let fun = function findClosest(tile : Tile, dir : Direction) : BestTile {
+            switch (dir) {
+                case Direction.East:
+                    if (tile.leaf && tile.position.x > source.position.x) {
+                        return new BestTile(tile, Monitor.tileDistance(tile, source));
+                    } else if (tile.leaf) {
+                        return new BestTile();
+                    } else if (tile.child1 && tile.child2) {
+                        let res1 = findClosest(tile.child1, dir);
+                        let res2 = findClosest(tile.child2, dir);
+                        if ((res1.distance && res2.distance && res1.distance > res2.distance) 
+                            || (res2.distance && !res1.distance)) {
+                            return res2;
+                        } else if ((res1.distance && res2.distance && res1.distance < res2.distance) 
+                            || (res1.distance && !res2.distance)) {
+                            return res1;
+                        } else {
+                            return new BestTile();
+                        }
+                    }
+                    return new BestTile();
+                case Direction.West:
+                    if (tile.leaf && tile.position.x < source.position.x) {
+                        return new BestTile(tile, Monitor.tileDistance(tile, source));
+                    } else if (tile.leaf) {
+                        return new BestTile();
+                    } else if (tile.child1 && tile.child2) {
+                        let res1 = findClosest(tile.child1, dir);
+                        let res2 = findClosest(tile.child2, dir);
+                        if ((res1.distance && res2.distance && res1.distance > res2.distance) 
+                            || (res2.distance && !res1.distance)) {
+                            return res2;
+                        } else if ((res1.distance && res2.distance && res1.distance < res2.distance) 
+                            || (res1.distance && !res2.distance)) {
+                            return res1;
+                        } else {
+                            return new BestTile();
+                        }
+                    }
+                    return new BestTile();
+                case Direction.North:
+                    if (tile.leaf && tile.position.y < source.position.y) {
+                        return new BestTile(tile, Monitor.tileDistance(tile, source));
+                    } else if (tile.leaf) {
+                        return new BestTile();
+                    } else if (tile.child1 && tile.child2) {
+                        let res1 = findClosest(tile.child1, dir);
+                        let res2 = findClosest(tile.child2, dir);
+                        if ((res1.distance && res2.distance && res1.distance > res2.distance) 
+                            || (res2.distance && !res1.distance)) {
+                            return res2;
+                        } else if ((res1.distance && res2.distance && res1.distance < res2.distance) 
+                            || (res1.distance && !res2.distance)) {
+                            return res1;
+                        } else {
+                            return new BestTile();
+                        }
+                    }
+                    return new BestTile();
+                case Direction.South:
+                    if (tile.leaf && tile.position.y > source.position.y) {
+                        return new BestTile(tile, Monitor.tileDistance(tile, source));
+                    } else if (tile.leaf) {
+                        return new BestTile();
+                    } else if (tile.child1 && tile.child2) {
+                        let res1 = findClosest(tile.child1, dir);
+                        let res2 = findClosest(tile.child2, dir);
+                        if ((res1.distance && res2.distance && res1.distance > res2.distance) 
+                            || (res2.distance && !res1.distance)) {
+                            return res2;
+                        } else if ((res1.distance && res2.distance && res1.distance < res2.distance) 
+                            || (res1.distance && !res2.distance)) {
+                            return res1;
+                        } else {
+                            return new BestTile();
+                        }
+                    }
+                    return new BestTile();
+                default:
+                    return new BestTile();
+            }
+        }
+
+        if (this.root) {
+            let res = fun(this.root, dir);
+            return res.tile;
+        }
+
+        return null;
     }
 
     public destroy() {
