@@ -8,6 +8,12 @@
       <description>Whether to show or hide window header bar</description>
     </key>
 
+    <key name="tile-padding" type="i">
+      <default>0</default>
+      <summary>Tile padding</summary>
+      <description>Set tile padding</description>
+    </key>
+
     <key name="tile-insertion-behavior" type="i">
 			<!-- 0: best-fit, 1: Focus -->
 			<default>0</default>

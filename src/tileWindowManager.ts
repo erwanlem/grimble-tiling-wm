@@ -42,7 +42,7 @@ export class TileWindowManager {
 
     _focusHistory: Array<Meta.Window>;
 
-    monitors: Array<Monitor>;
+    private static monitors: Array<Monitor>;
 
     _searchContainer: St.Bin | undefined;
     _searchEntry: St.Entry | undefined;
@@ -55,9 +55,9 @@ export class TileWindowManager {
         this._extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
         this._settings = this._extensionObject?.getSettings();
 
-        this.monitors = new Array(global.display.get_n_monitors());
-        for (const [i, value] of this.monitors.entries()) {
-            this.monitors[i] = new Monitor(i);
+        TileWindowManager.monitors = new Array(global.display.get_n_monitors());
+        for (const [i, value] of TileWindowManager.monitors.entries()) {
+            TileWindowManager.monitors[i] = new Monitor(i);
         }
 
         this._focusHistory = [];
@@ -79,7 +79,7 @@ export class TileWindowManager {
             }
         );
 
-        this.monitors.forEach(el => el.root?.update());
+        TileWindowManager.monitors.forEach(el => el.root?.update());
 
         this._windowCreatedSignal = global.display.connect(
             'window-created',
@@ -91,6 +91,14 @@ export class TileWindowManager {
             (_, window, op) => this._onGrabBegin(window, op)
         );
 
+    }
+
+    public static getMonitors() : Monitor[] {
+        return TileWindowManager.monitors;
+    }
+
+    public updateMonitors() {
+        TileWindowManager.monitors.forEach(el => el.root?.update());
     }
 
     /**
@@ -159,7 +167,7 @@ export class TileWindowManager {
         if (app.get_id().startsWith('window:'))
             return false;
 
-        let containsWindow = this.monitors.reduce(
+        let containsWindow = TileWindowManager.monitors.reduce(
             (acc: boolean, val: Monitor) => val.root ? acc || val.root.contains(window) : acc, false
         );
         if (containsWindow)
@@ -266,14 +274,14 @@ export class TileWindowManager {
 
         // Select monitor
         if (this._settings?.get_int('monitor-tile-insertion-behavior') == 0) {
-            monitor = Monitor.bestFitMonitor(this.monitors);
+            monitor = Monitor.bestFitMonitor(TileWindowManager.monitors);
         } else {
             let focusWindow = this.getFocusedWindow();
             if (focusWindow) {
                 let tile: Tile = (focusWindow as any).tile;
-                monitor = this.monitors[tile.monitor];
+                monitor = TileWindowManager.monitors[tile.monitor];
             } else {
-                monitor = Monitor.bestFitMonitor(this.monitors);
+                monitor = Monitor.bestFitMonitor(TileWindowManager.monitors);
             }
         }
 
@@ -286,19 +294,18 @@ export class TileWindowManager {
 
             (window as any).tile = tile;
 
-            this.monitors[index].root = tile;            
-            this.monitors[index].root?.update();
-
+            TileWindowManager.monitors[index].root = tile;            
+            TileWindowManager.monitors[index].root?.update();
         } else {
             if (this._settings?.get_int('tile-insertion-behavior') == 0) {
-                this.monitors[index].root?.addWindowOnBlock(window);
+                TileWindowManager.monitors[index].root?.addWindowOnBlock(window);
             } else {
                 let focusWindow = this.getFocusedWindow();
                 if (focusWindow) {
                     let tile: Tile = (focusWindow as any).tile;
                     tile.addWindowOnBlock(window);
                 } else {
-                    this.monitors[index].root?.addWindowOnBlock(window);
+                    TileWindowManager.monitors[index].root?.addWindowOnBlock(window);
                 }
             }
 
@@ -306,7 +313,7 @@ export class TileWindowManager {
                 (window as any).tile.state = TileState.MINIMIZED;
             }
 
-            this.monitors[index].root?.update();
+            TileWindowManager.monitors[index].root?.update();
         }
     }
 
@@ -325,9 +332,9 @@ export class TileWindowManager {
 
         let m = tile.monitor;
         if (tile.removeTile() === null)
-            this.monitors[m].root = null;
+            TileWindowManager.monitors[m].root = null;
         else
-            this.monitors[m].root?.update();
+            TileWindowManager.monitors[m].root?.update();
     }
 
 
@@ -341,9 +348,8 @@ export class TileWindowManager {
 
         let m = tile.monitor;
         if (op === Meta.GrabOp.MOVING) {
-            let rect = window.get_frame_rect();
             GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                this.monitors[m].root?.update();
+                TileWindowManager.monitors[m].root?.update();
                 return GLib.SOURCE_REMOVE;
             });
 
@@ -442,7 +448,7 @@ export class TileWindowManager {
         if (this._fullscreenState) {
             this._fullscreenState = false;
 
-            this.monitors[m].root?.forEach(el => {
+            TileWindowManager.monitors[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
                 if (el.id === tile.id) {
                 } else {
@@ -452,7 +458,7 @@ export class TileWindowManager {
         } else {
             this._fullscreenState = true;
 
-            this.monitors[m].root?.forEach(el => {
+            TileWindowManager.monitors[m].root?.forEach(el => {
                 if (el.id === tile.id) {
                     el.state = TileState.MAXIMIZED;
                 } else {
@@ -461,7 +467,7 @@ export class TileWindowManager {
             });
         }
 
-        this.monitors[m].root?.update();
+        TileWindowManager.monitors[m].root?.update();
     }
 
 
@@ -557,7 +563,7 @@ export class TileWindowManager {
 
 
     public refresh() {
-        this.monitors.forEach(el => el.root ? el.root.update() : null);
+        TileWindowManager.monitors.forEach(el => el.root ? el.root.update() : null);
     }
 
 
@@ -609,7 +615,7 @@ export class TileWindowManager {
 
         file.replace_contents(
             JSON.stringify({
-                windows: this.monitors
+                windows: TileWindowManager.monitors
             }, (key, value) => {
                 if (value instanceof Meta.Window)
                     return value.get_id();
@@ -657,8 +663,8 @@ export class TileWindowManager {
                 : value
         );
 
-        this.monitors = states.windows;
-        this.monitors.forEach((value, index, array) => {
+        TileWindowManager.monitors = states.windows;
+        TileWindowManager.monitors.forEach((value, index, array) => {
             // We need to rebuild correct types from objects
             array[index] = Monitor.fromObject(value);
             array[index].root?.forEach(el => el.window ? this.configureWindowSignals(el.window) : null);
@@ -676,7 +682,7 @@ export class TileWindowManager {
         if (!tile.window)
             return;
         
-        let exchangeTile = this.monitors[tile.monitor].closestTile(tile, dir);
+        let exchangeTile = TileWindowManager.monitors[tile.monitor].closestTile(tile, dir);
         if (!exchangeTile || !exchangeTile.window)
             return;
 
@@ -687,6 +693,6 @@ export class TileWindowManager {
         (tile.window as any).tile = tile;
         (exchangeTile.window as any).tile = exchangeTile;
         
-        this.monitors[tile.monitor].root?.update();
+        TileWindowManager.monitors[tile.monitor].root?.update();
     }
 }

@@ -2,7 +2,7 @@ import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import './prefs/shortcutListener.js';
-import {Shortcut, Switches, Radio} from './prefs/settings.js';
+import {Shortcut, Switches, Radio, Spin} from './prefs/settings.js';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
@@ -32,6 +32,7 @@ export default class GtilePreferences extends ExtensionPreferences {
 
         this._bindRadioButtons(builder, settings);
         this._bindSwitches(builder, settings);
+        this._bindSpinbuttons(builder, settings);
 
         return page1;
     }
@@ -77,6 +78,15 @@ export default class GtilePreferences extends ExtensionPreferences {
         switches.forEach(key => {
             const widget = builder.get_object(key.replaceAll('-', '_'));
             settings.bind(key, widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+        });
+    }
+
+    private _bindSpinbuttons(builder: any, settings : Gio.Settings) {
+        const spinButtons = Spin.getSpins();
+
+        spinButtons.forEach(key => {
+            const widget = builder.get_object(key.replaceAll('-', '_'));
+            settings.bind(key, widget, 'value', Gio.SettingsBindFlags.DEFAULT);
         });
     }
 }

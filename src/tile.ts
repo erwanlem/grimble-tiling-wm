@@ -1,5 +1,7 @@
 import { Position } from "./position.js"
 import Meta from 'gi://Meta';
+import { Monitor } from './monitor.js';
+import { Direction, TileWindowManager } from './tileWindowManager.js';
 
 
 export enum Orientation {
@@ -30,7 +32,9 @@ export class Tile {
 
     _nr_tiles: number;
     _monitor : number | undefined;
+    _adjacents : boolean[];
 
+    public static padding = 0;
     static id_count = 0;
     static fullscreen : number | undefined;
 
@@ -48,6 +52,9 @@ export class Tile {
         this._child2 = null;
         this._orientation = Orientation.None;
         this._nr_tiles = 0;
+
+        // west / east / north / south
+        this._adjacents = [false, false, false, false];
     }
 
 
@@ -59,6 +66,8 @@ export class Tile {
         tile._parent = parent;
         tile._leaf = true;
         tile._nr_tiles = 1;
+
+        tile.findAdjacents();
 
         return tile;
     }
@@ -195,10 +204,10 @@ export class Tile {
 
                 this._window.move_resize_frame(
                     false,
-                    area.x + this._position.x,
-                    area.y + this._position.y,
-                    this._position.width,
-                    this._position.height);
+                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
+                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
+                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
+                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
 
             } else {
                 this.state = TileState.DEFAULT;
@@ -214,10 +223,10 @@ export class Tile {
 
                 this._window.move_resize_frame(
                     false,
-                    area.x + this._position.x,
-                    area.y + this._position.y,
-                    this._position.width,
-                    this._position.height);
+                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
+                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
+                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
+                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
             }
 
         } else {
@@ -284,6 +293,19 @@ export class Tile {
             (tile.window as any).tile = tile;
 
         return tile;
+    }
+
+    public findAdjacents() {
+        let _monitor = TileWindowManager.getMonitors()[this.monitor];
+
+        let w = _monitor.closestTile(this, Direction.West);
+        let e = _monitor.closestTile(this, Direction.East);
+        let n = _monitor.closestTile(this, Direction.North);
+        let s = _monitor.closestTile(this, Direction.South);
+
+        this._adjacents = [w !== null, e !== null, n !== null, s !== null];
+
+        console.warn(`Adjacents : ${this._adjacents}`);
     }
 
     private set leaf(b : boolean) {
@@ -355,8 +377,12 @@ export class Tile {
         this._monitor = m;
     }
 
-    public get monitor() {
+    public get monitor() : number {
         return this._monitor ? this._monitor : 0;
+    }
+
+    public get adjacents() : boolean[] {
+        return this._adjacents;
     }
 
 }

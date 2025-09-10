@@ -2,8 +2,17 @@ import { Tile } from './tile.js';
 import { Position } from "./position.js";
 import GLib from 'gi://GLib';
 import Mtk from 'gi://Mtk';
+import { TileWindowManager } from './tileWindowManager.js';
 
 export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
+    if (!tile.adjacents[1]) {
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            return GLib.SOURCE_REMOVE;
+        });
+        return;
+    }
+
     let p = tile.findParent(
         (el: Tile) =>
             el.position.x + el.position.width === tile.position.x + tile.position.width
@@ -30,6 +39,14 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
 }
 
 export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
+    if (!tile.adjacents[0]) {
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            return GLib.SOURCE_REMOVE;
+        });
+        return;
+    }
+
     let p = tile.findParent(
         (el: Tile) =>
             el.position.x === tile.position.x
@@ -56,6 +73,14 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
 }
 
 export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
+    if (!tile.adjacents[3]) {
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            return GLib.SOURCE_REMOVE;
+        });
+        return;
+    }
+
     let p = tile.findParent(
         (el: Tile) =>
             el.position.y + el.position.height === tile.position.y + tile.position.height
@@ -82,6 +107,14 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
 }
 
 export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
+    if (!tile.adjacents[2]) {
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            return GLib.SOURCE_REMOVE;
+        });
+        return;
+    }
+
     let p = tile.findParent(
         (el: Tile) =>
             el.position.y === tile.position.y

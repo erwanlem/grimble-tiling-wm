@@ -17,6 +17,19 @@
             <!-- <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property> -->
           </object>
         </child>
+
+        <child>
+          <object class="AdwSpinRow" id="tile_padding">
+            <property name="title" translatable="yes" comments="Translators: This is the name of setting to set tile padding in the 'General' tab">Tile padding</property>
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="upper">30</property>
+                <property name="step-increment">1</property>
+                <property name="page-increment">2</property>
+              </object>
+            </property>
+          </object>
+        </child>
       </object>
     </child>
 

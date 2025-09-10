@@ -32,6 +32,17 @@ export class Switches {
     }
 }
 
+export class Spin {
+
+    private static _spinList : Array<string> = [
+        'tile-padding'
+    ];
+
+    public static getSpins() {
+        return Spin._spinList;
+    }
+}
+
 export class Radio {
 
     private static _radioButtons = [

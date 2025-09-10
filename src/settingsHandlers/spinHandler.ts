@@ -1,19 +1,19 @@
 import Gio from 'gi://Gio';
 
-import {Switches} from '../prefs/settings.js';
+import {Spin} from '../prefs/settings.js';
 import { TileWindowManager } from '../tileWindowManager.js';
-import { enableWindowTheme } from '../theme.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Tile } from '../tile.js';
 
 
-export default class SwitchHandler {
-    _switchs : Array<string>;
+export default class SpinHandler {
+    _spins : Array<string>;
     _windowManager : TileWindowManager;
 
     constructor(windowManager : TileWindowManager, settings : Gio.Settings) {
         this._windowManager = windowManager;
-        this._switchs = Switches.getSwitches();
-        this._switchs.forEach(key => {
+        this._spins = Spin.getSpins();
+        this._spins.forEach(key => {
             settings.connect(
                 "changed::" + key,
                 (settings, key) => this._onSwitchChanged(key, settings)
@@ -26,13 +26,13 @@ export default class SwitchHandler {
     _onSwitchChanged(key : string, settings : Gio.Settings) {
         console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
         switch (key) {
-            case "header-bar":
+            case "tile-padding":
                 let extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
                 let metadata = extensionObject?.metadata;
-                if (metadata && settings.get_boolean('header-bar')) {
-                    enableWindowTheme(metadata, true);
-                } else if (metadata) {
-                    enableWindowTheme(metadata, false);
+                if (metadata && settings.get_int('tile-padding')) {
+                    console.warn('Tile padding ' + settings.get_int('tile-padding'));
+                    Tile.padding = settings.get_int('tile-padding');
+                    this._windowManager.updateMonitors();
                 }
                 
                 break;
