@@ -166,8 +166,6 @@
             <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
           </object>
         </child>
-
-        
       </object>
     </child>
    

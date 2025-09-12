@@ -13,7 +13,7 @@ export class Shortcut {
         'keybinding-move-left',
         'keybinding-move-right',
         'keybinding-move-top',
-        'keybinding-move-bottom'
+        'keybinding-move-bottom',
     ];
 
     public static getShortcuts() {

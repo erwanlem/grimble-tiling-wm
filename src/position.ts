@@ -6,15 +6,17 @@ export class Position {
     y: number;
     width: number;
     height: number;
+    index : number;
 
     constructor(proportion: number = 1.0,
         x = 0, y = 0,
-        width = 0, height = 0) {
+        width = 0, height = 0, index = 0) {
         this.proportion = proportion;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.index = index;
     }
 
     split(orientation: Orientation | null = null) {
@@ -24,7 +26,7 @@ export class Position {
         newPosition1.proportion = this.proportion / 2;
         newPosition1.x = this.x;
         newPosition1.y = this.y;
-
+        newPosition1.index = 0;
 
         switch (orientation) {
             case null:
@@ -57,7 +59,8 @@ export class Position {
             vertical ? this.x + this.width / 2 : this.x,
             vertical ? this.y : this.y + this.height / 2,
             vertical ? this.width / 2 : this.width,
-            vertical ? this.height : this.height / 2
+            vertical ? this.height : this.height / 2,
+            1
         );
 
         return [newPosition1, newPosition2];

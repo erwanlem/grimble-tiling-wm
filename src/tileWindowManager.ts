@@ -12,9 +12,9 @@ import { launchApp } from './utils.js';
 import Shell from 'gi://Shell';
 import Pango from 'gi://Pango';
 import Clutter from 'gi://Clutter';
+import Mtk from 'gi://Mtk';
 
 import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
-
 
 export enum Direction {
     North = 1,
@@ -23,7 +23,7 @@ export enum Direction {
     East
 }
 
-
+const RESIZE_GAP = 10;
 let LOCKED = false;
 
 export class TileWindowManager {
@@ -35,8 +35,6 @@ export class TileWindowManager {
 
     _extensionObject: Extension | null = null;
     _settings: Gio.Settings | undefined;
-
-    _fullscreenState: boolean = false;
 
     static rotateEven = [0, 0];
 
@@ -50,6 +48,7 @@ export class TileWindowManager {
     _searchButton : PanelButton | undefined;
 
     _wasLocked: boolean = false;
+    
 
     constructor() {
         this._extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
@@ -90,6 +89,8 @@ export class TileWindowManager {
             'grab-op-end',
             (_, window, op) => this._onGrabBegin(window, op)
         );
+
+        global.workspace_manager.connect('workspace-added', () => { console.warn("New workspace"); });
 
     }
 
@@ -259,10 +260,6 @@ export class TileWindowManager {
 
 
     private _addNewWindow(window: Meta.Window) {
-        // console.warn(`>>> Window created ${window.get_title()} wm-class=${window.get_wm_class()} role=${window.get_role()} workspace=${window.get_workspace().index()}`);
-        // let app = Shell.WindowTracker.get_default().get_window_app(window);
-        // console.warn(`App : ${app.get_id()} <<<`);
-
         if (!this._isValidWindow(window))
             return;
 
@@ -309,7 +306,7 @@ export class TileWindowManager {
                 }
             }
 
-            if (this._fullscreenState) {
+            if (TileWindowManager.monitors[index].fullscreen) {
                 (window as any).tile.state = TileState.MINIMIZED;
             }
 
@@ -331,6 +328,15 @@ export class TileWindowManager {
         }
 
         let m = tile.monitor;
+        if (TileWindowManager.monitors[m].fullscreen) {
+            TileWindowManager.monitors[m].fullscreen = false;
+
+            TileWindowManager.monitors[m].root?.forEach(el => {
+                el.state = TileState.DEFAULT;
+                el.window?.unminimize();
+            });
+        }
+
         if (tile.removeTile() === null)
             TileWindowManager.monitors[m].root = null;
         else
@@ -341,7 +347,7 @@ export class TileWindowManager {
     private _onGrabBegin(window: Meta.Window, op: Meta.GrabOp) {
         if (!window) return;
 
-        let tile = (window as any).tile;
+        let tile : Tile = (window as any).tile;
 
         if (!tile)
             return;
@@ -386,6 +392,89 @@ export class TileWindowManager {
     }
 
 
+    public resizeFocusedWindow(op : Meta.GrabOp) {
+        let window = global.display.focusWindow;
+        if (!window)
+            return;
+
+        let tile = (window as any).tile;
+
+        if (op === Meta.GrabOp.RESIZING_E) {
+            if (tile.adjacents[1]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y,
+                    width: tile.position.width + RESIZE_GAP,
+                    height: tile.position.height
+                });
+                Resize.resizeE(tile, r);
+            } else if (tile.adjacents[0]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x + RESIZE_GAP, 
+                    y: tile.position.y,
+                    width: tile.position.width - RESIZE_GAP,
+                    height: tile.position.height
+                });
+                Resize.resizeW(tile, r);
+            }
+        } else if (op === Meta.GrabOp.RESIZING_W) {            
+            if (tile.adjacents[0]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x - RESIZE_GAP, 
+                    y: tile.position.y,
+                    width: tile.position.width + RESIZE_GAP,
+                    height: tile.position.height
+                });
+                Resize.resizeW(tile, r);
+            } else if (tile.adjacents[1]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y,
+                    width: tile.position.width - RESIZE_GAP,
+                    height: tile.position.height
+                });
+                Resize.resizeE(tile, r);
+            }
+        } else if (op === Meta.GrabOp.RESIZING_N) {
+            if (tile.adjacents[2]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y - RESIZE_GAP,
+                    width: tile.position.width,
+                    height: tile.position.height + RESIZE_GAP
+                });
+                Resize.resizeN(tile, r);
+            } else if (tile.adjacents[3]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y,
+                    width: tile.position.width,
+                    height: tile.position.height - RESIZE_GAP
+                });
+                Resize.resizeS(tile, r);
+            }
+        } else if (op === Meta.GrabOp.RESIZING_S) {
+            if (tile.adjacents[3]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y,
+                    width: tile.position.width,
+                    height: tile.position.height + RESIZE_GAP
+                });
+                Resize.resizeS(tile, r);
+            } else if (tile.adjacents[2]) {
+                let r = new Mtk.Rectangle({
+                    x: tile.position.x, 
+                    y: tile.position.y + RESIZE_GAP,
+                    width: tile.position.width,
+                    height: tile.position.height - RESIZE_GAP
+                });
+                Resize.resizeN(tile, r);
+            }
+        }
+    }
+
+
     /** Clock wise windows rotation. 
      * Rotates the parent tile (if existing).
      * 
@@ -409,6 +498,8 @@ export class TileWindowManager {
             if (parent.child1 && parent.child2) {
                 parent.child1.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 0 : 1]);
                 parent.child2.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 1 : 0]);
+                parent.child1.findAdjacents();
+                parent.child2.findAdjacents();
                 TileWindowManager.rotateEven[0] = (TileWindowManager.rotateEven[0] + 1) % 2;
                 parent.update();
             } else {
@@ -420,6 +511,8 @@ export class TileWindowManager {
             if (parent.child1 && parent.child2) {
                 parent.child1.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 1 : 0]);
                 parent.child2.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 0 : 1]);
+                parent.child1.findAdjacents();
+                parent.child2.findAdjacents();
                 TileWindowManager.rotateEven[1] = (TileWindowManager.rotateEven[1] + 1) % 2;
                 parent.update();
             } else {
@@ -445,18 +538,17 @@ export class TileWindowManager {
 
         let m = tile.monitor;
 
-        if (this._fullscreenState) {
-            this._fullscreenState = false;
+        if (TileWindowManager.monitors[tile.monitor].fullscreen) {
+            TileWindowManager.monitors[tile.monitor].fullscreen = false;
 
             TileWindowManager.monitors[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
-                if (el.id === tile.id) {
-                } else {
+                if (el.id !== tile.id) {
                     el.window?.unminimize();
                 }
             });
         } else {
-            this._fullscreenState = true;
+            TileWindowManager.monitors[tile.monitor].fullscreen = true;
 
             TileWindowManager.monitors[m].root?.forEach(el => {
                 if (el.id === tile.id) {
@@ -669,6 +761,8 @@ export class TileWindowManager {
             array[index] = Monitor.fromObject(value);
             array[index].root?.forEach(el => el.window ? this.configureWindowSignals(el.window) : null);
         });
+        
+        this.updateMonitors();
     }
 
 
@@ -681,7 +775,7 @@ export class TileWindowManager {
         let tile : Tile = (window as any).tile;
         if (!tile.window)
             return;
-        
+
         let exchangeTile = TileWindowManager.monitors[tile.monitor].closestTile(tile, dir);
         if (!exchangeTile || !exchangeTile.window)
             return;

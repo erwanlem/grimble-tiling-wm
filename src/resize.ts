@@ -22,8 +22,8 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
         return GLib.SOURCE_REMOVE;
     } else {
         let pos: Position = p.position;
-        let diff = rect.width - pos.width;
-        pos.width = rect.width;
+        let diff = rect.width - tile.position.width;
+        pos.width = pos.width + diff;
         p.resize(pos);
         p.update();
 
@@ -56,8 +56,8 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
         return GLib.SOURCE_REMOVE;
     } else {
         let pos: Position = p.position;
-        let diff = rect.width - pos.width;
-        pos.width += diff;
+        let diff = rect.width - tile.position.width;
+        pos.width = pos.width + diff;
         pos.x -= diff;
         p.resize(pos);
         p.update();

@@ -1,8 +1,7 @@
 import { Position } from "./position.js"
 import Meta from 'gi://Meta';
-import { Monitor } from './monitor.js';
 import { Direction, TileWindowManager } from './tileWindowManager.js';
-
+import GLib from 'gi://GLib';
 
 export enum Orientation {
     Vertical = 1,
@@ -95,12 +94,12 @@ export class Tile {
             c1._state = this._state;
             (this._window as any).tile = c1;
 
-            console.warn("c1 " + c1._position.width + " " + c1._position.height + " " + c1._position.proportion + " " + c1.monitor);
+            //console.warn("c1 " + c1._position.width + " " + c1._position.height + " " + c1._position.proportion + " " + c1.monitor);
 
             let c2 = Tile.createTileLeaf(window, newPositions[1], this.monitor, this);
             (window as any).tile = c2;
 
-            console.warn("c2 " + c2._position.width + " " + c2._position.height + " " + c2._position.proportion + " " + c2.monitor);
+            //console.warn("c2 " + c2._position.width + " " + c2._position.height + " " + c2._position.proportion + " " + c2.monitor);
 
             this._window = null;
             this._leaf = false;
@@ -109,6 +108,9 @@ export class Tile {
             this._nr_tiles++;
             this._orientation = this._position.width > this._position.height
                 ? Orientation.Horizontal : Orientation.Vertical;
+
+            c1.findAdjacents();
+            c2.findAdjacents();
         } else if (this._child1 && this._child2) {
             if (this._child1?._nr_tiles > this._child2?._nr_tiles) {
                 this._child2.addWindowOnBlock(window);
@@ -163,8 +165,8 @@ export class Tile {
         this._position = position;
         if (!this._window) {
             let newPositions = this._position.split(this._orientation);
-            this._child1?.resize(newPositions[0]);
-            this._child2?.resize(newPositions[1]);
+            this._child1?.resize(newPositions[this._child1.position.index]);
+            this._child2?.resize(newPositions[this._child2.position.index]);
         }
     }
 
@@ -175,7 +177,6 @@ export class Tile {
     }
 
     public update() {
-        console.warn(`Update ${this.id}`);
 
         if (this._window) {
 
@@ -190,7 +191,8 @@ export class Tile {
             if (this._position.proportion == 1) {
                 this.state = TileState.ALONE_MAXIMIZED;
 
-                //(this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
+                if (this._window.maximized_horizontally || this._window.maximized_vertically)
+                    this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
                 const workspc = this._window.get_workspace();
                 const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
@@ -200,14 +202,19 @@ export class Tile {
                 this._position.width = area.width;
                 this._position.height = area.height;
 
-                console.warn(`area.x : ${area.x}, area.y : ${area.y}, ${this._position.width} x ${this._position.height}`);
-
-                this._window.move_resize_frame(
-                    false,
+                this._window?.move_resize_frame(
+                    true,
                     area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
                     area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
                     this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
                     this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                    this._window?.move_frame(true,
+                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
+                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                    return GLib.SOURCE_REMOVE;
+                });
 
             } else {
                 this.state = TileState.DEFAULT;
@@ -218,15 +225,19 @@ export class Tile {
                 const workspc = this._window.get_workspace();
                 const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 
-                console.warn(`monitor : ${this._monitor}`);
-                console.warn(`area.x : ${area.x}, area.y : ${area.y}, ${this._position.width} x ${this._position.height}`);
-
-                this._window.move_resize_frame(
-                    false,
+                this._window?.move_resize_frame(
+                    true,
                     area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
                     area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
                     this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
                     this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
+                
+                GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                    this._window?.move_frame(true,
+                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
+                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                    return GLib.SOURCE_REMOVE;
+                });
             }
 
         } else {
@@ -292,6 +303,7 @@ export class Tile {
         if (tile.window)
             (tile.window as any).tile = tile;
 
+        tile.findAdjacents();
         return tile;
     }
 

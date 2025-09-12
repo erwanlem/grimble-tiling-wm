@@ -5,6 +5,7 @@ import { Direction } from './tileWindowManager.js';
 export class Monitor {
     _root : Tile | null;
     _index : number;
+    _fullscreenState: boolean = false;
 
     constructor(index : number) {
         this._index = index;
@@ -25,6 +26,14 @@ export class Monitor {
 
     public get index() {
         return this._index;
+    }
+
+    public get fullscreen() {
+        return this._fullscreenState;
+    }
+
+    public set fullscreen(b : boolean) {
+        this._fullscreenState = b;
     }
 
     public size() : number {

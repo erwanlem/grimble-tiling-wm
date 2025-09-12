@@ -34,11 +34,6 @@
       <summary>Resize tile</summary>
       <description>Custom shortcut</description>
     </key>
-    <key name="keybinding-move" type="as">
-      <default>[]</default>
-      <summary>Move tile</summary>
-      <description>Custom shortcut</description>
-    </key>
     <key name="keybinding-close" type="as">
       <default>[]</default>
       <summary>Close tile</summary>
@@ -83,6 +78,38 @@
       <default>[]</default>
       <summary>Move Bottom</summary>
       <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-move" type="as">
+      <default>[]</default>
+      <summary>Move</summary>
+      <description>Custom shortcut</description>
+    </key>
+
+    <!-- Default keybindings -->
+    <key name="arrow-up" type="as">
+      <default><![CDATA[['Up']]]></default>
+      <summary>Arrow Up action</summary>
+      <description>Triggered when pressing Super+Up</description>
+    </key>
+    <key name="arrow-down" type="as">
+      <default><![CDATA[['Down']]]></default>
+      <summary>Arrow Down action</summary>
+      <description>Triggered when pressing Super+Down</description>
+    </key>
+    <key name="arrow-right" type="as">
+      <default><![CDATA[['Right']]]></default>
+      <summary>Arrow Up action</summary>
+      <description>Triggered when pressing Super+Up</description>
+    </key>
+    <key name="arrow-left" type="as">
+      <default><![CDATA[['Left']]]></default>
+      <summary>Arrow Down action</summary>
+      <description>Triggered when pressing Super+Down</description>
+    </key>
+    <key name="key-escape" type="as">
+      <default><![CDATA[['Escape']]]></default>
+      <summary>Escape action</summary>
+      <description>Triggered when pressing Super+Down</description>
     </key>
     
 
