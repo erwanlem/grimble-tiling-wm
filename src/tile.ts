@@ -29,6 +29,8 @@ export class Tile {
     _state : TileState;
     _orientation: Orientation;
 
+    _workspace : number;
+
     _nr_tiles: number;
     _monitor : number | undefined;
     _adjacents : boolean[];
@@ -51,6 +53,7 @@ export class Tile {
         this._child2 = null;
         this._orientation = Orientation.None;
         this._nr_tiles = 0;
+        this._workspace = 0;
 
         // west / east / north / south
         this._adjacents = [false, false, false, false];
@@ -65,6 +68,7 @@ export class Tile {
         tile._parent = parent;
         tile._leaf = true;
         tile._nr_tiles = 1;
+        tile._workspace = 0;
 
         tile.findAdjacents();
 
@@ -179,6 +183,7 @@ export class Tile {
     public update() {
 
         if (this._window) {
+            console.warn('UPDATE');
 
             if (this._state === TileState.MAXIMIZED) {
                 (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
@@ -298,12 +303,13 @@ export class Tile {
         tile.monitor = obj._monitor;
         tile.nr_tiles = obj._nr_tiles;
         tile.window = obj._window;
+        tile.adjacents = obj._adjacents;
         if (parent)
             tile.parent = parent;
         if (tile.window)
             (tile.window as any).tile = tile;
 
-        tile.findAdjacents();
+        //tile.findAdjacents();
         return tile;
     }
 
@@ -397,4 +403,15 @@ export class Tile {
         return this._adjacents;
     }
 
+    private set adjacents(adj : Array<boolean>) {
+        this._adjacents = adj;
+    }
+
+    public set workspace(w : number) {
+        this._workspace = w;
+    }
+
+    public get workspace() : number {
+        return this._workspace;
+    }
 }

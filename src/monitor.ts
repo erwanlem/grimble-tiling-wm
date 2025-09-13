@@ -164,7 +164,12 @@ export class Monitor {
 
     public static fromObject(obj : Monitor) {
         let monitor = new Monitor(obj._index);
-        monitor.root = Tile.fromObject(obj._root);
+        monitor.fullscreen = obj.fullscreen;
+
+        if (!obj._root)
+            monitor.root = null;
+        else
+            monitor.root = Tile.fromObject(obj._root);
 
         return monitor;
     }

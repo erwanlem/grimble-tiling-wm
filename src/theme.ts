@@ -60,15 +60,19 @@ export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = 
         originalTheme = undefined;
     }
 
-    reload_gtk_theme();
+    //reload_gtk_theme();
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
-    originalLayout = settings.get_string('button-layout');
+    //originalLayout = settings.get_string('button-layout');
     settings.set_string('button-layout', ':');
 
     settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
-    originalTiling = settings.get_boolean('edge-tiling');
+    //originalTiling = settings.get_boolean('edge-tiling');
     settings.set_boolean('edge-tiling', false);
+
+    settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
+    //originalTiling = settings.get_boolean('workspaces-only-on-primary');
+    settings.set_boolean('workspaces-only-on-primary', false);
 }
 
 
@@ -78,13 +82,16 @@ export function disableWindowTheme(metadata : ExtensionMetadata) {
         writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
     }
 
-    reload_gtk_theme();
+    //reload_gtk_theme();
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     settings.reset('button-layout');
 
     settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
     settings.reset('edge-tiling');
+
+    settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
+    settings.reset('workspaces-only-on-primary');
 }
 
 

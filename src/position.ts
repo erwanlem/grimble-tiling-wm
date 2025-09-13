@@ -68,7 +68,7 @@ export class Position {
 
 
     public static fromObject(obj : any) {
-        return new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height);
+        return new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height, obj.index);
     } 
 
 }

@@ -23,47 +23,59 @@ export enum Direction {
     East
 }
 
+
 const RESIZE_GAP = 10;
 let LOCKED = false;
 
 export class TileWindowManager {
+
+    /**************************************************/
+    // Store all the signals to be restored when disabled
     _wrappedWindows: Map<Meta.Window, [() => void,
         (dir: Meta.MaximizeFlags | null) => void,
-        number, number, number, number, number]>;
+        number, number, number, number, number, number, number]>;
+
     _windowCreatedSignal: number;
     _windowGrabSignal: number;
-
-    _extensionObject: Extension | null = null;
+    _workareaChangedSignal : number;
+    _workspaceAddedSignal : number;
+    _enteredMonitorSignal : number;
+    _grabBeginSignal : number;
+    /**************************************************/
     _settings: Gio.Settings | undefined;
 
+    _userResize : Set<Meta.Window>;
+
+    // Alternate windows rotation
     static rotateEven = [0, 0];
 
     _focusHistory: Array<Meta.Window>;
 
-    private static monitors: Array<Monitor>;
-
+    // Search bar widgets
     _searchContainer: St.Bin | undefined;
     _searchEntry: St.Entry | undefined;
     _searchSuggestion: St.Label | undefined;
     _searchButton : PanelButton | undefined;
 
-    _wasLocked: boolean = false;
-    
+    // Tiles structures
+    private static _workspaces : Map<number, Array<Monitor>> = new Map();
+
 
     constructor() {
-        this._extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
-        this._settings = this._extensionObject?.getSettings();
+        let _extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+        this._settings = _extensionObject?.getSettings();
 
-        TileWindowManager.monitors = new Array(global.display.get_n_monitors());
-        for (const [i, value] of TileWindowManager.monitors.entries()) {
-            TileWindowManager.monitors[i] = new Monitor(i);
+        for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
+            let _monitors = new Array(global.display.get_n_monitors());
+            for (const [i, value] of _monitors.entries()) {
+                _monitors[i] = new Monitor(i);
+            }
+            TileWindowManager._workspaces.set(i, _monitors);
         }
 
         this._focusHistory = [];
         this._wrappedWindows = new Map();
-
-        this._windowCreatedSignal = 0;
-        this._windowGrabSignal = 0;
+        this._userResize = new Set();
 
         if (LOCKED) {
             this._loadAfterSessionLock();
@@ -78,28 +90,59 @@ export class TileWindowManager {
             }
         );
 
-        TileWindowManager.monitors.forEach(el => el.root?.update());
+        this.updateMonitors();
 
         this._windowCreatedSignal = global.display.connect(
             'window-created',
             (display, obj) => this._onWindowCreated(display, obj)
         );
 
-        this._windowGrabSignal = global.display.connect(
-            'grab-op-end',
-            (_, window, op) => this._onGrabBegin(window, op)
+        this._workareaChangedSignal = global.display.connect(
+            'workareas-changed', 
+            () => this.updateMonitors()
         );
 
-        global.workspace_manager.connect('workspace-added', () => { console.warn("New workspace"); });
+        this._enteredMonitorSignal = global.display.connect(
+            'window-entered-monitor', 
+            (_, __, window) => {
+                let tile = (window as any).tile;
+                if (tile)
+                    TileWindowManager.getMonitors()[tile.monitor].root?.update();
+        });
 
+        this._grabBeginSignal = global.display.connect('grab-op-begin', (_, w) => this._userResize.add(w));
+
+        this._windowGrabSignal = global.display.connect(
+            'grab-op-end',
+            (_, window, op) => {
+                this._onGrab(window, op);
+                this._userResize.delete(window);
+            }
+        );
+
+        this._workspaceAddedSignal = global.workspace_manager.connect('workspace-added', (_, index) => {
+            this._onWorkspaceCreated(index);
+        });
     }
+
+
 
     public static getMonitors() : Monitor[] {
-        return TileWindowManager.monitors;
+        let wk = TileWindowManager._workspaces.get(global.workspace_manager.get_active_workspace_index());
+        if (wk)
+            return wk;
+        else
+            return [];
     }
 
+
+    /**
+     * Refresh **ALL** existing tiles.
+     */
     public updateMonitors() {
-        TileWindowManager.monitors.forEach(el => el.root?.update());
+        TileWindowManager._workspaces.forEach((value, key) => {
+            value.forEach(el => el.root?.update());
+        });
     }
 
     /**
@@ -127,13 +170,18 @@ export class TileWindowManager {
     public destroy() {
         global.display.disconnect(this._windowCreatedSignal);
         global.display.disconnect(this._windowGrabSignal);
+        global.display.disconnect(this._workspaceAddedSignal);
+        global.display.disconnect(this._workspaceAddedSignal);
+        global.display.disconnect(this._enteredMonitorSignal);
+        global.display.disconnect(this._grabBeginSignal);
 
         this._wrappedWindows.forEach(
             (value, key) => {
                 key.minimize = value[0]; key.maximize = value[1];
                 key.disconnect(value[2]); key.disconnect(value[3]);
                 key.disconnect(value[4]); key.disconnect(value[5]);
-                key.disconnect(value[6]);
+                key.disconnect(value[6]); key.disconnect(value[7]);
+                key.disconnect(value[8]);
                 this._wrappedWindows.delete(key);
             }
         );
@@ -168,23 +216,36 @@ export class TileWindowManager {
         if (app.get_id().startsWith('window:'))
             return false;
 
-        let containsWindow = TileWindowManager.monitors.reduce(
-            (acc: boolean, val: Monitor) => val.root ? acc || val.root.contains(window) : acc, false
-        );
-        if (containsWindow)
-            return false;
+
+        for (var [key, value] of TileWindowManager._workspaces) {
+            let containsWindow = value.reduce(
+                (acc: boolean, val: Monitor) => val.root ? acc || val.root.contains(window) : acc, false
+            );
+            if (containsWindow)
+                return false;
+        }
 
         return true;
     }
 
 
+    private _onWorkspaceCreated(index : number) {
+
+        let _monitors = new Array(global.display.get_n_monitors());
+        for (const [i, value] of _monitors.entries()) {
+            _monitors[i] = new Monitor(i);
+        }
+
+        if (!TileWindowManager._workspaces.has(index))
+            TileWindowManager._workspaces.set(index, _monitors);
+
+    } 
+
+
 
     private _onWindowCreated(_: Meta.Display | null, window: Meta.Window) {
-        // console.warn(`Window created ${window.get_title()} wm-class=${window.get_wm_class()} role=${window.get_role()} workspace=${window.get_workspace().index()}`);
-        // let app = Shell.WindowTracker.get_default().get_window_app(window);
-        // console.warn(`App : ${app.get_id()}`);
 
-        // Wait to be sure window is fully created
+        // Wait for first frame to be sure window is fully created
         window.get_compositor_private().connect(
             'first-frame',
             () => {
@@ -194,11 +255,24 @@ export class TileWindowManager {
     }
 
 
+
+    private _windowWorkspaceChanged(window : Meta.Window) {
+        let tile : Tile = (window as any).tile;
+        if (tile) {
+            if (tile.workspace !== window.get_workspace().index()) {
+                window.change_workspace_by_index(tile.workspace, false);
+            }
+        }
+    }
+
+
+
+
     /** Connect to signals and remove some functions
      * 
      * @param window 
      */
-    public configureWindowSignals(window: Meta.Window) {
+    private configureWindowSignals(window: Meta.Window) {
 
         let minimizeSignal = window.connect('notify::minimized', () => {
             if ((window as any).tile.state === TileState.MINIMIZED)
@@ -245,18 +319,33 @@ export class TileWindowManager {
             }
         );
 
+        let workspaceChangedSignal = window.connect('workspace-changed', 
+            (window) => this._windowWorkspaceChanged(window)
+        );
+
+        let sizeChangedSignal = window.connect('size-changed', (window) => {
+            let tile : Tile = (window as any).tile;
+            if (!this._userResize.has(window) 
+                && (tile.position.width !== window.get_frame_rect().width 
+                || tile.position.height !== window.get_frame_rect().height))
+                tile.update();
+        });
+
         (window as any)._originalMaximize = window.maximize;
         (window as any)._originalMinimize = window.minimize;
 
         this._wrappedWindows.set(
             window,
             [window.minimize, window.maximize, minimizeSignal,
-                maximizeSignal1, maximizeSignal2, focusSignal, unmanagedSignal]
+                maximizeSignal1, maximizeSignal2, focusSignal, 
+                unmanagedSignal, workspaceChangedSignal, sizeChangedSignal]
         );
 
         window.minimize = () => { };
         window.maximize = () => { };
     }
+
+
 
 
     private _addNewWindow(window: Meta.Window) {
@@ -267,52 +356,61 @@ export class TileWindowManager {
 
         this.updateFocusHistory(window);
 
-        let monitor: Monitor;
+        let _monitors = TileWindowManager._workspaces.get(window.get_workspace().index());
+        if (!_monitors) {
+            console.warn(`Workspace ${window.get_workspace().index()} not found`);
+            return;
+        }
+
+        let selected_monitor: Monitor;
 
         // Select monitor
         if (this._settings?.get_int('monitor-tile-insertion-behavior') == 0) {
-            monitor = Monitor.bestFitMonitor(TileWindowManager.monitors);
+            selected_monitor = Monitor.bestFitMonitor(_monitors);
         } else {
-            let focusWindow = this.getFocusedWindow();
+            let focusWindow = global.display.focus_window;
             if (focusWindow) {
                 let tile: Tile = (focusWindow as any).tile;
-                monitor = TileWindowManager.monitors[tile.monitor];
+                selected_monitor = _monitors[tile.monitor];
             } else {
-                monitor = Monitor.bestFitMonitor(TileWindowManager.monitors);
+                selected_monitor = Monitor.bestFitMonitor(_monitors);
             }
         }
 
         // Selected monitor index
-        let index = monitor.index;
+        let index = selected_monitor.index;
 
         // Now insert tile on selected monitor
-        if (monitor.size() === 0) {
+        if (selected_monitor.size() === 0) {
             let tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), index);
+            tile.workspace = window.get_workspace().index();
 
             (window as any).tile = tile;
 
-            TileWindowManager.monitors[index].root = tile;            
-            TileWindowManager.monitors[index].root?.update();
+            _monitors[index].root = tile;            
+            _monitors[index].root?.update();
         } else {
             if (this._settings?.get_int('tile-insertion-behavior') == 0) {
-                TileWindowManager.monitors[index].root?.addWindowOnBlock(window);
+                _monitors[index].root?.addWindowOnBlock(window);
             } else {
-                let focusWindow = this.getFocusedWindow();
+                let focusWindow = global.display.focus_window;
                 if (focusWindow) {
                     let tile: Tile = (focusWindow as any).tile;
                     tile.addWindowOnBlock(window);
                 } else {
-                    TileWindowManager.monitors[index].root?.addWindowOnBlock(window);
+                    _monitors[index].root?.addWindowOnBlock(window);
                 }
             }
+            (window as any).tile.workspace = window.get_workspace().index();
 
-            if (TileWindowManager.monitors[index].fullscreen) {
+            if (_monitors[index].fullscreen) {
                 (window as any).tile.state = TileState.MINIMIZED;
             }
 
-            TileWindowManager.monitors[index].root?.update();
+            _monitors[index].root?.update();
         }
     }
+
 
 
     private _removeWindow(window: Meta.Window) {
@@ -328,23 +426,24 @@ export class TileWindowManager {
         }
 
         let m = tile.monitor;
-        if (TileWindowManager.monitors[m].fullscreen) {
-            TileWindowManager.monitors[m].fullscreen = false;
+        if (TileWindowManager.getMonitors()[m].fullscreen) {
+            TileWindowManager.getMonitors()[m].fullscreen = false;
 
-            TileWindowManager.monitors[m].root?.forEach(el => {
+            TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
                 el.window?.unminimize();
             });
         }
 
         if (tile.removeTile() === null)
-            TileWindowManager.monitors[m].root = null;
+            TileWindowManager.getMonitors()[m].root = null;
         else
-            TileWindowManager.monitors[m].root?.update();
+            TileWindowManager.getMonitors()[m].root?.update();
     }
 
 
-    private _onGrabBegin(window: Meta.Window, op: Meta.GrabOp) {
+
+    private _onGrab(window: Meta.Window, op: Meta.GrabOp) {
         if (!window) return;
 
         let tile : Tile = (window as any).tile;
@@ -355,7 +454,7 @@ export class TileWindowManager {
         let m = tile.monitor;
         if (op === Meta.GrabOp.MOVING) {
             GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                TileWindowManager.monitors[m].root?.update();
+                TileWindowManager.getMonitors()[m].root?.update();
                 return GLib.SOURCE_REMOVE;
             });
 
@@ -392,6 +491,14 @@ export class TileWindowManager {
     }
 
 
+
+    /** Resize operation with keyboard. This operation is 
+     * different from the one operated with the mouse (grab operation)
+     * because we handle left/right resize differently.
+     * 
+     * @param op 
+     * @returns void
+     */
     public resizeFocusedWindow(op : Meta.GrabOp) {
         let window = global.display.focusWindow;
         if (!window)
@@ -538,19 +645,19 @@ export class TileWindowManager {
 
         let m = tile.monitor;
 
-        if (TileWindowManager.monitors[tile.monitor].fullscreen) {
-            TileWindowManager.monitors[tile.monitor].fullscreen = false;
+        if (TileWindowManager.getMonitors()[tile.monitor].fullscreen) {
+            TileWindowManager.getMonitors()[tile.monitor].fullscreen = false;
 
-            TileWindowManager.monitors[m].root?.forEach(el => {
+            TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
                 if (el.id !== tile.id) {
                     el.window?.unminimize();
                 }
             });
         } else {
-            TileWindowManager.monitors[tile.monitor].fullscreen = true;
+            TileWindowManager.getMonitors()[tile.monitor].fullscreen = true;
 
-            TileWindowManager.monitors[m].root?.forEach(el => {
+            TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 if (el.id === tile.id) {
                     el.state = TileState.MAXIMIZED;
                 } else {
@@ -559,7 +666,32 @@ export class TileWindowManager {
             });
         }
 
-        TileWindowManager.monitors[m].root?.update();
+        TileWindowManager.getMonitors()[m].root?.update();
+    }
+
+
+
+    public moveTile(dir : Direction) {
+        let window : Meta.Window | null = this.getFocusedWindow();
+        if (!window)
+            return;
+        
+        let tile : Tile = (window as any).tile;
+        if (!tile.window)
+            return;
+
+        let exchangeTile = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
+        if (!exchangeTile || !exchangeTile.window)
+            return;
+
+        let tmpWindow = exchangeTile.window;
+        exchangeTile.window = tile.window;
+        tile.window = tmpWindow;
+
+        (tile.window as any).tile = tile;
+        (exchangeTile.window as any).tile = exchangeTile;
+        
+        TileWindowManager.getMonitors()[tile.monitor].root?.update();
     }
 
 
@@ -655,8 +787,9 @@ export class TileWindowManager {
 
 
     public refresh() {
-        TileWindowManager.monitors.forEach(el => el.root ? el.root.update() : null);
+        TileWindowManager.getMonitors().forEach(el => el.root ? el.root.update() : null);
     }
+
 
 
     public disableSearchEntry() {
@@ -671,6 +804,7 @@ export class TileWindowManager {
             this._searchSuggestion = undefined;
         }
     }
+
 
 
     /** Extension is disabled on screen lock.
@@ -707,7 +841,7 @@ export class TileWindowManager {
 
         file.replace_contents(
             JSON.stringify({
-                windows: TileWindowManager.monitors
+                windows: Array.from(TileWindowManager._workspaces.entries())
             }, (key, value) => {
                 if (value instanceof Meta.Window)
                     return value.get_id();
@@ -754,39 +888,25 @@ export class TileWindowManager {
                 ? openWindows.find((val: Meta.Window) => val.get_id() === value)
                 : value
         );
-
-        TileWindowManager.monitors = states.windows;
-        TileWindowManager.monitors.forEach((value, index, array) => {
-            // We need to rebuild correct types from objects
-            array[index] = Monitor.fromObject(value);
-            array[index].root?.forEach(el => el.window ? this.configureWindowSignals(el.window) : null);
-        });
         
+        let map : Map<number, Monitor[]> = new Map(states.windows);
+        map.forEach((mapValue, mapKey, map) => {
+            mapValue.forEach((value, index, array) => {
+                // We need to rebuild correct types from objects
+                array[index] = Monitor.fromObject(value);
+                array[index].root?.forEach(el => {
+                    if (el.window) {
+                        this.configureWindowSignals(el.window);
+                        el.window.change_workspace_by_index(mapKey, false);
+                        console.warn(`Window ${el.window.get_title()} (${el.window.get_id()}) workspace : ${el.window.get_workspace().workspace_index} (${mapKey})`);
+                    }
+                });
+            });
+            
+            TileWindowManager._workspaces.set(mapKey, mapValue);
+        });
+
         this.updateMonitors();
     }
 
-
-
-    public moveTile(dir : Direction) {
-        let window : Meta.Window | null = this.getFocusedWindow();
-        if (!window)
-            return;
-        
-        let tile : Tile = (window as any).tile;
-        if (!tile.window)
-            return;
-
-        let exchangeTile = TileWindowManager.monitors[tile.monitor].closestTile(tile, dir);
-        if (!exchangeTile || !exchangeTile.window)
-            return;
-
-        let tmpWindow = exchangeTile.window;
-        exchangeTile.window = tile.window;
-        tile.window = tmpWindow;
-
-        (tile.window as any).tile = tile;
-        (exchangeTile.window as any).tile = exchangeTile;
-        
-        TileWindowManager.monitors[tile.monitor].root?.update();
-    }
 }
