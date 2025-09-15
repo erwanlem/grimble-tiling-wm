@@ -10,9 +10,9 @@ import St from 'gi://St';
 import { Monitor } from './monitor.js';
 import { launchApp } from './utils.js';
 import Shell from 'gi://Shell';
-import Pango from 'gi://Pango';
 import Clutter from 'gi://Clutter';
 import Mtk from 'gi://Mtk';
+import { autocomplete } from './autocomplete.js';
 
 import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
@@ -30,7 +30,7 @@ let LOCKED = false;
 export class TileWindowManager {
 
     /**************************************************/
-    // Store all the signals to be restored when disabled
+    // Store all signals to be restored when extension is disabled
     _wrappedWindows: Map<Meta.Window, [() => void,
         (dir: Meta.MaximizeFlags | null) => void,
         number, number, number, number, number, number, number]>;
@@ -716,56 +716,84 @@ export class TileWindowManager {
             x_expand: true,
         });
 
-        // this._searchSuggestion = new St.Label({
-        //     text: 'hello',
-        //     style: 'color: rgba(150,150,150,0.6);',
-        //     x_align: Clutter.ActorAlign.START,
-        //     y_align: Clutter.ActorAlign.CENTER,
-        //     x_expand: true,
-        //     translation_x: 4,
-        // });
-
+        this._searchSuggestion = new St.Label({
+            text: '',
+            x_align: Clutter.ActorAlign.START,
+            y_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+            //reactive: false,
+        });
 
         this._searchEntry.clutter_text.connect('notify::mapped', (actor) => {
             if (actor.mapped)
                 actor.grab_key_focus();
         });
 
-        //this._searchContainer.add_child(this._searchSuggestion);
+        this._searchContainer.add_child(this._searchSuggestion);
         this._searchContainer.add_child(this._searchEntry);
 
 
-        // this._searchEntry.clutter_text.connect('text-changed', (actor) => {
-        //     let current = actor.get_text();
-        //     let candidates = ["firefox", "code", "gnome-extensions", "gnome-terminal"];
+        this._searchEntry.clutter_text.connect('text-changed', (actor) => {
+            let current = actor.get_text();
 
-        //     let match = candidates.find(w => w.startsWith(current) && w !== current);
+            if (current.length > 1 && this._searchSuggestion) {
+                let match = autocomplete(current)[0];
+                this._searchSuggestion.set_text(match.slice(current.length));
 
-        //     if (!(current == "") && match && this._searchSuggestion) {
-        //         this._searchSuggestion.set_text(match);
+                if (this._searchEntry) {
+                    const ct = this._searchEntry.get_clutter_text();
+                    const layout = ct.get_layout();
+                    const [textW] = layout.get_pixel_size();
 
-        //         if (this._searchEntry) {
-        //             let context = this._searchEntry.clutter_text.get_pango_context();
-        //             let layout = Pango.Layout.new(context);
-        //             layout.set_text(current, -1);
+                    const themeNode = this._searchEntry.get_theme_node();
+                    const leftPad  = themeNode.get_padding(St.Side.LEFT);
 
-        //             let font_description = this._searchEntry.clutter_text.get_font_description();
-        //             if (font_description)
-        //                 layout.set_font_description(font_description);
-                    
-        //             let [strong] = layout.get_cursor_pos(current.length);
-        //             if (strong) {
-        //                 let cursorX = strong.x / Pango.SCALE;
+                    const x = leftPad + textW;
 
-        //                 // Move suggestion just after typed chars
-        //                 this._searchSuggestion.set_translation(cursorX, 0, 0);
-        //             }
+                    this._searchSuggestion.set_style(`color: rgba(255,255,255,0.35); margin-left: ${x+4}px;`);
 
-        //         }
-        //     } else if (this._searchSuggestion) {
-        //         this._searchSuggestion.set_text('');
-        //     }
-        // });
+                }
+            } else if (this._searchSuggestion) {
+                this._searchSuggestion.set_text('');
+            }
+        });
+
+        let completeText = () => {
+            const typed = this._searchEntry?.get_text();
+            const ct = this._searchEntry?.get_clutter_text();
+            if (!typed || !ct)
+                return;
+            let full = typed + this._searchSuggestion?.get_text();
+            this._searchEntry?.set_text(full);
+            ct.set_cursor_position(full.length);
+            this._searchSuggestion?.set_text('');
+        };
+
+        this._searchEntry.clutter_text.connect('key-press-event', (ct, event) => {
+            const key = event.get_key_symbol();
+            if (key === Clutter.KEY_KP_Right || key === Clutter.KEY_Right) {
+                // Only accept if cursor is at end and a suggestion exists
+                const typed = this._searchEntry?.get_text();
+                const pos = ct.get_cursor_position();
+                if (typed) {
+                    completeText();
+                    return Clutter.EVENT_STOP;
+                }
+            }
+            return Clutter.EVENT_PROPAGATE;
+        });
+
+        this._searchEntry.connect('captured-event', (actor, event) => {
+            if (event.type() !== Clutter.EventType.KEY_PRESS)
+                return Clutter.EVENT_PROPAGATE;
+
+            const sym = event.get_key_symbol();
+            if (sym === Clutter.KEY_Tab || sym === Clutter.KEY_ISO_Left_Tab) {
+                completeText();
+                return Clutter.EVENT_STOP;
+            }
+            return Clutter.EVENT_PROPAGATE;
+        });
 
         this._searchEntry.clutter_text.connect('activate', (actor) => {
             let query = actor.get_text().trim().toLowerCase();

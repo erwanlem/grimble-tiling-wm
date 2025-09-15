@@ -60,6 +60,14 @@ export class Tile {
     }
 
 
+    /** Tile factory
+     * 
+     * @param window 
+     * @param position 
+     * @param monitor 
+     * @param parent 
+     * @returns 
+     */
     public static createTileLeaf(window : Meta.Window, position : Position, monitor : number, parent : Tile | null = null) : Tile {
         let tile = new Tile();
         tile._window = window;
@@ -82,9 +90,6 @@ export class Tile {
             this._parent.decrementTiles();
     }
 
-    public get leaf() {
-        return this._leaf;
-    }
 
     public addWindowOnBlock(window: Meta.Window) {
         console.warn("addWindowOnBlock");
@@ -165,6 +170,11 @@ export class Tile {
         return parent;
     }
 
+    
+    /** Update tile position and its children size
+     * 
+     * @param position 
+     */
     public resize(position : Position) {
         this._position = position;
         if (!this._window) {
@@ -183,7 +193,6 @@ export class Tile {
     public update() {
 
         if (this._window) {
-            console.warn('UPDATE');
 
             if (this._state === TileState.MAXIMIZED) {
                 (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
@@ -251,6 +260,12 @@ export class Tile {
         }
     }
 
+
+    /** Leaf to root research
+     * 
+     * @param fn 
+     * @returns 
+     */
     public findParent(fn : (el : Tile) => boolean) : Tile | null {
         if (fn(this)) {
             if (!this._parent)
@@ -313,6 +328,7 @@ export class Tile {
         return tile;
     }
 
+
     public findAdjacents() {
         let _monitor = TileWindowManager.getMonitors()[this.monitor];
 
@@ -322,18 +338,16 @@ export class Tile {
         let s = _monitor.closestTile(this, Direction.South);
 
         this._adjacents = [w !== null, e !== null, n !== null, s !== null];
-
-        console.warn(`Adjacents : ${this._adjacents}`);
-    }
-
-    private set leaf(b : boolean) {
-        this._leaf = b;
     }
 
     private setChild(child1 : Tile, child2 : Tile) {
         this._child1 = child1;
         this._child2 = child2;
     }
+
+
+    /***********************/
+    /* GETTERS AND SETTERS */
 
     public set orientation(o : Orientation) {
         this._orientation = o;
@@ -413,5 +427,13 @@ export class Tile {
 
     public get workspace() : number {
         return this._workspace;
+    }
+
+    public get leaf() {
+        return this._leaf;
+    }
+
+    private set leaf(b : boolean) {
+        this._leaf = b;
     }
 }
