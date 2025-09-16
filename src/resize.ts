@@ -24,6 +24,7 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
         let pos: Position = p.position;
         let diff = rect.width - tile.position.width;
         pos.width = pos.width + diff;
+
         p.resize(pos);
         p.update();
 
@@ -34,6 +35,11 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
             pos.x += diff;
             sibling.resize(pos);
             sibling.update();
+        }
+
+        if (p.parent && p.parent.child2) {
+            p.parent.position.splitProportion = 0.5 * (p.parent.position.width - p.parent.child2.position.width) / p.parent.child2.position.width;
+            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }
@@ -69,6 +75,11 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
             sibling.resize(pos);
             sibling.update();
         }
+
+        if (p.parent && p.parent.child2) {
+            p.parent.position.splitProportion = 0.5 * (p.parent.position.width - p.parent.child2.position.width) / p.parent.child2.position.width;
+            console.warn(`New proportion ${p.parent.position.splitProportion}`);
+        }
     }
 }
 
@@ -103,6 +114,11 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
             sibling.resize(pos);
             sibling.update();
         }
+
+        if (p.parent && p.parent.child2) {
+            p.parent.position.splitProportion = 0.5 * (p.parent.position.height - p.parent.child2.position.height) / p.parent.child2.position.height;
+            console.warn(`New proportion ${p.parent.position.splitProportion}`);
+        }
     }
 }
 
@@ -136,6 +152,11 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
             pos.height -= diff;
             sibling.resize(pos);
             sibling.update();
+        }
+
+        if (p.parent && p.parent.child2) {
+            p.parent.position.splitProportion = 0.5 * (p.parent.position.height - p.parent.child2.position.height) / p.parent.child2.position.height;
+            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }

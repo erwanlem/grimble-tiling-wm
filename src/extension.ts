@@ -7,6 +7,7 @@ import KeybindingHandler from './settingsHandlers/keybindingHandler.js';
 import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
 import { Tile } from './tile.js';
+import { load_executables } from './autocomplete.js';
 
 
 export default class Gtile extends Extension {
@@ -28,6 +29,7 @@ export default class Gtile extends Extension {
     this._switchHandler = new SwitchHandler(this._tileWindowManager, this._settings);
     this._spinHandler = new SpinHandler(this._tileWindowManager, this._settings);
 
+    load_executables();
   }
 
   disable() {

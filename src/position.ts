@@ -7,6 +7,7 @@ export class Position {
     width: number;
     height: number;
     index : number;
+    splitProportion: number;
 
     constructor(proportion: number = 1.0,
         x = 0, y = 0,
@@ -17,13 +18,14 @@ export class Position {
         this.width = width;
         this.height = height;
         this.index = index;
+        this.splitProportion = 0.5;
     }
 
     split(orientation: Orientation | null = null) {
         let vertical: boolean;
 
         let newPosition1 = new Position();
-        newPosition1.proportion = this.proportion / 2;
+        newPosition1.proportion = this.proportion * this.splitProportion;
         newPosition1.x = this.x;
         newPosition1.y = this.y;
         newPosition1.index = 0;
@@ -33,33 +35,33 @@ export class Position {
             case Orientation.None:
                 if (this.width > this.height) {
                     vertical = true;
-                    newPosition1.width = this.width / 2;
+                    newPosition1.width = this.width * this.splitProportion;
                     newPosition1.height = this.height;
                 } else {
                     vertical = false;
                     newPosition1.width = this.width;
-                    newPosition1.height = this.height / 2;
+                    newPosition1.height = this.height * this.splitProportion;
                 }
                 break;
             case Orientation.Horizontal:
                 vertical = true;
-                newPosition1.width = this.width / 2;
+                newPosition1.width = this.width * this.splitProportion;
                 newPosition1.height = this.height;
                 break;
 
             case Orientation.Vertical:
                 vertical = false;
                 newPosition1.width = this.width;
-                newPosition1.height = this.height / 2;
+                newPosition1.height = this.height * this.splitProportion;
                 break;
         }
 
         let newPosition2 = new Position(
-            this.proportion / 2,
-            vertical ? this.x + this.width / 2 : this.x,
-            vertical ? this.y : this.y + this.height / 2,
-            vertical ? this.width / 2 : this.width,
-            vertical ? this.height : this.height / 2,
+            this.proportion * (1 - this.splitProportion),
+            vertical ? this.x + this.width * this.splitProportion : this.x,
+            vertical ? this.y : this.y + this.height * this.splitProportion,
+            vertical ? this.width * (1 - this.splitProportion) : this.width,
+            vertical ? this.height : this.height * (1 - this.splitProportion),
             1
         );
 

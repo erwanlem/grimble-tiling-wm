@@ -1,13 +1,21 @@
+/**
+ * © gnome-shell-extension-tiling-assistant
+ * Source: https://git.launchpad.net/ubuntu/+source/gnome-shell-extension-tiling-assistant/tree/tiling-assistant@leleat-on-github/src/prefs/shortcutListener.js
+ * 
+ * This code is partially reused from Ubuntu tiling assistant extension (GPL-2.0).
+ * 
+ * enableArrowBinding and disableArrowBinding are new methods.
+ * Other methods are modified for our use case.
+ */
+
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import Gio from 'gi://Gio';
-import Clutter from 'gi://Clutter';
 
 import {Shortcut} from '../prefs/settings.js';
 import { TileWindowManager, Direction } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-import Gdk from 'gi://Gdk';
 
 /**
  * Class to handle the keyboard shortcuts (on the extension side) except the
@@ -93,8 +101,10 @@ export default class KeybindingHandler {
                 break;
 
             case 'keybinding-refresh':
+                // Unused
                 this._windowManager.refresh();
                 break;
+
             case 'keybinding-move-left':
                 this._windowManager.moveTile(Direction.West);
                 break;
@@ -115,6 +125,31 @@ export default class KeybindingHandler {
             case 'keybinding-resize':
                 this._waitingAction = shortcutName;
                 this.enableArrowBinding();
+                break;
+            
+            case 'keybinding-resize-left':
+                this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_W);
+                break;
+            case 'keybinding-resize-right':
+                this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_E);
+                break;
+            case 'keybinding-resize-top':
+                this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_N);
+                break;
+            case 'keybinding-resize-bottom':
+                this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_S);
+                break;
+
+            case 'keybinding-next-workspace':
+                this._windowManager.moveToWorkspace(true);
+                break;
+
+            case 'keybinding-previous-workspace':
+                this._windowManager.moveToWorkspace(false);
+                break;
+
+            case 'keybinding-next-monitor':
+                this._windowManager.moveToNextMonitor();
                 break;
 
             case 'arrow-up':

@@ -259,7 +259,7 @@ export class TileWindowManager {
     private _windowWorkspaceChanged(window : Meta.Window) {
         let tile : Tile = (window as any).tile;
         if (tile) {
-            if (tile.workspace !== window.get_workspace().index()) {
+            if (tile.workspace !== window.get_workspace()?.index()) {
                 window.change_workspace_by_index(tile.workspace, false);
             }
         }
@@ -346,8 +346,6 @@ export class TileWindowManager {
     }
 
 
-
-
     private _addNewWindow(window: Meta.Window) {
         if (!this._isValidWindow(window))
             return;
@@ -356,11 +354,13 @@ export class TileWindowManager {
 
         this.updateFocusHistory(window);
 
-        let _monitors = TileWindowManager._workspaces.get(window.get_workspace().index());
-        if (!_monitors) {
-            console.warn(`Workspace ${window.get_workspace().index()} not found`);
+        this._insertWindow(window); 
+    }
+
+    private _insertWindow(window: Meta.Window, workspace : number | null = null) {
+        let _monitors = TileWindowManager._workspaces.get(workspace ? workspace : window.get_workspace().index());
+        if (!_monitors)
             return;
-        }
 
         let selected_monitor: Monitor;
 
@@ -412,7 +412,6 @@ export class TileWindowManager {
     }
 
 
-
     private _removeWindow(window: Meta.Window) {
         this.updateFocusHistory(window, false);
 
@@ -452,42 +451,95 @@ export class TileWindowManager {
             return;
 
         let m = tile.monitor;
-        if (op === Meta.GrabOp.MOVING) {
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                TileWindowManager.getMonitors()[m].root?.update();
-                return GLib.SOURCE_REMOVE;
-            });
+        let rect : Mtk.Rectangle;
+        switch (op) {
+            case Meta.GrabOp.MOVING:
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    TileWindowManager.getMonitors()[m].root?.update();
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
 
-        } else if (op === Meta.GrabOp.RESIZING_E) {
-            let rect = window.get_frame_rect();
+            case Meta.GrabOp.RESIZING_E:
+                rect = window.get_frame_rect();
 
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                Resize.resizeE(tile, rect);
-                return GLib.SOURCE_REMOVE;
-            });
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeE(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
 
-        } else if (op === Meta.GrabOp.RESIZING_W) {
-            let rect = window.get_frame_rect();
+            case Meta.GrabOp.RESIZING_W:
+                rect = window.get_frame_rect();
 
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                Resize.resizeW(tile, rect);
-                return GLib.SOURCE_REMOVE;
-            });
-        } else if (op === Meta.GrabOp.RESIZING_N) {
-            let rect = window.get_frame_rect();
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeW(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
 
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                Resize.resizeN(tile, rect);
-                return GLib.SOURCE_REMOVE;
-            });
-        } else if (op === Meta.GrabOp.RESIZING_S) {
-            let rect = window.get_frame_rect();
+            case Meta.GrabOp.RESIZING_N:
+                rect = window.get_frame_rect();
 
-            GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-                Resize.resizeS(tile, rect);
-                return GLib.SOURCE_REMOVE;
-            });
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeN(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+
+            case Meta.GrabOp.RESIZING_S:
+                rect = window.get_frame_rect();
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeS(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+            
+            case Meta.GrabOp.RESIZING_NE:
+                rect = window.get_frame_rect();
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeN(tile, rect);
+                    Resize.resizeE(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+
+            case Meta.GrabOp.RESIZING_NW:
+                rect = window.get_frame_rect();
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeN(tile, rect);
+                    Resize.resizeW(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+
+            case Meta.GrabOp.RESIZING_SE:
+                rect = window.get_frame_rect();
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeS(tile, rect);
+                    Resize.resizeE(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+
+            case Meta.GrabOp.RESIZING_SW:
+                rect = window.get_frame_rect();
+
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    Resize.resizeS(tile, rect);
+                    Resize.resizeW(tile, rect);
+                    return GLib.SOURCE_REMOVE;
+                });
+                break;
+
+            default:
+                break;
         }
+
     }
 
 
@@ -603,10 +655,11 @@ export class TileWindowManager {
         if (parent.orientation === Orientation.Horizontal) {
             newPositions = parent.position.split(Orientation.Vertical);
             if (parent.child1 && parent.child2) {
+                newPositions[TileWindowManager.rotateEven[0] == 0 ? 0 : 1].splitProportion = parent.child1.position.splitProportion;
+                newPositions[TileWindowManager.rotateEven[0] == 0 ? 1 : 0].splitProportion = parent.child2.position.splitProportion;
                 parent.child1.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 0 : 1]);
                 parent.child2.resize(newPositions[TileWindowManager.rotateEven[0] == 0 ? 1 : 0]);
-                parent.child1.findAdjacents();
-                parent.child2.findAdjacents();
+                parent.forEach(el => el.findAdjacents());
                 TileWindowManager.rotateEven[0] = (TileWindowManager.rotateEven[0] + 1) % 2;
                 parent.update();
             } else {
@@ -616,10 +669,11 @@ export class TileWindowManager {
         } else if (parent.orientation === Orientation.Vertical) {
             newPositions = parent.position.split(Orientation.Horizontal);
             if (parent.child1 && parent.child2) {
+                newPositions[TileWindowManager.rotateEven[1] == 0 ? 1 : 0].splitProportion = parent.child1.position.splitProportion;
+                newPositions[TileWindowManager.rotateEven[1] == 0 ? 0 : 1].splitProportion = parent.child2.position.splitProportion;
                 parent.child1.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 1 : 0]);
                 parent.child2.resize(newPositions[TileWindowManager.rotateEven[1] == 0 ? 0 : 1]);
-                parent.child1.findAdjacents();
-                parent.child2.findAdjacents();
+                parent.forEach(el => el.findAdjacents());
                 TileWindowManager.rotateEven[1] = (TileWindowManager.rotateEven[1] + 1) % 2;
                 parent.update();
             } else {
@@ -721,7 +775,6 @@ export class TileWindowManager {
             x_align: Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
-            //reactive: false,
         });
 
         this._searchEntry.clutter_text.connect('notify::mapped', (actor) => {
@@ -737,10 +790,9 @@ export class TileWindowManager {
             let current = actor.get_text();
 
             if (current.length > 1 && this._searchSuggestion) {
-                let match = autocomplete(current)[0];
-                this._searchSuggestion.set_text(match.slice(current.length));
-
-                if (this._searchEntry) {
+                let matches = autocomplete(current);
+                if (matches.length > 0 && this._searchEntry) {
+                    let match = matches[0];
                     const ct = this._searchEntry.get_clutter_text();
                     const layout = ct.get_layout();
                     const [textW] = layout.get_pixel_size();
@@ -751,7 +803,9 @@ export class TileWindowManager {
                     const x = leftPad + textW;
 
                     this._searchSuggestion.set_style(`color: rgba(255,255,255,0.35); margin-left: ${x+4}px;`);
-
+                    this._searchSuggestion.set_text(match.slice(current.length));
+                } else {
+                    this._searchSuggestion.set_text('');
                 }
             } else if (this._searchSuggestion) {
                 this._searchSuggestion.set_text('');
@@ -805,7 +859,7 @@ export class TileWindowManager {
                 this._searchEntry?.set_style("border: 2px solid red;");
             }
 
-            console.warn(`User pressed Enter with: ${query}`);
+            //console.warn(`User pressed Enter with: ${query}`);
         });
 
         this._searchButton.add_child(this._searchContainer);
@@ -824,12 +878,61 @@ export class TileWindowManager {
         if (this._searchButton) {
             this._searchContainer?.destroy();
             this._searchContainer = undefined;
-            this._searchEntry?.destroy();
             this._searchEntry = undefined;
-            this._searchButton.destroy();
             this._searchButton = undefined;
-            this._searchSuggestion?.destroy();
             this._searchSuggestion = undefined;
+        }
+    }
+
+
+
+    public moveToWorkspace(next : boolean) {
+        let window = global.display.get_focus_window();
+        let tile : Tile = (window as any).tile;
+        let current = tile.workspace;
+        if (next) {
+            if (current < global.workspaceManager.get_n_workspaces()-1) {
+                tile.workspace = current + 1;
+                window.change_workspace_by_index(tile.workspace, false);
+                this._removeWindow(window);
+                this._insertWindow(window, current+1);
+            }
+        } else {
+            if (current > 0) {
+                tile.workspace = current - 1;
+                window.change_workspace_by_index(tile.workspace, false);
+                this._removeWindow(window);
+                this._insertWindow(window, current-1);
+            }
+        }
+    }
+
+
+    public moveToNextMonitor() {
+        let window = global.display.get_focus_window();
+        this._removeWindow(window);
+        
+        let tile : Tile = (window as any).tile;
+        let monitors = TileWindowManager.getMonitors();
+        let newMonitorIndex = (tile.monitor + 1) % monitors.length;
+        let newMonitor = monitors[newMonitorIndex];
+        if (newMonitor.size() === 0) {
+            let tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), newMonitorIndex);
+            tile.workspace = window.get_workspace().index();
+            (window as any).tile = tile;
+
+            newMonitor.root = tile;            
+            newMonitor.root?.update();
+        } else {
+            // Easier to create a new tile for insertion
+            newMonitor.root?.addWindowOnBlock(window);
+            (window as any).tile.workspace = window.get_workspace().index();
+
+            if (newMonitor.fullscreen) {
+                (window as any).tile.state = TileState.MINIMIZED;
+            }
+
+            newMonitor.root?.update();
         }
     }
 
@@ -936,5 +1039,6 @@ export class TileWindowManager {
 
         this.updateMonitors();
     }
+
 
 }

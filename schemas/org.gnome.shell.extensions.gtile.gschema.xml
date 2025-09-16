@@ -84,6 +84,43 @@
       <summary>Move</summary>
       <description>Custom shortcut</description>
     </key>
+    <key name="keybinding-resize-left" type="as">
+      <default>[]</default>
+      <summary>Resize</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-resize-right" type="as">
+      <default>[]</default>
+      <summary>Resize</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-resize-top" type="as">
+      <default>[]</default>
+      <summary>Resize</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-resize-bottom" type="as">
+      <default>[]</default>
+      <summary>Resize</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-next-monitor" type="as">
+      <default>[]</default>
+      <summary>Next monitor</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-next-workspace" type="as">
+      <default>[]</default>
+      <summary>Next Workspace</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-previous-workspace" type="as">
+      <default>[]</default>
+      <summary>Previous Workspace</summary>
+      <description>Custom shortcut</description>
+    </key>
+
+
 
     <!-- Default keybindings -->
     <key name="arrow-up" type="as">

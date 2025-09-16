@@ -1,3 +1,11 @@
+/**
+ * © gnome-shell-extension-tiling-assistant
+ * Source: https://git.launchpad.net/ubuntu/+source/gnome-shell-extension-tiling-assistant/tree/tiling-assistant@leleat-on-github/src/prefs/shortcutListener.js
+ * 
+ * This code is extracted from Ubuntu tiling assistant extension (GPL-2.0).
+ */
+
+
 // @ts-nocheck
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';

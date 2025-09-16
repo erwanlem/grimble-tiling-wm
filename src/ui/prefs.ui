@@ -65,7 +65,7 @@
   <child>
       <object class="AdwPreferencesGroup">
         <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Multiple monitors</property>
-        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab">How to insert a new tile when using multiple monitors.</property>
+        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab">Define tile insertion behavior when using multiple monitors.</property>
         <child>
           <object class="AdwActionRow" id="monitors_best_fit_row">
             <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Best fit</property>
@@ -106,21 +106,7 @@
     <child>
       <object class="AdwPreferencesGroup">
         <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">General</property>
-        <child>
-          <object class="ShortcutListener" id="keybinding_rotation">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation">Tile rotation</property>
-          </object>
-        </child>
-        <child>
-          <object class="ShortcutListener" id="keybinding_resize">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing">Resize tile</property>
-          </object>
-        </child>
-        <child>
-          <object class="ShortcutListener" id="keybinding_move">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile">Move tile</property>
-          </object>
-        </child>
+
         <child>
           <object class="ShortcutListener" id="keybinding_close">
             <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to close tile">Close tile</property>
@@ -141,31 +127,105 @@
             <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize">Maximize tile</property>
           </object>
         </child>
-        <child>
+        <!-- <child>
           <object class="ShortcutListener" id="keybinding_refresh">
             <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to refresh">Refresh</property>
           </object>
-        </child>
+        </child> -->
+      </object>
+    </child>
+
+    <!-- Tile movement -->
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Tile movement</property>
+          <child>
+            <object class="ShortcutListener" id="keybinding_move">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile">Move tile</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_move_left">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left">Move Left</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_move_right">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right">Move Right</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_move_top">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Top</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_move_bottom">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_rotation">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation">Tile rotation</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_next_workspace">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation">Move to next workspace</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_previous_workspace">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation">Move to previous workspace</property>
+            </object>
+          </child>
+      </object>
+    </child>
+
+    <!-- Tile resizing -->
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Tile resizing</property>
         <child>
-          <object class="ShortcutListener" id="keybinding_move_left">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left">Move Left</property>
+          <object class="ShortcutListener" id="keybinding_resize">
+            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing">Resize tile</property>
           </object>
         </child>
+
         <child>
-          <object class="ShortcutListener" id="keybinding_move_right">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right">Move Right</property>
-          </object>
-        </child>
-        <child>
-          <object class="ShortcutListener" id="keybinding_move_top">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Top</property>
-          </object>
-        </child>
-        <child>
-          <object class="ShortcutListener" id="keybinding_move_bottom">
-            <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
-          </object>
-        </child>
+            <object class="ShortcutListener" id="keybinding_resize_left">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left">Move Left</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_resize_right">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right">Move Right</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_resize_top">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Top</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_resize_bottom">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
+            </object>
+          </child>
+
+      </object>
+    </child>
+
+    <!-- Multiple monitors bindings -->
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Multiple monitors</property>
+        <property name="description" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Keybindings related to multiple monitors actions.</property>
+          <child>
+            <object class="ShortcutListener" id="keybinding_next_monitor">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move tile to next monitor</property>
+            </object>
+          </child>
       </object>
     </child>
    

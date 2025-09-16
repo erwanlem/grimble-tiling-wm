@@ -9,11 +9,17 @@ export class Shortcut {
         'keybinding-search',
         'keybinding-open-settings',
         'keybinding-maximize',
-        'keybinding-refresh',
         'keybinding-move-left',
         'keybinding-move-right',
         'keybinding-move-top',
         'keybinding-move-bottom',
+        'keybinding-resize-left',
+        'keybinding-resize-right',
+        'keybinding-resize-top',
+        'keybinding-resize-bottom',
+        'keybinding-next-monitor',
+        'keybinding-next-workspace',
+        'keybinding-previous-workspace'
     ];
 
     public static getShortcuts() {
