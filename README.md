@@ -26,11 +26,20 @@ Currently supports Gnome **46, 47 and 48**.
 
 ### Manual
 
+Download the latest release of GTile.
 ``` shell
-cd gtile
-./install
+gnome-extensions install gtile@lmt.github.io.shell-extension.zip
 ```
 
+Once installed, the extension may not show up in extensions list (especially with wayland).
+If that's the case log out and log in.
+
+Once installed you can enable the extension with the *Extensions* app or 
+with the following command.
+
+``` shell
+gnome-extensions enable gtile@lmt.github.io
+```
 ## Uninstall
 
 You can run the uninstall script
