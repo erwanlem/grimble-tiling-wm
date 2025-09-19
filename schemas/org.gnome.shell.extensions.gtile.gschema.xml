@@ -3,7 +3,7 @@
   <schema id="org.gnome.shell.extensions.gtile" path="/org/gnome/shell/extensions/gtile/">
 
     <key name="header-bar" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Header bar</summary>
       <description>Whether to show or hide window header bar</description>
     </key>

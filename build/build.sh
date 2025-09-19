@@ -14,5 +14,5 @@ cp -r src/ui ${DEST_FOLDER}
 cp src/stylesheet.css ${DEST_FOLDER}
 cp -r dist/* ${DEST_FOLDER}
 
-(cd GTile && gnome-extensions pack -o .. --force --extra-source=./*)
+(cd GTile && zip -r ../gtile@lmt.github.io.shell-extension.zip ./*)
 rm -rf GTile

@@ -1,8 +1,8 @@
 # GTile
 
-*This extension is still in development, bugs report and new features enhancement/suggestion are welcome.*
+*This extension is still in development, bug reports and new feature enhancements/suggestions are welcome.*
 
-You like GNOME ? You like Tiling Window Manager ? You can now have the best of both worlds with **GTILE**, the GNOME tiling window manager extension. 
+You like GNOME? You like Tiling Window Managers? You can now have the best of both worlds with **GTILE**, the GNOME tiling window manager extension. 
 
 This extension provides the following features:
 - Create new tile
@@ -11,16 +11,16 @@ This extension provides the following features:
 - Maximize tile
 - Remove tile
 
-**GTile** is **flexible** with its easily **customizable keybindings** and its wide choice of options which let you build the tiling window manager you have always needed! But no worry, if options and customizations frightened you, **GTile** is a ready to use extension. GTile natively supports multiple monitors and workspaces.
+**GTile** is **flexible** with its easily **customizable keybindings** and its wide choice of options which let you build the tiling window manager you have always needed! But don't worry, if options and customizations frighten you, **GTile** is ready to use. GTile natively supports multiple monitors and workspaces.
 
-*GNOME works with windows, do we really have tiles ?* Yes and... No. This extension keep GNOME windows (we build an extension not a real window manager) but we endeavor to make it look as if you were dealing with a real tiling window manager! 
+*GNOME works with windows, do we really have tiles?* Yes and... no. This extension keeps GNOME windows (we build an extension, not a real window manager) but we endeavor to make it look as if you are dealing with a real tiling window manager! 
 
-[Experimental] You have the choice to **remove GTK top bar** (looks really like tile). This option is disabled by default because it can lead to missing buttons on some apps which put buttons on top bar. Be careful too if you have GTK themes which may override this option **or** may be overridden by this option.
+[Experimental] You have the choice to **remove GTK top bar** (makes windows look more like tiles). This option is disabled by default because it can lead to missing buttons on some apps that place buttons on the top bar. Moreover, be careful if you have GTK themes which may override this option **or** may be overridden by this option.
 
-## System requirements
-This extension is available on all Linux distribution using Gnome.
+## System Requirements
+This extension is available on all Linux distributions using GNOME.
 
-Currently supports Gnome **46, 47 and 48**.
+Currently supports GNOME **46, 47 and 48**.
 
 ## Installation
 
@@ -31,8 +31,8 @@ Download the latest release of GTile.
 gnome-extensions install gtile@lmt.github.io.shell-extension.zip
 ```
 
-Once installed, the extension may not show up in extensions list (especially with wayland).
-If that's the case log out and log in.
+Once installed, the extension may not show up in the extensions list (especially with Wayland).
+If that's the case, log out and log in.
 
 Once installed you can enable the extension with the *Extensions* app or 
 with the following command.
@@ -45,23 +45,23 @@ gnome-extensions enable gtile@lmt.github.io
 ``` shell
 gnome-extensions uninstall gtile@lmt.github.io
 ```
-or remove the extension with gnome shell extension app.
+or remove the extension with the GNOME Shell Extensions app.
 
 
-## User guide
+## User Guide
 
-Once the extension is installed you can activate it with the `gnome-extension` app or in command line. It will detect existing windows and place them. It's now time to take a look at the extension settings. You can open the settings from the `gnome-extension` app or with the shortcut `Ctrl+Super+g`. The settings will show you all the keybindings (which can be modified) and general options of the extension.
+Once the extension is installed, you can activate it with the `Extensions` app or via in command line. It will detect existing windows and tile them. It's now time to take a look at the extension settings. You can open the settings from the `Extensions` app or with the shortcut `Ctrl+Super+g`. The settings will show you all the keybindings (which can be modified) and general options of the extension.
 
 **You are now ready to use GTile!**
 
-## Bug reports
+## Bug Reports
 
-This extension is on its early days which means that it probably contains bug. Please add an issue if you find new bugs.
-To add an issue you need to provide some information in order to help us fix it:
+This extension is in its early days which means that it probably contains bugs. Please create an issue if you find new bugs.
+When creating an issue you need to provide some information in order to help us fix it:
 - Gnome Shell version (`gnome-shell --version`) and GTile version.
 - Describe how the bug is triggered (how we can reproduce it).
-- **One issue = one bug**. Do not create one issue for multiple bugs.
+- **One issue = one bug**. Do not report multiple bugs in a single issue.
 
 ## Suggestions
 
-This extension is not perfect, if you have suggestions to make it better feel free to create issues to improve this extension!
+This extension is not perfect, if you have suggestions to make it better, feel free to create issues to help improve this extension!
