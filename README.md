@@ -20,7 +20,7 @@ This extension provides the following features:
 ## System requirements
 This extension is available on all Linux distribution using Gnome.
 
-Currently supported Gnome versions are Gnome **46, 47 and 48**.
+Currently supports Gnome **46, 47 and 48**.
 
 ## Installation
 
@@ -56,4 +56,4 @@ To add an issue you need to provide some information in order to help us fix it:
 
 ## Suggestions
 
-This extension is not perfect, if you have suggestion to make it better feel free to create issues to improve it!
+This extension is not perfect, if you have suggestions to make it better feel free to create issues to improve this extension!
