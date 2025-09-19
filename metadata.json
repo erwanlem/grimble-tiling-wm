@@ -2,8 +2,8 @@
   "uuid": "gtile@lmt.github.io",
   "name": "GTile",
   "description": "Tiling Window Manager for GNOME",
-  "url": "",
-  "version": 1,
+  "url": "https://github.com/erwanlem/GTile",
+  "version": 0.9,
   "settings-schema": "org.gnome.shell.extensions.gtile",
   "shell-version": [
     "46", "47", "48"
