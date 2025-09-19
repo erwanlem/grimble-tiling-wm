@@ -6,6 +6,6 @@
   "version": 1,
   "settings-schema": "org.gnome.shell.extensions.gtile",
   "shell-version": [
-    "46"
+    "46", "47", "48"
   ]
 }

@@ -45,7 +45,7 @@
       <description>Custom shortcut</description>
     </key>
     <key name="keybinding-open-settings" type="as">
-      <default>[]</default>
+      <default><![CDATA[['<Control><Super>g']]]></default>
       <summary>Gtile settings</summary>
       <description>Custom shortcut</description>
     </key>

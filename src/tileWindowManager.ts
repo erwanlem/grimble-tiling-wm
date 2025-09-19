@@ -6,15 +6,12 @@ import * as Resize from "./resize.js";
 import Gio from 'gi://Gio';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import St from 'gi://St';
 import { Monitor } from './monitor.js';
-import { launchApp } from './utils.js';
 import Shell from 'gi://Shell';
-import Clutter from 'gi://Clutter';
 import Mtk from 'gi://Mtk';
-import { autocomplete } from './autocomplete.js';
 
-import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import {TopBarSearchEntry} from './topBarSearchEntry.js';
+import {ModalSearchEntry} from './modalSearchEntry.js';
 
 export enum Direction {
     North = 1,
@@ -33,12 +30,15 @@ export class TileWindowManager {
     // Store all signals to be restored when extension is disabled
     _wrappedWindows: Map<Meta.Window, [() => void,
         (dir: Meta.MaximizeFlags | null) => void,
-        number, number, number, number, number, number, number]>;
+        number, number, number, number, number, number]>;
+    _focusSignal : number | undefined;
 
     _windowCreatedSignal: number;
     _windowGrabSignal: number;
     _workareaChangedSignal : number;
     _workspaceAddedSignal : number;
+    _workspaceRemovedSignal : number;
+    _activeWorkspaceSignal : number
     _enteredMonitorSignal : number;
     _grabBeginSignal : number;
     /**************************************************/
@@ -49,13 +49,11 @@ export class TileWindowManager {
     // Alternate windows rotation
     static rotateEven = [0, 0];
 
-    _focusHistory: Array<Meta.Window>;
+    _focusHistory: Map<number, Array<Meta.Window>>;
 
     // Search bar widgets
-    _searchContainer: St.Bin | undefined;
-    _searchEntry: St.Entry | undefined;
-    _searchSuggestion: St.Label | undefined;
-    _searchButton : PanelButton | undefined;
+    _topBarSearchEntry : TopBarSearchEntry | undefined;
+    _modalSearchEntry : ModalSearchEntry | undefined;
 
     // Tiles structures
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
@@ -65,15 +63,17 @@ export class TileWindowManager {
         let _extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
         this._settings = _extensionObject?.getSettings();
 
+        this._focusHistory = new Map();
+
         for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
             let _monitors = new Array(global.display.get_n_monitors());
             for (const [i, value] of _monitors.entries()) {
                 _monitors[i] = new Monitor(i);
             }
             TileWindowManager._workspaces.set(i, _monitors);
+            this._focusHistory.set(i, []);
         }
 
-        this._focusHistory = [];
         this._wrappedWindows = new Map();
         this._userResize = new Set();
 
@@ -123,6 +123,16 @@ export class TileWindowManager {
         this._workspaceAddedSignal = global.workspace_manager.connect('workspace-added', (_, index) => {
             this._onWorkspaceCreated(index);
         });
+
+        this._workspaceRemovedSignal = global.workspace_manager.connect('workspace-removed', (_, index) => {
+            this._onWorkspaceRemoved(index);
+        });
+
+        this._activeWorkspaceSignal = global.workspace_manager.connect('active-workspace-changed', w => {
+            this.updateMonitors();
+            this.updateAdjacents();
+        });
+
     }
 
 
@@ -145,14 +155,23 @@ export class TileWindowManager {
         });
     }
 
+    public updateAdjacents() {
+        TileWindowManager._workspaces.forEach((value, key) => {
+            value.forEach(el => el.root?.forEach(t => t.findAdjacents()));
+        });
+    }
+
     /**
      * @returns Meta.Window or null
      */
     private getFocusedWindow() {
-        if (this._focusHistory.length > 0)
-            return this._focusHistory[0];
-        else
+        let index = global.workspace_manager.get_active_workspace_index();
+        let history = this._focusHistory.get(index);
+        if (history?.length && history.length > 0) {
+            return history[0];
+        } else {
             return null;
+        }
     }
     
     /** We keep track of the focused window using the `focus` signal
@@ -162,18 +181,32 @@ export class TileWindowManager {
      * @param focused false to remove the focused window
      */
     private updateFocusHistory(window: Meta.Window, focused = true) {
-        this._focusHistory = this._focusHistory.filter((w) => w !== window)
-        if (focused) this._focusHistory.unshift(window)
+        console.warn(`Update focus`);
+        let index = global.workspace_manager.get_active_workspace_index();
+        if (!this._focusHistory.has(index)) {
+            this._focusHistory.set(index, []);
+        }
+        let history = this._focusHistory.get(index);
+        if (history) {
+            history = history.filter((w) => w !== window)
+            if (focused)
+                history.unshift(window)
+            this._focusHistory.set(index, history);
+        }
     }
 
 
     public destroy() {
         global.display.disconnect(this._windowCreatedSignal);
         global.display.disconnect(this._windowGrabSignal);
-        global.display.disconnect(this._workspaceAddedSignal);
-        global.display.disconnect(this._workspaceAddedSignal);
         global.display.disconnect(this._enteredMonitorSignal);
         global.display.disconnect(this._grabBeginSignal);
+        global.workspace_manager.disconnect(this._workspaceAddedSignal);
+        global.workspace_manager.disconnect(this._workspaceRemovedSignal);
+        global.workspace_manager.disconnect(this._activeWorkspaceSignal);
+
+        if (this._focusSignal)
+            global.display.disconnect(this._focusSignal);
 
         this._wrappedWindows.forEach(
             (value, key) => {
@@ -181,12 +214,11 @@ export class TileWindowManager {
                 key.disconnect(value[2]); key.disconnect(value[3]);
                 key.disconnect(value[4]); key.disconnect(value[5]);
                 key.disconnect(value[6]); key.disconnect(value[7]);
-                key.disconnect(value[8]);
                 this._wrappedWindows.delete(key);
             }
         );
         this._wrappedWindows.clear();
-        this.disableSearchEntry();
+        this._topBarSearchEntry?.destroy();
     }
 
     
@@ -230,7 +262,7 @@ export class TileWindowManager {
 
 
     private _onWorkspaceCreated(index : number) {
-
+        console.warn(`Workspace created ${index}`);
         let _monitors = new Array(global.display.get_n_monitors());
         for (const [i, value] of _monitors.entries()) {
             _monitors[i] = new Monitor(i);
@@ -238,8 +270,30 @@ export class TileWindowManager {
 
         if (!TileWindowManager._workspaces.has(index))
             TileWindowManager._workspaces.set(index, _monitors);
+    }
 
-    } 
+    private _onWorkspaceRemoved(index : number) {
+        console.warn(`Workspace removed ${index}`);
+        TileWindowManager._workspaces.delete(index);
+        let newMap = new Map();
+        let newFocus = new Map();
+        TileWindowManager._workspaces.forEach((value, key) => {
+            if (key > index) {
+                newFocus.set(key-1, this._focusHistory.get(key));
+                value.forEach(el => el.root?.forEach(t => t.workspace = key-1));
+                newMap.set(key-1, value);
+            } else {
+                newFocus.set(key, this._focusHistory.get(key));
+                newMap.set(key, value);
+            }
+        });
+
+        this._focusHistory = newFocus;
+        TileWindowManager._workspaces = newMap;
+
+        this.updateMonitors();
+        this.updateAdjacents();
+    }
 
 
 
@@ -258,9 +312,21 @@ export class TileWindowManager {
 
     private _windowWorkspaceChanged(window : Meta.Window) {
         let tile : Tile = (window as any).tile;
+        console.warn("Workspace changed");
         if (tile) {
-            if (tile.workspace !== window.get_workspace()?.index()) {
+            let w = window.get_workspace()?.index();
+            if (w && tile.workspace !== w) {
                 window.change_workspace_by_index(tile.workspace, false);
+
+                let monitors = TileWindowManager._workspaces.get(tile.workspace);
+                if (!monitors)
+                    return;
+
+                // Update workspace
+                monitors.forEach(m => {
+                    m.root?.forEach(t => t.findAdjacents());
+                    m.root?.update();
+                });
             }
         }
     }
@@ -311,14 +377,6 @@ export class TileWindowManager {
 
         let unmanagedSignal = window.connect('unmanaged', () => this._removeWindow(window));
 
-        this._focusHistory.push(window);
-        let focusSignal = window.connect(
-            'focus',
-            () => {
-                this.updateFocusHistory(window);
-            }
-        );
-
         let workspaceChangedSignal = window.connect('workspace-changed', 
             (window) => this._windowWorkspaceChanged(window)
         );
@@ -337,7 +395,7 @@ export class TileWindowManager {
         this._wrappedWindows.set(
             window,
             [window.minimize, window.maximize, minimizeSignal,
-                maximizeSignal1, maximizeSignal2, focusSignal, 
+                maximizeSignal1, maximizeSignal2, 
                 unmanagedSignal, workspaceChangedSignal, sizeChangedSignal]
         );
 
@@ -352,9 +410,15 @@ export class TileWindowManager {
 
         this.configureWindowSignals(window);
 
-        this.updateFocusHistory(window);
+        this._insertWindow(window);
 
-        this._insertWindow(window); 
+        this.updateFocusHistory(window);
+        this._focusSignal = window.connect(
+            'focus',
+            () => {
+                this.updateFocusHistory(window);
+            }
+        );
     }
 
     private _insertWindow(window: Meta.Window, workspace : number | null = null) {
@@ -365,10 +429,10 @@ export class TileWindowManager {
         let selected_monitor: Monitor;
 
         // Select monitor
-        if (this._settings?.get_int('monitor-tile-insertion-behavior') == 0) {
+        if (this._settings?.get_int('tile-insertion-behavior') == 0) {
             selected_monitor = Monitor.bestFitMonitor(_monitors);
         } else {
-            let focusWindow = global.display.focus_window;
+            let focusWindow = this.getFocusedWindow();
             if (focusWindow) {
                 let tile: Tile = (focusWindow as any).tile;
                 selected_monitor = _monitors[tile.monitor];
@@ -393,7 +457,7 @@ export class TileWindowManager {
             if (this._settings?.get_int('tile-insertion-behavior') == 0) {
                 _monitors[index].root?.addWindowOnBlock(window);
             } else {
-                let focusWindow = global.display.focus_window;
+                let focusWindow = this.getFocusedWindow();
                 if (focusWindow) {
                     let tile: Tile = (focusWindow as any).tile;
                     tile.addWindowOnBlock(window);
@@ -751,139 +815,21 @@ export class TileWindowManager {
 
 
     public createSearchBar() {
-        if (this._searchButton) {
-            this.disableSearchEntry();
-            this._searchButton = undefined;
+        if (this._topBarSearchEntry && this._topBarSearchEntry.isAlive()) {
+            this._topBarSearchEntry.destroy();
+            this._topBarSearchEntry = undefined;
+            return ;
         }
 
-        this._searchButton = new PanelButton(0.0, 'searchEntry', false);
-
-        this._searchContainer = new St.Bin({
-            x_expand: true,
-        });
-
-        this._searchEntry = new St.Entry({
-            style_class: 'search-entry',
-            can_focus: true,
-            hint_text: 'Type to search…',
-            track_hover: true,
-            x_expand: true,
-        });
-
-        this._searchSuggestion = new St.Label({
-            text: '',
-            x_align: Clutter.ActorAlign.START,
-            y_align: Clutter.ActorAlign.CENTER,
-            x_expand: true,
-        });
-
-        this._searchEntry.clutter_text.connect('notify::mapped', (actor) => {
-            if (actor.mapped)
-                actor.grab_key_focus();
-        });
-
-        this._searchContainer.add_child(this._searchSuggestion);
-        this._searchContainer.add_child(this._searchEntry);
-
-
-        this._searchEntry.clutter_text.connect('text-changed', (actor) => {
-            let current = actor.get_text();
-
-            if (current.length > 1 && this._searchSuggestion) {
-                let matches = autocomplete(current);
-                if (matches.length > 0 && this._searchEntry) {
-                    let match = matches[0];
-                    const ct = this._searchEntry.get_clutter_text();
-                    const layout = ct.get_layout();
-                    const [textW] = layout.get_pixel_size();
-
-                    const themeNode = this._searchEntry.get_theme_node();
-                    const leftPad  = themeNode.get_padding(St.Side.LEFT);
-
-                    const x = leftPad + textW;
-
-                    this._searchSuggestion.set_style(`color: rgba(255,255,255,0.35); margin-left: ${x+4}px;`);
-                    this._searchSuggestion.set_text(match.slice(current.length));
-                } else {
-                    this._searchSuggestion.set_text('');
-                }
-            } else if (this._searchSuggestion) {
-                this._searchSuggestion.set_text('');
-            }
-        });
-
-        let completeText = () => {
-            const typed = this._searchEntry?.get_text();
-            const ct = this._searchEntry?.get_clutter_text();
-            if (!typed || !ct)
-                return;
-            let full = typed + this._searchSuggestion?.get_text();
-            this._searchEntry?.set_text(full);
-            ct.set_cursor_position(full.length);
-            this._searchSuggestion?.set_text('');
-        };
-
-        this._searchEntry.clutter_text.connect('key-press-event', (ct, event) => {
-            const key = event.get_key_symbol();
-            if (key === Clutter.KEY_KP_Right || key === Clutter.KEY_Right) {
-                // Only accept if cursor is at end and a suggestion exists
-                const typed = this._searchEntry?.get_text();
-                const pos = ct.get_cursor_position();
-                if (typed) {
-                    completeText();
-                    return Clutter.EVENT_STOP;
-                }
-            }
-            return Clutter.EVENT_PROPAGATE;
-        });
-
-        this._searchEntry.connect('captured-event', (actor, event) => {
-            if (event.type() !== Clutter.EventType.KEY_PRESS)
-                return Clutter.EVENT_PROPAGATE;
-
-            const sym = event.get_key_symbol();
-            if (sym === Clutter.KEY_Tab || sym === Clutter.KEY_ISO_Left_Tab) {
-                completeText();
-                return Clutter.EVENT_STOP;
-            }
-            return Clutter.EVENT_PROPAGATE;
-        });
-
-        this._searchEntry.clutter_text.connect('activate', (actor) => {
-            let query = actor.get_text().trim().toLowerCase();
-
-            if (query === "" || launchApp([query])) {
-                this.disableSearchEntry();
-            } else {
-                actor.set_text("");
-                this._searchEntry?.set_style("border: 2px solid red;");
-            }
-
-            //console.warn(`User pressed Enter with: ${query}`);
-        });
-
-        this._searchButton.add_child(this._searchContainer);
-
-        Main.panel.addToStatusArea('SearchEntry', this._searchButton, 0, 'left');
+        // this._modalSearchEntry = new ModalSearchEntry();
+        // this._modalSearchEntry.openWithFocus();
+        this._topBarSearchEntry = new TopBarSearchEntry();
     }
 
 
     public refresh() {
         TileWindowManager.getMonitors().forEach(el => el.root ? el.root.update() : null);
     }
-
-
-
-    public disableSearchEntry() {
-        if (this._searchButton) {
-            this._searchContainer?.destroy();
-            this._searchContainer = undefined;
-            this._searchEntry = undefined;
-            this._searchButton = undefined;
-            this._searchSuggestion = undefined;
-        }
-    }
-
 
 
     public moveToWorkspace(next : boolean) {
@@ -905,6 +851,9 @@ export class TileWindowManager {
                 this._insertWindow(window, current-1);
             }
         }
+
+        this.updateMonitors();
+        this.updateAdjacents();
     }
 
 

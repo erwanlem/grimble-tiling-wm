@@ -194,6 +194,9 @@ export class Tile {
 
         if (this._window) {
 
+            if (!this._window.isAlive)
+                return;
+
             if (this._state === TileState.MAXIMIZED) {
                 (this._window as any)?._originalMaximize(Meta.MaximizeFlags.BOTH);
                 return;
@@ -202,12 +205,16 @@ export class Tile {
                 return;
             }
 
+            if (this._window.minimized)
+                this._window.unminimize();
+
             if (this._position.proportion == 1) {
                 this.state = TileState.ALONE_MAXIMIZED;
 
                 if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
+                console.warn(`Getting workspace ${this._window.get_title()}`);
                 const workspc = this._window.get_workspace();
                 const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 

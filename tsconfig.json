@@ -29,5 +29,6 @@
     "src/settingsHandlers/switchHandler.ts",
     "src/settingsHandlers/spinHandler.ts",
     "src/autocomplete.ts",
+    "src/modalSearchEntry.ts"
   ],
 }

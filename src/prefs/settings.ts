@@ -52,23 +52,23 @@ export class Spin {
 export class Radio {
 
     private static _radioButtons = [
-            {
-                key: 'tile-insertion-behavior',
-                rowNames: [
-                    'insertion_best_fit_row',
-                    'insertion_focus_row'
-                ]
-            },
-            {
-                key: 'monitor-tile-insertion-behavior',
-                rowNames: [
-                    'monitors_best_fit_row',
-                    'monitors_focus_row'
-                ]
-            },
+            // {
+            //     key: 'tile-insertion-behavior',
+            //     rowNames: [
+            //         'insertion_best_fit_row',
+            //         'insertion_focus_row'
+            //     ]
+            // },
+            // {
+            //     key: 'monitor-tile-insertion-behavior',
+            //     rowNames: [
+            //         'monitors_best_fit_row',
+            //         'monitors_focus_row'
+            //     ]
+            // },
         ];
 
-    public static getRadios() {
+    public static getRadios() : Array<{key: string, rowNames: Array<string>}> {
         return Radio._radioButtons;
     }
 }
