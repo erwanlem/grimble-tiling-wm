@@ -42,9 +42,8 @@ gnome-extensions enable gtile@lmt.github.io
 ```
 ## Uninstall
 
-You can run the uninstall script
 ``` shell
-./uninstall
+gnome-extensions uninstall gtile@lmt.github.io
 ```
 or remove the extension with gnome shell extension app.
 
