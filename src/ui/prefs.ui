@@ -135,6 +135,37 @@
       </object>
     </child>
 
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Tile Focus</property>
+          <child>
+            <object class="ShortcutListener" id="keybinding_focus">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus">Change focus</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_focus_left">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus left">Change focus left</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_focus_right">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus right">Change focus right</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_focus_top">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top">Change focus top</property>
+            </object>
+          </child>
+          <child>
+            <object class="ShortcutListener" id="keybinding_focus_bottom">
+              <property name="title" translatable="yes" comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom">Change focus bottom</property>
+            </object>
+          </child>
+      </object>
+    </child>
+
     <!-- Tile movement -->
     <child>
       <object class="AdwPreferencesGroup">

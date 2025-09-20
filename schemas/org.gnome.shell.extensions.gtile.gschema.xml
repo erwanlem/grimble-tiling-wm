@@ -84,6 +84,31 @@
       <summary>Move</summary>
       <description>Custom shortcut</description>
     </key>
+    <key name="keybinding-focus" type="as">
+      <default>[]</default>
+      <summary>Change focus</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-focus-left" type="as">
+      <default>[]</default>
+      <summary>Change focus left</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-focus-right" type="as">
+      <default>[]</default>
+      <summary>Change focus right</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-focus-top" type="as">
+      <default>[]</default>
+      <summary>Change focus top</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-focus-bottom" type="as">
+      <default>[]</default>
+      <summary>Change focus bottom</summary>
+      <description>Custom shortcut</description>
+    </key>
     <key name="keybinding-resize-left" type="as">
       <default>[]</default>
       <summary>Resize</summary>

@@ -140,6 +140,23 @@ export default class KeybindingHandler {
                 this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_S);
                 break;
 
+            case 'keybinding-focus':
+                this._waitingAction = shortcutName;
+                this.enableArrowBinding();
+                break;
+            case 'keybinding-focus-left':
+                this._windowManager.changeFocus(Direction.West);
+                break;
+            case 'keybinding-focus-right':
+                this._windowManager.changeFocus(Direction.East);
+                break;
+            case 'keybinding-focus-top':
+                this._windowManager.changeFocus(Direction.North);
+                break;
+            case 'keybinding-focus-bottom':
+                this._windowManager.changeFocus(Direction.South);
+                break;
+
             case 'keybinding-next-workspace':
                 this._windowManager.moveToWorkspace(true);
                 break;
@@ -158,6 +175,8 @@ export default class KeybindingHandler {
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
                     this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_N);
+                } else if (this._waitingAction === 'keybinding-focus') {
+                    this._windowManager.changeFocus(Direction.North);
                 }
                 break;
             case 'arrow-down':
@@ -166,6 +185,8 @@ export default class KeybindingHandler {
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
                     this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_S);
+                } else if (this._waitingAction === 'keybinding-focus') {
+                    this._windowManager.changeFocus(Direction.South);
                 }
                 break;
             case 'arrow-left':
@@ -174,6 +195,8 @@ export default class KeybindingHandler {
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
                     this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_W);
+                } else if (this._waitingAction === 'keybinding-focus') {
+                    this._windowManager.changeFocus(Direction.West);
                 }
                 break;
             case 'arrow-right':
@@ -182,6 +205,8 @@ export default class KeybindingHandler {
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
                     this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_E);
+                } else if (this._waitingAction === 'keybinding-focus') {
+                    this._windowManager.changeFocus(Direction.East);
                 }
                 break;
             case 'key-escape':

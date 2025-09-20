@@ -19,7 +19,12 @@ export class Shortcut {
         'keybinding-resize-bottom',
         'keybinding-next-monitor',
         'keybinding-next-workspace',
-        'keybinding-previous-workspace'
+        'keybinding-previous-workspace',
+        'keybinding-focus',
+        'keybinding-focus-left',
+        'keybinding-focus-right',
+        'keybinding-focus-top',
+        'keybinding-focus-bottom'
     ];
 
     public static getShortcuts() {

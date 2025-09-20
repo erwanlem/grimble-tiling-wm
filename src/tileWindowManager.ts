@@ -348,6 +348,7 @@ export class TileWindowManager {
                 window.unminimize();
             }
         });
+
         let maximizeSignal1 = window.connect(
             'notify::maximized-horizontally',
             () => {
@@ -768,7 +769,7 @@ export class TileWindowManager {
 
             TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
-                if (el.id !== tile.id) {
+                if (el.window?.minimized) {
                     el.window?.unminimize();
                 }
             });
@@ -810,6 +811,20 @@ export class TileWindowManager {
         (exchangeTile.window as any).tile = exchangeTile;
         
         TileWindowManager.getMonitors()[tile.monitor].root?.update();
+    }
+
+
+    public changeFocus(dir : Direction) {
+        let window : Meta.Window | null = this.getFocusedWindow();
+        if (!window)
+            return;
+        
+        let tile : Tile = (window as any).tile;
+        if (!tile.window)
+            return;
+
+        let newFocus = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
+        newFocus?.window?.focus(0);
     }
 
 
