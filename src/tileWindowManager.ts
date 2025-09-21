@@ -341,10 +341,17 @@ export class TileWindowManager {
     private configureWindowSignals(window: Meta.Window) {
 
         let minimizeSignal = window.connect('notify::minimized', () => {
-            if ((window as any).tile.state === TileState.MINIMIZED)
-                return;
+            if (!window.minimized) {
+                let tile : Tile = (window as any).tile;
+                if (tile.state === TileState.MINIMIZED) {
+                    if (TileWindowManager.getMonitors()[tile.monitor].fullscreen) {
+                        this.maximizeTile(window);
+                    }
+                }
+            } else {
+                if ((window as any).tile.state === TileState.MINIMIZED)
+                    return;
 
-            if (window.minimized) {
                 window.unminimize();
             }
         });

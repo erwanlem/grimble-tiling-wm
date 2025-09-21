@@ -30,9 +30,8 @@ export class TopBarSearchEntry {
         });
 
         this._searchSuggestion = new St.Label({
+            style_class: 'suggestion',
             text: '',
-            x_align: Clutter.ActorAlign.START,
-            y_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
         });
 

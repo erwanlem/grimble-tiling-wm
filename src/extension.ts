@@ -20,6 +20,7 @@ export default class Gtile extends Extension {
   enable() {
     this._settings = this.getSettings();
     
+    ExtensionTheme.enableWindowTheme(this.metadata);
     Tile.padding = this._settings.get_int('tile-padding');
 
     this._tileWindowManager = new TileWindowManager();

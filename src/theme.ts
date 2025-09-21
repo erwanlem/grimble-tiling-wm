@@ -40,7 +40,7 @@ function readFile(path : string) {
 }
 
 
-export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = true) {
+export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = false) {
     if (hideHeaderBar) {
         console.warn("Hide header bar");
        let gtkTheme = readFile(metadata.path + "/gtktheme.css");
