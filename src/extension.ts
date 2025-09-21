@@ -19,9 +19,7 @@ export default class Gtile extends Extension {
 
   enable() {
     this._settings = this.getSettings();
-
-    // put a new theme to remove windows header bars
-    ExtensionTheme.enableWindowTheme(this.metadata, this._settings.get_boolean('header-bar'));
+    
     Tile.padding = this._settings.get_int('tile-padding');
 
     this._tileWindowManager = new TileWindowManager();

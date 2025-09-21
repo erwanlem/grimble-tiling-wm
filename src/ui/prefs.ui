@@ -11,12 +11,11 @@
       <object class="AdwPreferencesGroup">
         <property name="title" translatable="yes" comments="Translators: This is the header for a preference group in the 'General' tab">Appearance</property>
         
-        <child>
+        <!-- <child>
           <object class="AdwSwitchRow" id="header_bar">
             <property name="title" translatable="yes" comments="Translators: This is the name of setting to enable/disable window header bar in the 'General' tab">Hide window header bar</property>
-            <!-- <property name="subtitle" translatable="yes" comments="Translators: This is an explanation about the 'cursor' setting">Display the mouse cursor.</property> -->
           </object>
-        </child>
+        </child> -->
 
         <child>
           <object class="AdwSpinRow" id="tile_padding">
@@ -30,39 +29,50 @@
             </property>
           </object>
         </child>
+
       </object>
     </child>
 
-    <!-- <child>
+    <child>
       <object class="AdwPreferencesGroup">
-        <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Tile insertion</property>
-        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Tile Insertion' in the 'General' tab">Define the tile insertion behaviour.</property>
+        <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Search bar position</property>
         <child>
-          <object class="AdwActionRow" id="insertion_best_fit_row">
-            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Best fit</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Best fit' option for the 'Tile insertion' in the 'General' tab">Insert tiles at the best place. It reduces the depth of the tiles on the screen.</property>
-            <property name="activatable-widget">insertion_best_fit_button</property>
+          <object class="AdwActionRow" id="search_entry_left">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Left</property>
+            <property name="activatable-widget">search_bar_position</property>
             <child type="prefix">
-              <object class="GtkCheckButton" id="insertion_best_fit_button"/>
+              <object class="GtkCheckButton" id="search_bar_position"/>
             </child>
           </object>
         </child>
         <child>
-          <object class="AdwActionRow" id="insertion_focus_row">
-            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Focus</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This is an explanation for the 'Focus' option for the 'Tile insertion' in the 'General' tab">Cut the focused window to insert the new tile.</property>
-            <property name="activatable-widget">insertion_focus_button</property>
+          <object class="AdwActionRow" id="search_entry_center">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Center</property>
+            <property name="activatable-widget">search_entry_center_button</property>
             <child type="prefix">
-              <object class="GtkCheckButton" id="insertion_focus_button">
-                <property name="group">insertion_best_fit_button</property>
+              <object class="GtkCheckButton" id="search_entry_center_button">
+                <property name="group">search_bar_position</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwActionRow" id="search_entry_right">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab">Right</property>
+            <property name="activatable-widget">search_entry_right_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="search_entry_right_button">
+                <property name="group">search_bar_position</property>
               </object>
             </child>
           </object>
         </child>
 
       </object>
-  </child> -->
-  <!-- <child>
+  </child>
+
+<!-- 
+  <child>
       <object class="AdwPreferencesGroup">
         <property name="title" translatable="yes" comments="Translators: This is the header for the insertion group in the 'General' tab">Multiple monitors</property>
         <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab">Define tile insertion behavior when using multiple monitors.</property>

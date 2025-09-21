@@ -24,6 +24,11 @@
 			<default>0</default>
 		</key>
 
+    <key name="search-entry-position" type="i">
+			<!-- 0: left, 1: center, 2: right -->
+			<default>0</default>
+		</key>
+
     <key name="keybinding-rotation" type="as">
       <default>[]</default>
       <summary>Tile roration</summary>

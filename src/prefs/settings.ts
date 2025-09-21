@@ -35,7 +35,7 @@ export class Shortcut {
 export class Switches {
 
     private static _switchList : Array<string> = [
-        'header-bar'
+        
     ];
 
     public static getSwitches() {
@@ -71,6 +71,14 @@ export class Radio {
             //         'monitors_focus_row'
             //     ]
             // },
+            {
+                key: 'search-entry-position',
+                rowNames: [
+                    'search_entry_left',
+                    'search_entry_center',
+                    'search_entry_right'
+                ]
+            }
         ];
 
     public static getRadios() : Array<{key: string, rowNames: Array<string>}> {
