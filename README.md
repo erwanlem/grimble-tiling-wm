@@ -13,9 +13,8 @@ This extension provides the following features:
 
 **GTile** is **flexible** with its easily **customizable keybindings** and its wide choice of options which let you build the tiling window manager you have always needed! But don't worry, if options and customizations frighten you, **GTile** is ready to use. GTile natively supports multiple monitors and workspaces.
 
-*GNOME works with windows, do we really have tiles?* Yes and... no. This extension keeps GNOME windows (we build an extension, not a real window manager) but we endeavor to make it look as if you are dealing with a real tiling window manager! 
+*GNOME works with windows, do we really have tiles?* Yes and... no. This extension keeps GNOME windows (we build an extension, not a real window manager) but we endeavor to make it look as if you are dealing with a real tiling window manager!
 
-[Experimental] You have the choice to **remove GTK top bar** (makes windows look more like tiles). This option is disabled by default because it can lead to missing buttons on some apps that place buttons on the top bar. Moreover, be careful if you have GTK themes which may override this option **or** may be overridden by this option.
 
 ## System Requirements
 This extension is available on all Linux distributions using GNOME.
