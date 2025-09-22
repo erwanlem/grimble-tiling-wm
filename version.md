@@ -7,3 +7,4 @@ First release. Basic features.
 - Add keybindings to change focus.
 - New option to select search bar position.
 - Add descriptions for keybindings in preferences.
+- Fix bug with search entry theme.

@@ -60,7 +60,7 @@ export class TileWindowManager {
 
 
     constructor() {
-        let _extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+        let _extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
         this._settings = _extensionObject?.getSettings();
 
         this._focusHistory = new Map();
@@ -921,7 +921,7 @@ export class TileWindowManager {
         LOCKED = true;
 
         const userPath = GLib.get_user_config_dir();
-        const parentPath = GLib.build_filenamev([userPath, '/gtile']);
+        const parentPath = GLib.build_filenamev([userPath, '/grimble']);
         const parent = Gio.File.new_for_path(parentPath);
 
         try {
@@ -967,7 +967,7 @@ export class TileWindowManager {
         LOCKED = false;
 
         const userPath = GLib.get_user_config_dir();
-        const path = GLib.build_filenamev([userPath, '/gtile/tilingWmSession2.json']);
+        const path = GLib.build_filenamev([userPath, '/grimble/tilingWmSession2.json']);
         const file = Gio.File.new_for_path(path);
         if (!file.query_exists(null))
             return;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="gtile@lmt.github.io">
+<interface domain="grimble@lmt.github.io">
 
   <object class="AdwPreferencesPage" id="general">
     <property name="title" translatable="yes"
@@ -151,7 +151,7 @@
         <child>
           <object class="ShortcutListener" id="keybinding_open_settings">
             <property name="title" translatable="yes"
-              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open settings">GTile settings</property>
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open settings">Grimble settings</property>
           </object>
         </child>
         <child>

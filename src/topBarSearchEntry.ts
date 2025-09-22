@@ -22,7 +22,7 @@ export class TopBarSearchEntry {
         });
 
         this._searchEntry = new St.Entry({
-            style_class: 'search-entry',
+            style_class: 'custom-search-entry',
             can_focus: true,
             hint_text: 'Type to search…',
             track_hover: true,
@@ -120,7 +120,7 @@ export class TopBarSearchEntry {
 
         this._searchButton.add_child(this._searchContainer);
 
-        let extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+        let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
         let positionInt = extensionObject?.getSettings().get_int('search-entry-position');
         let position = positionInt === 0 ? 'left' : positionInt === 1 ? 'center' : 'right';
         Main.panel.addToStatusArea('SearchEntry', this._searchButton, 0, position);

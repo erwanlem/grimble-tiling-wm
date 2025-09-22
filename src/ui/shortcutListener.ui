@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="gtile@lmt.github.io">
+<interface domain="grimble@lmt.github.io">
   <object class="GtkEventControllerKey" id="eventKeyController">
     <signal name="key-pressed" handler="_onKeyPressed" swapped="no"/>
   </object>

@@ -27,7 +27,7 @@ export default class SpinHandler {
         console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
         switch (key) {
             case "tile-padding":
-                let extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+                let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
                 let metadata = extensionObject?.metadata;
                 if (metadata && settings.get_int('tile-padding')) {
                     console.warn('Tile padding ' + settings.get_int('tile-padding'));

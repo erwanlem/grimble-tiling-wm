@@ -10,7 +10,7 @@ import { Tile } from './tile.js';
 import { load_executables } from './autocomplete.js';
 
 
-export default class Gtile extends Extension {
+export default class Grimble extends Extension {
   _tileWindowManager?: TileWindowManager;
   _settings : Gio.Settings | null = null;
   _keybindingHandler : KeybindingHandler | undefined;

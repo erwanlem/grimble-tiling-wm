@@ -27,7 +27,7 @@ export default class SwitchHandler {
         console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
         switch (key) {
             case "header-bar":
-                let extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+                let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
                 let metadata = extensionObject?.metadata;
                 if (metadata && settings.get_boolean('header-bar')) {
                     enableWindowTheme(metadata, true);

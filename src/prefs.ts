@@ -7,7 +7,7 @@ import {Shortcut, Switches, Radio, Spin} from './prefs/settings.js';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 
-export default class GtilePreferences extends ExtensionPreferences {
+export default class GrimblePreferences extends ExtensionPreferences {
     _settings: Gio.Settings | null = null;
     _prefWindow: Adw.PreferencesWindow | null = null;
 

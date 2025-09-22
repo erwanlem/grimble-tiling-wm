@@ -34,7 +34,7 @@ export default class KeybindingHandler {
 
     constructor(windowManager : TileWindowManager, settings : Gio.Settings) {
         this._settings = settings;
-        this._extensionObject = Extension.lookupByUUID('gtile@lmt.github.io');
+        this._extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
         this._windowManager = windowManager;
         this._keyBindings = Shortcut.getShortcuts();
         this._keyBindings.forEach(key => {
