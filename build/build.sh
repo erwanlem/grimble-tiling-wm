@@ -1,4 +1,4 @@
-DEST_FOLDER=GTile
+DEST_FOLDER=Grimble
 
 
 if ([ ! -d "$DEST_FOLDER" ]) then
@@ -14,5 +14,5 @@ cp -r src/ui ${DEST_FOLDER}
 cp src/stylesheet.css ${DEST_FOLDER}
 cp -r dist/* ${DEST_FOLDER}
 
-(cd GTile && zip -r ../gtile@lmt.github.io.shell-extension.zip ./*)
-rm -rf GTile
+(cd GTile && zip -r ../grimble@lmt.github.io.shell-extension.zip ./*)
+rm -rf Grimble

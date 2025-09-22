@@ -1,4 +1,4 @@
-DEST_FOLDER=~/.local/share/gnome-shell/extensions/gtile\@lmt.github.io/
+DEST_FOLDER=~/.local/share/gnome-shell/extensions/grimble\@lmt.github.io/
 
 glib-compile-schemas schemas/
 make clean
