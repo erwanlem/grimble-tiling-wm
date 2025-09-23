@@ -204,10 +204,6 @@ export const ShortcutListener = GObject.registerClass({
     _isKeyvalForbidden(keyval) {
         const forbiddenKeyvals = [
             Gdk.KEY_Home,
-            Gdk.KEY_Left,
-            Gdk.KEY_Up,
-            Gdk.KEY_Right,
-            Gdk.KEY_Down,
             Gdk.KEY_Page_Up,
             Gdk.KEY_Page_Down,
             Gdk.KEY_End,

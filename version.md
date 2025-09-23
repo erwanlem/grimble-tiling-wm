@@ -8,3 +8,4 @@ First release. Basic features.
 - New option to select search bar position.
 - Add descriptions for keybindings in preferences.
 - Fix bug with search entry theme.
+- Allow arrows in keybindings
