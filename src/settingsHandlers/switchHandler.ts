@@ -21,10 +21,8 @@ export default class SwitchHandler {
         });
     }
 
-    destroy() {}
 
     _onSwitchChanged(key : string, settings : Gio.Settings) {
-        console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
         switch (key) {
             case "header-bar":
                 let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');

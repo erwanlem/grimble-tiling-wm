@@ -21,16 +21,12 @@ export default class SpinHandler {
         });
     }
 
-    destroy() {}
-
     _onSwitchChanged(key : string, settings : Gio.Settings) {
-        console.warn(`${key} :  ${settings.get_value(key).print(true)}`);
         switch (key) {
             case "tile-padding":
                 let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
                 let metadata = extensionObject?.metadata;
                 if (metadata && settings.get_int('tile-padding')) {
-                    console.warn('Tile padding ' + settings.get_int('tile-padding'));
                     Tile.padding = settings.get_int('tile-padding');
                     this._windowManager.updateMonitors();
                 }

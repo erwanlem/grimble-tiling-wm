@@ -20,8 +20,6 @@ export enum Direction {
     East
 }
 
-
-const RESIZE_GAP = 10;
 let LOCKED = false;
 
 export class TileWindowManager {
@@ -181,7 +179,6 @@ export class TileWindowManager {
      * @param focused false to remove the focused window
      */
     private updateFocusHistory(window: Meta.Window, focused = true) {
-        console.warn(`Update focus`);
         let index = global.workspace_manager.get_active_workspace_index();
         if (!this._focusHistory.has(index)) {
             this._focusHistory.set(index, []);
@@ -312,21 +309,16 @@ export class TileWindowManager {
 
     private _windowWorkspaceChanged(window : Meta.Window) {
         let tile : Tile = (window as any).tile;
-        console.warn("Workspace changed");
         if (tile) {
             let w = window.get_workspace()?.index();
-            if (w && tile.workspace !== w) {
-                window.change_workspace_by_index(tile.workspace, false);
+            if (w !== null && tile.workspace !== w) {
+                tile.workspace = w;
+                window.change_workspace_by_index(w, false);
+                this._removeWindow(window);
+                this._insertWindow(window, w);
 
-                let monitors = TileWindowManager._workspaces.get(tile.workspace);
-                if (!monitors)
-                    return;
-
-                // Update workspace
-                monitors.forEach(m => {
-                    m.root?.forEach(t => t.findAdjacents());
-                    m.root?.update();
-                });
+                this.updateMonitors();
+                this.updateAdjacents();
             }
         }
     }
@@ -359,8 +351,7 @@ export class TileWindowManager {
         let maximizeSignal1 = window.connect(
             'notify::maximized-horizontally',
             () => {
-                if ((window as any).tile.state === TileState.MAXIMIZED
-                    || (window as any).tile.state === TileState.ALONE_MAXIMIZED) {
+                if ((window as any).tile.state === TileState.MAXIMIZED) {
                     return;
                 }
 
@@ -372,8 +363,7 @@ export class TileWindowManager {
         let maximizeSignal2 = window.connect(
             'notify::maximized-vertically',
             () => {
-                if ((window as any).tile.state === TileState.MAXIMIZED
-                    || (window as any).tile.state === TileState.ALONE_MAXIMIZED) {
+                if ((window as any).tile.state === TileState.MAXIMIZED) {
                     return;
                 }
 
@@ -491,10 +481,8 @@ export class TileWindowManager {
         let tile: Tile = (window as any).tile;
 
         // Not found
-        if (!tile) {
-            console.warn("_removeWindow : tile not found");
+        if (!tile)
             return;
-        }
 
         let m = tile.monitor;
         if (TileWindowManager.getMonitors()[m].fullscreen) {
@@ -623,7 +611,7 @@ export class TileWindowManager {
      * @param op 
      * @returns void
      */
-    public resizeFocusedWindow(op : Meta.GrabOp) {
+    public resizeFocusedWindow(op : Meta.GrabOp, resize_gap = 10) {
         let window = global.display.focusWindow;
         if (!window)
             return;
@@ -635,15 +623,15 @@ export class TileWindowManager {
                 let r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
-                    width: tile.position.width + RESIZE_GAP,
+                    width: tile.position.width + resize_gap,
                     height: tile.position.height
                 });
                 Resize.resizeE(tile, r);
             } else if (tile.adjacents[0]) {
                 let r = new Mtk.Rectangle({
-                    x: tile.position.x + RESIZE_GAP, 
+                    x: tile.position.x + resize_gap, 
                     y: tile.position.y,
-                    width: tile.position.width - RESIZE_GAP,
+                    width: tile.position.width - resize_gap,
                     height: tile.position.height
                 });
                 Resize.resizeW(tile, r);
@@ -651,9 +639,9 @@ export class TileWindowManager {
         } else if (op === Meta.GrabOp.RESIZING_W) {            
             if (tile.adjacents[0]) {
                 let r = new Mtk.Rectangle({
-                    x: tile.position.x - RESIZE_GAP, 
+                    x: tile.position.x - resize_gap, 
                     y: tile.position.y,
-                    width: tile.position.width + RESIZE_GAP,
+                    width: tile.position.width + resize_gap,
                     height: tile.position.height
                 });
                 Resize.resizeW(tile, r);
@@ -661,7 +649,7 @@ export class TileWindowManager {
                 let r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
-                    width: tile.position.width - RESIZE_GAP,
+                    width: tile.position.width - resize_gap,
                     height: tile.position.height
                 });
                 Resize.resizeE(tile, r);
@@ -670,9 +658,9 @@ export class TileWindowManager {
             if (tile.adjacents[2]) {
                 let r = new Mtk.Rectangle({
                     x: tile.position.x, 
-                    y: tile.position.y - RESIZE_GAP,
+                    y: tile.position.y - resize_gap,
                     width: tile.position.width,
-                    height: tile.position.height + RESIZE_GAP
+                    height: tile.position.height + resize_gap
                 });
                 Resize.resizeN(tile, r);
             } else if (tile.adjacents[3]) {
@@ -680,7 +668,7 @@ export class TileWindowManager {
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width,
-                    height: tile.position.height - RESIZE_GAP
+                    height: tile.position.height - resize_gap
                 });
                 Resize.resizeS(tile, r);
             }
@@ -690,15 +678,15 @@ export class TileWindowManager {
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width,
-                    height: tile.position.height + RESIZE_GAP
+                    height: tile.position.height + resize_gap
                 });
                 Resize.resizeS(tile, r);
             } else if (tile.adjacents[2]) {
                 let r = new Mtk.Rectangle({
                     x: tile.position.x, 
-                    y: tile.position.y + RESIZE_GAP,
+                    y: tile.position.y + resize_gap,
                     width: tile.position.width,
-                    height: tile.position.height - RESIZE_GAP
+                    height: tile.position.height - resize_gap
                 });
                 Resize.resizeN(tile, r);
             }
@@ -843,8 +831,6 @@ export class TileWindowManager {
             return ;
         }
 
-        // this._modalSearchEntry = new ModalSearchEntry();
-        // this._modalSearchEntry.openWithFocus();
         this._topBarSearchEntry = new TopBarSearchEntry();
     }
 
@@ -1000,7 +986,6 @@ export class TileWindowManager {
                     if (el.window) {
                         this.configureWindowSignals(el.window);
                         el.window.change_workspace_by_index(mapKey, false);
-                        console.warn(`Window ${el.window.get_title()} (${el.window.get_id()}) workspace : ${el.window.get_workspace().workspace_index} (${mapKey})`);
                     }
                 });
             });

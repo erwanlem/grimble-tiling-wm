@@ -12,10 +12,16 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
 
 import {Shortcut} from '../prefs/settings.js';
 import { TileWindowManager, Direction } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+
+
+const MAX_RESIZE_GAP = 40;
+const MIN_RESIZE_GAP = 10;
+
 
 /**
  * Class to handle the keyboard shortcuts (on the extension side) except the
@@ -30,12 +36,14 @@ export default class KeybindingHandler {
 
     _waitingAction : string | undefined;
     _enableArrow : boolean = false;
+    _prevArrowTyped : [Direction, number];
 
 
     constructor(windowManager : TileWindowManager, settings : Gio.Settings) {
         this._settings = settings;
         this._extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
         this._windowManager = windowManager;
+        this._prevArrowTyped = [Direction.North, 0];
         this._keyBindings = Shortcut.getShortcuts();
         this._keyBindings.forEach(key => {
             Main.wm.addKeybinding(
@@ -73,11 +81,22 @@ export default class KeybindingHandler {
     }
 
 
+    private compute_gap(direction: Direction) {
+        const t = GLib.get_real_time();
+        const dir = this._prevArrowTyped[0];
+        const time = Math.min(Math.max(t - this._prevArrowTyped[1], 150000), 300000) - 150000;
+        this._prevArrowTyped = [direction, t];
+        let gap = dir === direction
+                    ? MAX_RESIZE_GAP - ((time * (MAX_RESIZE_GAP - MIN_RESIZE_GAP) / 150000))
+                    : MIN_RESIZE_GAP;
+        return gap;
+    }
+
+
     /**
      * @param {string} shortcutName
      */
     async _onCustomKeybindingPressed(shortcutName : string) {
-        console.warn("Keybinding pressed : " + shortcutName);
 
         switch (shortcutName) {
             case 'keybinding-close':
@@ -174,7 +193,7 @@ export default class KeybindingHandler {
                     this._windowManager.moveTile(Direction.North);
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
-                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_N);
+                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_N, this.compute_gap(Direction.North));
                 } else if (this._waitingAction === 'keybinding-focus') {
                     this._windowManager.changeFocus(Direction.North);
                 }
@@ -184,7 +203,7 @@ export default class KeybindingHandler {
                     this._windowManager.moveTile(Direction.South);
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
-                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_S);
+                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_S, this.compute_gap(Direction.South));
                 } else if (this._waitingAction === 'keybinding-focus') {
                     this._windowManager.changeFocus(Direction.South);
                 }
@@ -194,7 +213,7 @@ export default class KeybindingHandler {
                     this._windowManager.moveTile(Direction.West);
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
-                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_W);
+                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_W, this.compute_gap(Direction.West));
                 } else if (this._waitingAction === 'keybinding-focus') {
                     this._windowManager.changeFocus(Direction.West);
                 }
@@ -204,7 +223,7 @@ export default class KeybindingHandler {
                     this._windowManager.moveTile(Direction.East);
                     this.disableArrowBinding();
                 } else if (this._waitingAction === 'keybinding-resize') {
-                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_E);
+                    this._windowManager.resizeFocusedWindow(Meta.GrabOp.RESIZING_E, this.compute_gap(Direction.East));
                 } else if (this._waitingAction === 'keybinding-focus') {
                     this._windowManager.changeFocus(Direction.East);
                 }

@@ -39,7 +39,6 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
 
         if (p.parent && p.parent.child2) {
             p.parent.position.splitProportion = 0.5 * (p.parent.position.width - p.parent.child2.position.width) / p.parent.child2.position.width;
-            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }
@@ -78,7 +77,6 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
 
         if (p.parent && p.parent.child2) {
             p.parent.position.splitProportion = 0.5 * (p.parent.position.width - p.parent.child2.position.width) / p.parent.child2.position.width;
-            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }
@@ -117,7 +115,6 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
 
         if (p.parent && p.parent.child2) {
             p.parent.position.splitProportion = 0.5 * (p.parent.position.height - p.parent.child2.position.height) / p.parent.child2.position.height;
-            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }
@@ -156,7 +153,6 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
 
         if (p.parent && p.parent.child2) {
             p.parent.position.splitProportion = 0.5 * (p.parent.position.height - p.parent.child2.position.height) / p.parent.child2.position.height;
-            console.warn(`New proportion ${p.parent.position.splitProportion}`);
         }
     }
 }

@@ -19,7 +19,7 @@ function writeFile(path : string, content : string) {
             null
         );
     } catch (e) {
-        console.warn("Write error " + e);
+        console.error("Write error " + e);
         return null;
     }
 }
@@ -33,7 +33,7 @@ function readFile(path : string) {
             return decoder.decode(contents);
         }
     } catch (e) {
-        console.warn("Read error " + e);
+        console.error("Read error " + e);
         return null;
     }
     return null;
@@ -42,7 +42,6 @@ function readFile(path : string) {
 
 export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = false) {
     if (hideHeaderBar) {
-        console.warn("Hide header bar");
        let gtkTheme = readFile(metadata.path + "/gtktheme.css");
         let original = readFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");
 
@@ -54,7 +53,6 @@ export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = 
             writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", gtkTheme);
         }
     } else if (originalTheme) {
-        console.warn("show header bar");
         writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", originalTheme);
         writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
         originalTheme = undefined;

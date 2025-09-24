@@ -9,3 +9,5 @@ First release. Basic features.
 - Add descriptions for keybindings in preferences.
 - Fix bug with search entry theme.
 - Allow arrows in keybindings
+- Use system keybindings to change workspace
+- Fix bug allowing maximize when only one window.

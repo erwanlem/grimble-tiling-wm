@@ -92,7 +92,6 @@ export class Tile {
 
 
     public addWindowOnBlock(window: Meta.Window) {
-        console.warn("addWindowOnBlock");
 
         if (this.leaf) {
             if (!this._window)
@@ -103,12 +102,8 @@ export class Tile {
             c1._state = this._state;
             (this._window as any).tile = c1;
 
-            //console.warn("c1 " + c1._position.width + " " + c1._position.height + " " + c1._position.proportion + " " + c1.monitor);
-
             let c2 = Tile.createTileLeaf(window, newPositions[1], this.monitor, this);
             (window as any).tile = c2;
-
-            //console.warn("c2 " + c2._position.width + " " + c2._position.height + " " + c2._position.proportion + " " + c2.monitor);
 
             this._window = null;
             this._leaf = false;
@@ -153,7 +148,6 @@ export class Tile {
             parent._child2 = parent._child1._child2;
             parent._child1 = parent._child1._child1;
         } else {
-            //throw new Error("Cannot remove window " + this.id);
             return this;
         }
 
@@ -164,6 +158,7 @@ export class Tile {
 
         if (parent._window)
             (parent._window as any).tile = parent;
+
         parent.resize(parent._position);
         parent.decrementTiles();
 
@@ -214,7 +209,6 @@ export class Tile {
                 if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
-                console.warn(`Getting workspace ${this._window.get_title()}`);
                 const workspc = this._window.get_workspace();
                 const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 
@@ -331,7 +325,6 @@ export class Tile {
         if (tile.window)
             (tile.window as any).tile = tile;
 
-        //tile.findAdjacents();
         return tile;
     }
 
