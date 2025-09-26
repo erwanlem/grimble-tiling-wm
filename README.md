@@ -1,7 +1,9 @@
-[<img src="https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github_sponsor.svg" alt="Support this project" height="32" />](https://ko-fi.com/erwan_lmt)
+<img src="resources/logo1.png" 
+        alt="Grimble" 
+        width="100" 
+        style="display: block; margin: 0 auto" />
 
-<img src="resources/logo1.png" align="right" width="90px"/>
-<br clear="right">
+[<img src="resources/support_me_on_kofi_red.png" alt="Support this project" height="32" />](https://ko-fi.com/erwan_lmt)
 
 # Grimble: Gnome Tiling Window Manager
 
