@@ -1,5 +1,6 @@
 <p align="center">
         <img src="resources/logo1.png" 
+                width="100"
         alt="Grimble" />
 </p>
 
