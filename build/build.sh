@@ -13,6 +13,7 @@ cp -r schemas ${DEST_FOLDER}
 cp -r src/ui ${DEST_FOLDER}
 cp src/stylesheet.css ${DEST_FOLDER}
 cp -r dist/* ${DEST_FOLDER}
+cp LICENSE ${DEST_FOLDER}
 
 (cd Grimble && zip -r ../grimble@lmt.github.io.shell-extension.zip ./*)
 rm -rf Grimble

@@ -8,8 +8,6 @@
 
 # Grimble: Gnome Tiling Window Manager
 
-
-
 *This extension is still in development, bug reports and new feature enhancements/suggestions are welcome.*
 
 You like GNOME? You like Tiling Window Managers? You can now have the best of both worlds with **Grimble**, the GNOME tiling window manager extension.
