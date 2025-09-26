@@ -37,7 +37,6 @@ export class TileWindowManager {
     _workspaceAddedSignal : number;
     _workspaceRemovedSignal : number;
     _activeWorkspaceSignal : number
-    _enteredMonitorSignal : number;
     _grabBeginSignal : number;
     _monitorChangedSignal : number;
     _workareasChangedSignal : number;
@@ -97,14 +96,6 @@ export class TileWindowManager {
             'window-created',
             (display, obj) => this._onWindowCreated(display, obj)
         );
-
-        this._enteredMonitorSignal = global.display.connect(
-            'window-entered-monitor', 
-            (_, __, window) => {
-                let tile = (window as any).tile;
-                if (tile)
-                    TileWindowManager.getMonitors()[tile.monitor].root?.update();
-        });
 
         this._workareasChangedSignal = global.display.connect('workareas-changed', d => {
             TileWindowManager._workspaces.forEach((val, key) => {
@@ -238,7 +229,6 @@ export class TileWindowManager {
     public destroy() {
         global.display.disconnect(this._windowCreatedSignal);
         global.display.disconnect(this._windowGrabSignal);
-        global.display.disconnect(this._enteredMonitorSignal);
         global.display.disconnect(this._grabBeginSignal);
         global.display.disconnect(this._workareasChangedSignal);
         global.workspace_manager.disconnect(this._workspaceAddedSignal);
