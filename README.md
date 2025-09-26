@@ -1,7 +1,7 @@
-<img src="resources/logo1.png" 
-        alt="Grimble" 
-        width="100" 
-        style="display: block; margin: 0 auto" />
+<p align="center">
+        <img src="resources/logo1.png" 
+        alt="Grimble" />
+</p>
 
 [<img src="resources/support_me_on_kofi_red.png" alt="Support this project" height="32" />](https://ko-fi.com/erwan_lmt)
 
