@@ -10,6 +10,7 @@ export function launchApp(command : string[]) {
         );
         return true;
     } catch (e) {
+        console.warn(`Failed launch : ${e}`);
         return false;
     }
 }

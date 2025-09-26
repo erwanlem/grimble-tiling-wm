@@ -30,6 +30,7 @@ export class TileWindowManager {
         (dir: Meta.MaximizeFlags | null) => void,
         number, number, number, number, number, number]>;
     _focusSignal : number | undefined;
+    _nMonitors : number;
 
     _windowCreatedSignal: number;
     _windowGrabSignal: number;
@@ -39,6 +40,7 @@ export class TileWindowManager {
     _activeWorkspaceSignal : number
     _enteredMonitorSignal : number;
     _grabBeginSignal : number;
+    _monitorChangedSignal : number;
     /**************************************************/
     _settings: Gio.Settings | undefined;
 
@@ -62,9 +64,10 @@ export class TileWindowManager {
         this._settings = _extensionObject?.getSettings();
 
         this._focusHistory = new Map();
+        this._nMonitors = global.display.get_n_monitors();
 
         for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
-            let _monitors = new Array(global.display.get_n_monitors());
+            let _monitors = new Array(this._nMonitors);
             for (const [i, value] of _monitors.entries()) {
                 _monitors[i] = new Monitor(i);
             }
@@ -131,6 +134,16 @@ export class TileWindowManager {
             this.updateAdjacents();
         });
 
+        this._monitorChangedSignal = global.backend.get_monitor_manager().connect('monitors-changed', mm => {
+            // const n = global.display.get_n_monitors();
+            // if (n !== this._nMonitors) {
+            //     let diff = n - this._nMonitors;
+            //     if (diff > 0) {
+            //         this.addMonitors(diff);
+            //     }
+            // }
+        });
+
     }
 
 
@@ -141,6 +154,14 @@ export class TileWindowManager {
             return wk;
         else
             return [];
+    }
+
+    private addMonitors(n : number) {
+        TileWindowManager._workspaces.forEach((val, _, __) => {
+            for (let i = 0; i < n; i++) {
+                val.push(new Monitor(val.length));
+            }
+        });
     }
 
 
@@ -201,6 +222,7 @@ export class TileWindowManager {
         global.workspace_manager.disconnect(this._workspaceAddedSignal);
         global.workspace_manager.disconnect(this._workspaceRemovedSignal);
         global.workspace_manager.disconnect(this._activeWorkspaceSignal);
+        global.backend.disconnect(this._monitorChangedSignal);
 
         if (this._focusSignal)
             global.display.disconnect(this._focusSignal);
@@ -427,13 +449,13 @@ export class TileWindowManager {
         let selected_monitor: Monitor;
 
         // Select monitor
-        if (this._settings?.get_int('tile-insertion-behavior') == 0) {
+        if (this._settings?.get_int('monitor-tile-insertion-behavior') == 0) {
             selected_monitor = Monitor.bestFitMonitor(_monitors);
         } else {
             let focusWindow = this.getFocusedWindow();
             if (focusWindow) {
-                let tile: Tile = (focusWindow as any).tile;
-                selected_monitor = _monitors[tile.monitor];
+                let m = global.display.get_current_monitor();
+                selected_monitor = _monitors[m];
             } else {
                 selected_monitor = Monitor.bestFitMonitor(_monitors);
             }

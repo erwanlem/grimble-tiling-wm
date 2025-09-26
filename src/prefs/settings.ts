@@ -64,13 +64,13 @@ export class Radio {
             //         'insertion_focus_row'
             //     ]
             // },
-            // {
-            //     key: 'monitor-tile-insertion-behavior',
-            //     rowNames: [
-            //         'monitors_best_fit_row',
-            //         'monitors_focus_row'
-            //     ]
-            // },
+            {
+                key: 'monitor-tile-insertion-behavior',
+                rowNames: [
+                    'monitors_best_fit_row',
+                    'monitors_focus_row'
+                ]
+            },
             {
                 key: 'search-entry-position',
                 rowNames: [

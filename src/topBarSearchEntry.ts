@@ -2,7 +2,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import St from 'gi://St';
 import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import Clutter from 'gi://Clutter';
-import { autocomplete } from './autocomplete.js';
+import { gnomeExecutables, autocomplete } from './autocomplete.js';
 import { launchApp } from './utils.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
@@ -109,8 +109,13 @@ export class TopBarSearchEntry {
 
         this._searchEntry.clutter_text.connect('activate', (actor : any) => {
             let query = actor.get_text().trim().toLowerCase();
-
-            if (query === "" || launchApp([query])) {
+            
+            if (query === "") {
+                this.destroy();
+            } else if (gnomeExecutables.get(query)) {
+                gnomeExecutables.get(query)?.launch([], null);
+                this.destroy();
+            } else if (launchApp([query])) {
                 this.destroy();
             } else {
                 actor.set_text("");
