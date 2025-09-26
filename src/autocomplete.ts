@@ -44,7 +44,6 @@ export function load_executables() {
         Shell.AppSystem.get_default().get_installed().forEach(app => {
             let name = app.get_display_name() ?? app.get_name();
             let exe = app.get_commandline() ?? null;
-            console.warn(`name=${name}, exe=${exe}`);
             if (!gnomeExecutables.has(name) && exe)
                 gnomeExecutables.set(name.toLowerCase(), app);
         });

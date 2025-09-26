@@ -1,5 +1,6 @@
 import { Tile } from './tile.js';
 import { Direction } from './tileWindowManager.js';
+import { Position } from './position.js';
 
 
 export class Monitor {
@@ -38,6 +39,17 @@ export class Monitor {
 
     public size() : number {
         return this._root ? this._root._nr_tiles : 0;
+    }
+
+    public updateSize() {
+        if (this._root) {
+            const area = global.workspace_manager.get_active_workspace().get_work_area_for_monitor(this.index);
+            if (area) {
+                let pos = new Position(1.0, 0, 0, area.width, area.height);
+                pos.splitProportion = this._root.position.splitProportion;
+                this._root.resize(pos);
+            }
+        }
     }
 
     public static bestFitMonitor(monitors : Array<Monitor>) : Monitor {

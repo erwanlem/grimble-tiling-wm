@@ -186,7 +186,7 @@ export class Tile {
     }
 
     public update() {
-
+        
         if (this._window) {
 
             if (!this._window.isAlive)
@@ -240,13 +240,14 @@ export class Tile {
                 const workspc = this._window.get_workspace();
                 const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 
+
                 this._window?.move_resize_frame(
                     true,
                     area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
                     area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
                     this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
                     this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
-                
+
                 GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                     this._window?.move_frame(true,
                         area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),

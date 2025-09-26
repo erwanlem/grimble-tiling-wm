@@ -13,3 +13,4 @@ First release. Basic features.
 - Fix bug allowing maximize when only one window.
 - Search bar now integrates Gnome desktop apps.
 - New option to insert tile on multiple monitors.
+- Handle monitors hotplug and resolution update.

@@ -34,13 +34,13 @@ export class TileWindowManager {
 
     _windowCreatedSignal: number;
     _windowGrabSignal: number;
-    _workareaChangedSignal : number;
     _workspaceAddedSignal : number;
     _workspaceRemovedSignal : number;
     _activeWorkspaceSignal : number
     _enteredMonitorSignal : number;
     _grabBeginSignal : number;
     _monitorChangedSignal : number;
+    _workareasChangedSignal : number;
     /**************************************************/
     _settings: Gio.Settings | undefined;
 
@@ -98,17 +98,19 @@ export class TileWindowManager {
             (display, obj) => this._onWindowCreated(display, obj)
         );
 
-        this._workareaChangedSignal = global.display.connect(
-            'workareas-changed', 
-            () => this.updateMonitors()
-        );
-
         this._enteredMonitorSignal = global.display.connect(
             'window-entered-monitor', 
             (_, __, window) => {
                 let tile = (window as any).tile;
                 if (tile)
                     TileWindowManager.getMonitors()[tile.monitor].root?.update();
+        });
+
+        this._workareasChangedSignal = global.display.connect('workareas-changed', d => {
+            TileWindowManager._workspaces.forEach((val, key) => {
+                val.forEach(m => m.updateSize());
+            });
+            this.updateMonitors();
         });
 
         this._grabBeginSignal = global.display.connect('grab-op-begin', (_, w) => this._userResize.add(w));
@@ -135,15 +137,17 @@ export class TileWindowManager {
         });
 
         this._monitorChangedSignal = global.backend.get_monitor_manager().connect('monitors-changed', mm => {
-            // const n = global.display.get_n_monitors();
-            // if (n !== this._nMonitors) {
-            //     let diff = n - this._nMonitors;
-            //     if (diff > 0) {
-            //         this.addMonitors(diff);
-            //     }
-            // }
+            const n = global.display.get_n_monitors();
+            if (n !== this._nMonitors) {
+                let diff = n - this._nMonitors;
+                this._nMonitors = n;
+                if (diff > 0) {
+                    this._addMonitors(diff);
+                } else {
+                    this._removeMonitors(-diff);
+                }
+            }
         });
-
     }
 
 
@@ -156,12 +160,29 @@ export class TileWindowManager {
             return [];
     }
 
-    private addMonitors(n : number) {
+    private _addMonitors(n : number) {
         TileWindowManager._workspaces.forEach((val, _, __) => {
             for (let i = 0; i < n; i++) {
                 val.push(new Monitor(val.length));
             }
         });
+    }
+
+    private _removeMonitors(n : number) {
+        TileWindowManager._workspaces.forEach((val, _, __) => {
+            let windows = [];
+            for (let i = 0; i < n; i++) {
+                windows.push(val.pop());
+            }
+            for (let i = 0; i < windows.length; i++) {
+                windows[i]?.root?.forEach(t => {
+                    if (t.window) this._insertWindow(t.window);
+                });
+            }
+        });
+
+        this.updateMonitors();
+        this.updateAdjacents();
     }
 
 
@@ -219,6 +240,7 @@ export class TileWindowManager {
         global.display.disconnect(this._windowGrabSignal);
         global.display.disconnect(this._enteredMonitorSignal);
         global.display.disconnect(this._grabBeginSignal);
+        global.display.disconnect(this._workareasChangedSignal);
         global.workspace_manager.disconnect(this._workspaceAddedSignal);
         global.workspace_manager.disconnect(this._workspaceRemovedSignal);
         global.workspace_manager.disconnect(this._activeWorkspaceSignal);
@@ -281,7 +303,6 @@ export class TileWindowManager {
 
 
     private _onWorkspaceCreated(index : number) {
-        console.warn(`Workspace created ${index}`);
         let _monitors = new Array(global.display.get_n_monitors());
         for (const [i, value] of _monitors.entries()) {
             _monitors[i] = new Monitor(i);
@@ -292,7 +313,6 @@ export class TileWindowManager {
     }
 
     private _onWorkspaceRemoved(index : number) {
-        console.warn(`Workspace removed ${index}`);
         TileWindowManager._workspaces.delete(index);
         let newMap = new Map();
         let newFocus = new Map();
@@ -442,7 +462,7 @@ export class TileWindowManager {
     }
 
     private _insertWindow(window: Meta.Window, workspace : number | null = null) {
-        let _monitors = TileWindowManager._workspaces.get(workspace ? workspace : window.get_workspace().index());
+        let _monitors = TileWindowManager._workspaces.get(workspace != null ? workspace : window.get_workspace()?.index());
         if (!_monitors)
             return;
 
