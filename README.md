@@ -1,8 +1,13 @@
+<img src="resources/logo1.png" align="right" width="90px"/>
+<br clear="right">
+
 # Grimble: Gnome Tiling Window Manager
+
+
 
 *This extension is still in development, bug reports and new feature enhancements/suggestions are welcome.*
 
-You like GNOME? You like Tiling Window Managers? You can now have the best of both worlds with **Grimble**, the GNOME tiling window manager extension. 
+You like GNOME? You like Tiling Window Managers? You can now have the best of both worlds with **Grimble**, the GNOME tiling window manager extension.
 
 This extension provides the following features:
 - Create new tile
@@ -10,6 +15,10 @@ This extension provides the following features:
 - Resize tile
 - Maximize tile
 - Remove tile
+
+|<img src="resources/screen2.png">|
+|:--:|
+|Tiles with Grimble|
 
 **Grimble** is **flexible** with its easily **customizable keybindings** and its wide choice of options which let you build the tiling window manager you have always needed! But don't worry, if options and customizations frighten you, **Grimble** is ready to use. Grimble natively supports multiple monitors and workspaces.
 
