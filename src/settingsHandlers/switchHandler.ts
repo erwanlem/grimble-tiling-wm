@@ -16,21 +16,23 @@ export default class SwitchHandler {
         this._switchs.forEach(key => {
             settings.connect(
                 "changed::" + key,
-                (settings, key) => this._onSwitchChanged(key, settings)
+                () => this._onSwitchChanged(key, settings)
             );
         });
     }
 
 
     _onSwitchChanged(key : string, settings : Gio.Settings) {
+        let extensionObject;
+        let metadata;
         switch (key) {
             case "header-bar":
-                let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
-                let metadata = extensionObject?.metadata;
+                extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
+                metadata = extensionObject?.metadata;
                 if (metadata && settings.get_boolean('header-bar')) {
-                    enableWindowTheme(metadata, true);
+                    enableWindowTheme();
                 } else if (metadata) {
-                    enableWindowTheme(metadata, false);
+                    enableWindowTheme();
                 }
                 
                 break;

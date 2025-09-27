@@ -7,7 +7,7 @@ import KeybindingHandler from './settingsHandlers/keybindingHandler.js';
 import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
 import { Tile } from './tile.js';
-import { load_executables } from './autocomplete.js';
+import { loadExecutables } from './autocomplete.js';
 
 
 export default class Grimble extends Extension {
@@ -20,7 +20,7 @@ export default class Grimble extends Extension {
   enable() {
     this._settings = this.getSettings();
     
-    ExtensionTheme.enableWindowTheme(this.metadata);
+    ExtensionTheme.enableWindowTheme();
     Tile.padding = this._settings.get_int('tile-padding');
 
     this._tileWindowManager = new TileWindowManager();
@@ -28,14 +28,14 @@ export default class Grimble extends Extension {
     this._switchHandler = new SwitchHandler(this._tileWindowManager, this._settings);
     this._spinHandler = new SpinHandler(this._tileWindowManager, this._settings);
 
-    load_executables();
+    loadExecutables();
   }
 
   disable() {
     this._tileWindowManager?._saveBeforeSessionLock();
 
     // Restore theme
-    ExtensionTheme.disableWindowTheme(this.metadata);
+    ExtensionTheme.disableWindowTheme();
 
     this._tileWindowManager?.destroy();
     this._tileWindowManager = undefined;

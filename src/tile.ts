@@ -65,10 +65,10 @@ export class Tile {
 
     /** Tile factory
      * 
-     * @param window 
-     * @param position 
-     * @param monitor 
-     * @param parent 
+     * @param {Meta.Window} window 
+     * @param {Position} position 
+     * @param {number} monitor 
+     * @param {Tile | null} parent 
      * @returns 
      */
     public static createTileLeaf(window : Meta.Window, position : Position, monitor : number, parent : Tile | null = null) : Tile {
@@ -171,7 +171,7 @@ export class Tile {
     
     /** Update tile position and its children size
      * 
-     * @param position 
+     * @param {Position} position 
      */
     public resize(position : Position) {
         this._position = position;
@@ -206,7 +206,7 @@ export class Tile {
             if (this._window.minimized)
                 this._window.unminimize();
 
-            if (this._position.proportion == 1) {
+            if (this._position.proportion === 1) {
                 this.state = TileState.ALONE_MAXIMIZED;
 
                 if (this._window.maximized_horizontally || this._window.maximized_vertically)
@@ -279,7 +279,7 @@ export class Tile {
 
     /** Leaf to root research
      * 
-     * @param fn 
+     * @param {(el : Tile) => boolean} fn 
      * @returns 
      */
     public findParent(fn : (el : Tile) => boolean) : Tile | null {

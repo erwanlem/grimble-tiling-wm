@@ -8,6 +8,9 @@ fi
 glib-compile-schemas schemas/
 make clean
 make
+
+./tools/run-eslint.sh dist/*.js dist/prefs/*.js dist/settingsHandlers/*.js --fix
+
 cp gtktheme.css metadata.json ${DEST_FOLDER}
 cp -r schemas ${DEST_FOLDER}
 cp -r src/ui ${DEST_FOLDER}

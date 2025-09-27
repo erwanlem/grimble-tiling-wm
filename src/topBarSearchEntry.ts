@@ -87,7 +87,6 @@ export class TopBarSearchEntry {
             if (key === Clutter.KEY_KP_Right || key === Clutter.KEY_Right) {
                 // Only accept if cursor is at end and a suggestion exists
                 const typed = this._searchEntry?.get_text();
-                const pos = ct.get_cursor_position();
                 if (typed) {
                     completeText();
                     return Clutter.EVENT_STOP;
@@ -128,7 +127,14 @@ export class TopBarSearchEntry {
 
         let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
         let positionInt = extensionObject?.getSettings().get_int('search-entry-position');
-        let position = positionInt === 0 ? 'left' : positionInt === 1 ? 'center' : 'right';
+        let position;
+        if (positionInt === 0)
+            position = 'left';
+        else if (positionInt === 1)
+            position = 'center';
+        else 
+            position = 'right';
+        
         Main.panel.addToStatusArea('SearchEntry', this._searchButton, 0, position);
     }
 

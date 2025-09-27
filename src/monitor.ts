@@ -78,7 +78,7 @@ export class Monitor {
         };
         
         // We search for the closest tile in a Direction. We recursively iterate the tree
-        let fun = function findClosest(tile : Tile, dir : Direction) : BestTile {
+        let findClosest = (tile : Tile) : BestTile => {
             switch (dir) {
                 case Direction.East:
                     if (tile.leaf && tile.position.x > source.position.x) {
@@ -86,8 +86,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1, dir);
-                        let res2 = findClosest(tile.child2, dir);
+                        let res1 = findClosest(tile.child1);
+                        let res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -105,8 +105,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1, dir);
-                        let res2 = findClosest(tile.child2, dir);
+                        let res1 = findClosest(tile.child1);
+                        let res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -124,8 +124,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1, dir);
-                        let res2 = findClosest(tile.child2, dir);
+                        let res1 = findClosest(tile.child1);
+                        let res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -143,8 +143,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1, dir);
-                        let res2 = findClosest(tile.child2, dir);
+                        let res1 = findClosest(tile.child1);
+                        let res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -162,7 +162,7 @@ export class Monitor {
         }
 
         if (this.root) {
-            let res = fun(this.root, dir);
+            let res = findClosest(this.root);
             return res.tile;
         }
 

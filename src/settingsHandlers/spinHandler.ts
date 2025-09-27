@@ -16,16 +16,18 @@ export default class SpinHandler {
         this._spins.forEach(key => {
             settings.connect(
                 "changed::" + key,
-                (settings, key) => this._onSwitchChanged(key, settings)
+                () => this._onSwitchChanged(key, settings)
             );
         });
     }
 
     _onSwitchChanged(key : string, settings : Gio.Settings) {
+        let extensionObject;
+        let metadata;
         switch (key) {
             case "tile-padding":
-                let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
-                let metadata = extensionObject?.metadata;
+                extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
+                metadata = extensionObject?.metadata;
                 if (metadata && settings.get_int('tile-padding')) {
                     Tile.padding = settings.get_int('tile-padding');
                     this._windowManager.updateMonitors();

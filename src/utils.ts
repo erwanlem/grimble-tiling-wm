@@ -1,7 +1,11 @@
 import Gio from 'gi://Gio';
 
 
-
+/** Launch the given app
+ * 
+ * @param {string[]} command 
+ * @returns 
+ */
 export function launchApp(command : string[]) {
     try {
         Gio.Subprocess.new(

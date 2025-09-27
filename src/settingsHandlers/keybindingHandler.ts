@@ -96,7 +96,7 @@ export default class KeybindingHandler {
     /**
      * @param {string} shortcutName
      */
-    async _onCustomKeybindingPressed(shortcutName : string) {
+    _onCustomKeybindingPressed(shortcutName : string) {
 
         switch (shortcutName) {
             case 'keybinding-close':

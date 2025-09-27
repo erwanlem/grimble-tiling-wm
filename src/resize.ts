@@ -6,6 +6,12 @@ import { TileWindowManager } from './tileWindowManager.js';
 
 export var resizeSourceId : number | null = null;
 
+/** Resize Tile with size of rect in the East
+ * 
+ * @param {Tile} tile 
+ * @param {Mtk.Rectangle} rect 
+ * @returns 
+ */
 export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[1]) {
         if (resizeSourceId !== null)
@@ -23,9 +29,7 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
             el.position.x + el.position.width === tile.position.x + tile.position.width
     );
 
-    if (!p) {
-        return;
-    } else {
+    if (p) {
         let pos: Position = p.position;
         let diff = rect.width - tile.position.width;
         pos.width = pos.width + diff;
@@ -35,10 +39,10 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
 
         let sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let pos: Position = sibling.position;
-            pos.width -= diff;
-            pos.x += diff;
-            sibling.resize(pos);
+            let posSib: Position = sibling.position;
+            posSib.width -= diff;
+            posSib.x += diff;
+            sibling.resize(posSib);
             sibling.update();
         }
 
@@ -48,6 +52,12 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
     }
 }
 
+/** Resize Tile with size of rect in the West
+ * 
+ * @param {Tile} tile 
+ * @param {Mtk.Rectangle} rect 
+ * @returns 
+ */
 export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[0]) {
         if (resizeSourceId !== null)
@@ -65,9 +75,7 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
             el.position.x === tile.position.x
     );
 
-    if (!p) {
-        return;
-    } else {
+    if (p) {
         let pos: Position = p.position;
         let diff = rect.width - tile.position.width;
         pos.width = pos.width + diff;
@@ -77,9 +85,9 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
 
         let sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let pos: Position = sibling.position;
-            pos.width -= diff;
-            sibling.resize(pos);
+            let posSib: Position = sibling.position;
+            posSib.width -= diff;
+            sibling.resize(posSib);
             sibling.update();
         }
 
@@ -89,6 +97,12 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
     }
 }
 
+/** Resize Tile with size of rect in the South
+ * 
+ * @param {Tile} tile 
+ * @param {Mtk.Rectangle} rect 
+ * @returns 
+ */
 export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[3]) {
         if (resizeSourceId !== null)
@@ -106,9 +120,7 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
             el.position.y + el.position.height === tile.position.y + tile.position.height
     );
 
-    if (!p) {
-        return;
-    } else {
+    if (p) {
         let pos: Position = p.position;
         let diff = rect.height - pos.height;
         pos.height = rect.height;
@@ -117,10 +129,10 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
 
         let sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let pos: Position = sibling.position;
-            pos.height -= diff;
-            pos.y += diff;
-            sibling.resize(pos);
+            let posSib: Position = sibling.position;
+            posSib.height -= diff;
+            posSib.y += diff;
+            sibling.resize(posSib);
             sibling.update();
         }
 
@@ -130,6 +142,12 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
     }
 }
 
+/** Resize Tile with size of rect in the North
+ * 
+ * @param {Tile} tile 
+ * @param {Mtk.Rectangle} rect 
+ * @returns 
+ */
 export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[2]) {
         if (resizeSourceId !== null)
@@ -147,9 +165,7 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
             el.position.y === tile.position.y
     );
 
-    if (!p) {
-        return;
-    } else {
+    if (p) {
         let pos: Position = p.position;
         let diff = rect.height - pos.height;
         pos.height += diff;
@@ -159,9 +175,9 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
 
         let sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let pos: Position = sibling.position;
-            pos.height -= diff;
-            sibling.resize(pos);
+            let posSib: Position = sibling.position;
+            posSib.height -= diff;
+            sibling.resize(posSib);
             sibling.update();
         }
 
