@@ -3,3 +3,4 @@ node_modules
 schemas/gschemas.compiled
 GTile
 grimble@lmt.github.io.shell-extension.zip
+.eslintcache
