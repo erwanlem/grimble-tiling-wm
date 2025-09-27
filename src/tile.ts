@@ -28,6 +28,7 @@ export class Tile {
     _window: Meta.Window | null;
     _state : TileState;
     _orientation: Orientation;
+    _updateSource : number | null;
 
     _workspace : number;
 
@@ -54,6 +55,8 @@ export class Tile {
         this._orientation = Orientation.None;
         this._nr_tiles = 0;
         this._workspace = 0;
+
+        this._updateSource = null;
 
         // west / east / north / south
         this._adjacents = [false, false, false, false];
@@ -210,7 +213,10 @@ export class Tile {
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
                 const workspc = this._window.get_workspace();
-                const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
+                const area = workspc?.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
+
+                if (!area)
+                    return;
 
                 this._position.x = 0;
                 this._position.y = 0;
@@ -224,10 +230,13 @@ export class Tile {
                     this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
                     this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                if (this._updateSource !== null)
+                    GLib.Source.remove(this._updateSource);
+                this._updateSource = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                     this._window?.move_frame(true,
                         area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
                         area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                    this._updateSource = null;
                     return GLib.SOURCE_REMOVE;
                 });
 
@@ -238,8 +247,10 @@ export class Tile {
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
 
                 const workspc = this._window.get_workspace();
-                const area = workspc.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
+                const area = workspc?.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
 
+                if (!area)
+                    return;
 
                 this._window?.move_resize_frame(
                     true,
@@ -248,10 +259,13 @@ export class Tile {
                     this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
                     this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+                if (this._updateSource !== null)
+                    GLib.Source.remove(this._updateSource);
+                this._updateSource = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                     this._window?.move_frame(true,
                         area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
                         area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                    this._updateSource = null;
                     return GLib.SOURCE_REMOVE;
                 });
             }
@@ -345,6 +359,14 @@ export class Tile {
     private setChild(child1 : Tile, child2 : Tile) {
         this._child1 = child1;
         this._child2 = child2;
+    }
+
+
+    public destroy() {
+        if (this._updateSource !== null)
+            GLib.Source.remove(this._updateSource);
+        this._updateSource = null;
+        this._window = null;
     }
 
 

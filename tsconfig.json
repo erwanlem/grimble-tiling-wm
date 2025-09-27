@@ -6,6 +6,8 @@
     "sourceMap": false,
     "strict": true,
     "target": "ES2022",
+    "pretty": true,
+    "newLine": "lf",
     "lib": [
       "ES2022"
     ],

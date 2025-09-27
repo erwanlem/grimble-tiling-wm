@@ -1,6 +1,5 @@
 import { ExtensionMetadata } from '@girs/gnome-shell/extensions/extension';
 import Gio from 'gi://Gio';
-import GLib from 'gi://GLib';
 
 export var originalLayout : string;
 export var originalTiling : boolean;

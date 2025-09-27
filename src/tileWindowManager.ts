@@ -20,7 +20,6 @@ export enum Direction {
     East
 }
 
-let LOCKED = false;
 
 export class TileWindowManager {
 
@@ -29,7 +28,6 @@ export class TileWindowManager {
     _wrappedWindows: Map<Meta.Window, [() => void,
         (dir: Meta.MaximizeFlags | null) => void,
         number, number, number, number, number, number]>;
-    _focusSignal : number | undefined;
     _nMonitors : number;
 
     _windowCreatedSignal: number;
@@ -45,6 +43,8 @@ export class TileWindowManager {
 
     _userResize : Set<Meta.Window>;
 
+    static locked = false;
+
     // Alternate windows rotation
     static rotateEven = [0, 0];
 
@@ -53,6 +53,8 @@ export class TileWindowManager {
     // Search bar widgets
     _topBarSearchEntry : TopBarSearchEntry | undefined;
     _modalSearchEntry : ModalSearchEntry | undefined;
+
+    _sourceId : number | null;
 
     // Tiles structures
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
@@ -77,7 +79,9 @@ export class TileWindowManager {
         this._wrappedWindows = new Map();
         this._userResize = new Set();
 
-        if (LOCKED) {
+        this._sourceId = null;
+
+        if (TileWindowManager.locked) {
             this._loadAfterSessionLock();
         }
 
@@ -236,9 +240,10 @@ export class TileWindowManager {
         global.workspace_manager.disconnect(this._activeWorkspaceSignal);
         global.backend.disconnect(this._monitorChangedSignal);
 
-        if (this._focusSignal)
-            global.display.disconnect(this._focusSignal);
+        if (Resize.resizeSourceId !== null)
+            GLib.Source.remove(Resize.resizeSourceId);
 
+        // Disconnect each window
         this._wrappedWindows.forEach(
             (value, key) => {
                 key.minimize = value[0]; key.maximize = value[1];
@@ -248,7 +253,9 @@ export class TileWindowManager {
                 this._wrappedWindows.delete(key);
             }
         );
+
         this._wrappedWindows.clear();
+        
         this._topBarSearchEntry?.destroy();
     }
 
@@ -329,14 +336,13 @@ export class TileWindowManager {
     private _onWindowCreated(_: Meta.Display | null, window: Meta.Window) {
 
         // Wait for first frame to be sure window is fully created
-        window.get_compositor_private().connect(
+        let fframe = window.get_compositor_private().connect(
             'first-frame',
             () => {
                 this._addNewWindow(window);
             }
         );
     }
-
 
 
     private _windowWorkspaceChanged(window : Meta.Window) {
@@ -405,7 +411,10 @@ export class TileWindowManager {
             }
         );
 
-        let unmanagedSignal = window.connect('unmanaged', () => this._removeWindow(window));
+        let unmanagedSignal = window.connect('unmanaged', () =>  {
+            this._removeWindow(window);
+            this._removeWindowSignals(window);
+        });
 
         let workspaceChangedSignal = window.connect('workspace-changed', 
             (window) => this._windowWorkspaceChanged(window)
@@ -441,14 +450,6 @@ export class TileWindowManager {
         this.configureWindowSignals(window);
 
         this._insertWindow(window);
-
-        this.updateFocusHistory(window);
-        this._focusSignal = window.connect(
-            'focus',
-            () => {
-                this.updateFocusHistory(window);
-            }
-        );
     }
 
     private _insertWindow(window: Meta.Window, workspace : number | null = null) {
@@ -506,8 +507,23 @@ export class TileWindowManager {
     }
 
 
+    private _removeWindowSignals(window : Meta.Window) {
+        (window as any).tile?.destroy();
+
+        // Disconnect signals
+        let s = this._wrappedWindows.get(window);
+        if (s) {
+            window.minimize = s[0];  window.maximize = s[1];
+            window.disconnect(s[2]); window.disconnect(s[3]);
+            window.disconnect(s[4]); window.disconnect(s[5]);
+            window.disconnect(s[6]); window.disconnect(s[7]);
+        }
+        
+        this._wrappedWindows.delete(window);
+    }
+
+
     private _removeWindow(window: Meta.Window) {
-        this.updateFocusHistory(window, false);
 
         // get Tile from window
         let tile: Tile = (window as any).tile;
@@ -530,6 +546,7 @@ export class TileWindowManager {
             TileWindowManager.getMonitors()[m].root = null;
         else
             TileWindowManager.getMonitors()[m].root?.update();
+
     }
 
 
@@ -546,8 +563,11 @@ export class TileWindowManager {
         let rect : Mtk.Rectangle;
         switch (op) {
             case Meta.GrabOp.MOVING:
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     TileWindowManager.getMonitors()[m].root?.update();
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -555,8 +575,11 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_E:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeE(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -564,8 +587,11 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_W:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeW(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -573,8 +599,11 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_N:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeN(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -582,8 +611,11 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_S:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeS(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -591,9 +623,12 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_NE:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeN(tile, rect);
                     Resize.resizeE(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -601,9 +636,12 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_NW:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeN(tile, rect);
                     Resize.resizeW(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -611,9 +649,12 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_SE:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeS(tile, rect);
                     Resize.resizeE(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -621,9 +662,12 @@ export class TileWindowManager {
             case Meta.GrabOp.RESIZING_SW:
                 rect = window.get_frame_rect();
 
-                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                if (this._sourceId !== null)
+                    GLib.Source.remove(this._sourceId);
+                this._sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     Resize.resizeS(tile, rect);
                     Resize.resizeW(tile, rect);
+                    this._sourceId = null;
                     return GLib.SOURCE_REMOVE;
                 });
                 break;
@@ -936,7 +980,7 @@ export class TileWindowManager {
         if (!Main.sessionMode.isLocked)
             return;
 
-        LOCKED = true;
+        TileWindowManager.locked = true;
 
         const userPath = GLib.get_user_config_dir();
         const parentPath = GLib.build_filenamev([userPath, '/grimble']);
@@ -979,10 +1023,10 @@ export class TileWindowManager {
 
 
     public _loadAfterSessionLock() {
-        if (!LOCKED)
+        if (!TileWindowManager.locked)
             return;
 
-        LOCKED = false;
+        TileWindowManager.locked = false;
 
         const userPath = GLib.get_user_config_dir();
         const path = GLib.build_filenamev([userPath, '/grimble/tilingWmSession2.json']);

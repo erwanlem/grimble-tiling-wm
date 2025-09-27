@@ -4,10 +4,15 @@ import GLib from 'gi://GLib';
 import Mtk from 'gi://Mtk';
 import { TileWindowManager } from './tileWindowManager.js';
 
+export var resizeSourceId : number | null = null;
+
 export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[1]) {
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (resizeSourceId !== null)
+            GLib.Source.remove(resizeSourceId);
+        resizeSourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            resizeSourceId = null;
             return GLib.SOURCE_REMOVE;
         });
         return;
@@ -19,7 +24,7 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
     );
 
     if (!p) {
-        return GLib.SOURCE_REMOVE;
+        return;
     } else {
         let pos: Position = p.position;
         let diff = rect.width - tile.position.width;
@@ -45,8 +50,11 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
 
 export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[0]) {
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (resizeSourceId !== null)
+            GLib.Source.remove(resizeSourceId);
+        resizeSourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            resizeSourceId = null;
             return GLib.SOURCE_REMOVE;
         });
         return;
@@ -58,7 +66,7 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
     );
 
     if (!p) {
-        return GLib.SOURCE_REMOVE;
+        return;
     } else {
         let pos: Position = p.position;
         let diff = rect.width - tile.position.width;
@@ -83,8 +91,11 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
 
 export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[3]) {
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (resizeSourceId !== null)
+            GLib.Source.remove(resizeSourceId);
+        resizeSourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            resizeSourceId = null;
             return GLib.SOURCE_REMOVE;
         });
         return;
@@ -96,7 +107,7 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
     );
 
     if (!p) {
-        return GLib.SOURCE_REMOVE;
+        return;
     } else {
         let pos: Position = p.position;
         let diff = rect.height - pos.height;
@@ -121,8 +132,11 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
 
 export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
     if (!tile.adjacents[2]) {
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (resizeSourceId !== null)
+            GLib.Source.remove(resizeSourceId);
+        resizeSourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             TileWindowManager.getMonitors()[tile.monitor].root?.update();
+            resizeSourceId = null;
             return GLib.SOURCE_REMOVE;
         });
         return;
@@ -134,7 +148,7 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
     );
 
     if (!p) {
-        return GLib.SOURCE_REMOVE;
+        return;
     } else {
         let pos: Position = p.position;
         let diff = rect.height - pos.height;

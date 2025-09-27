@@ -2,9 +2,10 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import St from 'gi://St';
 import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import Clutter from 'gi://Clutter';
-import { gnomeExecutables, autocomplete } from './autocomplete.js';
+import { gnomeExecutables, autocomplete, clear } from './autocomplete.js';
 import { launchApp } from './utils.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import GLib from 'gi://GLib';
 
 export class TopBarSearchEntry {
     _searchButton : PanelButton | undefined;
@@ -145,6 +146,8 @@ export class TopBarSearchEntry {
             this._searchButton = undefined;
             this._searchSuggestion = undefined;
         }
+            
+        clear();
     }
 
 }
