@@ -70,7 +70,9 @@ export class Position {
 
 
     public static fromObject(obj : any) {
-        return new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height, obj.index);
+        let pos = new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height, obj.index);
+        pos.splitProportion = obj.splitProportion;
+        return pos;
     } 
 
 }

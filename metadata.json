@@ -3,7 +3,7 @@
   "name": "Grimble Tiling WM",
   "description": "A Tiling Window Manager for GNOME",
   "url": "https://github.com/erwanlem/GTile",
-  "version": 0.10,
+  "version": 1.0,
   "settings-schema": "org.gnome.shell.extensions.gtile",
   "shell-version": [
     "46", "47", "48"

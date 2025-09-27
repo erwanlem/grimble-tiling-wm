@@ -19,7 +19,7 @@ import { TileWindowManager, Direction } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 
-const MAX_RESIZE_GAP = 40;
+const MAX_RESIZE_GAP = 50;
 const MIN_RESIZE_GAP = 10;
 
 

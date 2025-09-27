@@ -321,6 +321,7 @@ export class Tile {
         tile.nr_tiles = obj._nr_tiles;
         tile.window = obj._window;
         tile.adjacents = obj._adjacents;
+        tile.workspace = obj._workspace;
         if (parent)
             tile.parent = parent;
         if (tile.window)

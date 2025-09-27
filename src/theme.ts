@@ -41,24 +41,6 @@ function readFile(path : string) {
 
 
 export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = false) {
-    if (hideHeaderBar) {
-       let gtkTheme = readFile(metadata.path + "/gtktheme.css");
-        let original = readFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");
-
-        if (original)
-            originalTheme = original;
-
-        if (gtkTheme) {
-            writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", gtkTheme);
-            writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", gtkTheme);
-        }
-    } else if (originalTheme) {
-        writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", originalTheme);
-        writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
-        originalTheme = undefined;
-    }
-
-    //reload_gtk_theme();
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     //originalLayout = settings.get_string('button-layout');
@@ -75,12 +57,6 @@ export function enableWindowTheme(metadata : ExtensionMetadata, hideHeaderBar = 
 
 
 export function disableWindowTheme(metadata : ExtensionMetadata) {
-    if (originalTheme) {
-        writeFile(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css", originalTheme);
-        writeFile(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css", originalTheme);
-    }
-
-    //reload_gtk_theme();
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     settings.reset('button-layout');
