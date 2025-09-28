@@ -15,7 +15,7 @@
   "homepage": "https://github.com/example/my-extension#readme",
   "sideEffects": false,
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "eslint": "^9.36.0",
     "eslint-plugin-jsdoc": "^53.0.1",
     "typescript": "^5.9.2"
   },
