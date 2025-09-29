@@ -2,8 +2,8 @@
   "uuid": "grimble@lmt.github.io",
   "name": "Grimble Tiling WM",
   "description": "You like GNOME? You like Tiling Window Managers? You can now have the best of both worlds with Grimble, the GNOME tiling window manager extension.",
-  "url": "https://github.com/erwanlem/GTile",
-  "settings-schema": "org.gnome.shell.extensions.gtile",
+  "url": "https://github.com/erwanlem/grimble-tiling-wm",
+  "settings-schema": "org.gnome.shell.extensions.grimble",
   "shell-version": [
     "46", "47", "48"
   ]

@@ -161,7 +161,7 @@
           <object class="ShortcutListener" id="keybinding_focus">
             <property name="title" translatable="yes"
               comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus">Change focus</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab">Press this shortcut, then use a directional arrow to change the focus. Press `Escape` to abort.</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab">Press this shortcut, then use directional arrows to change the focus. Press `Escape` to abort.</property>
           </object>
         </child>
         <child>

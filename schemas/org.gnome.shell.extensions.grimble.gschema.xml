@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.gtile" path="/org/gnome/shell/extensions/gtile/">
+  <schema id="org.gnome.shell.extensions.grimble" path="/org/gnome/shell/extensions/grimble/">
 
     <key name="header-bar" type="b">
       <default>false</default>
@@ -51,7 +51,7 @@
     </key>
     <key name="keybinding-open-settings" type="as">
       <default><![CDATA[['<Control><Super>g']]]></default>
-      <summary>Gtile settings</summary>
+      <summary>Grimble settings</summary>
       <description>Custom shortcut</description>
     </key>
     <key name="keybinding-maximize" type="as">

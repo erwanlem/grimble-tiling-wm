@@ -199,15 +199,15 @@ export class TileWindowManager {
     /**
      * @returns Meta.Window or null
      */
-    private getFocusedWindow() {
-        let index = global.workspace_manager.get_active_workspace_index();
-        let history = this._focusHistory.get(index);
-        if (history?.length && history.length > 0) {
-            return history[0];
-        } else {
-            return null;
-        }
-    }
+    // private getFocusedWindow() {
+    //     let index = global.workspace_manager.get_active_workspace_index();
+    //     let history = this._focusHistory.get(index);
+    //     if (history?.length && history.length > 0) {
+    //         return history[0];
+    //     } else {
+    //         return null;
+    //     }
+    // }
     
     /** We keep track of the focused window using the `focus` signal
      * because it is more reliable than global.display.focusWindow
@@ -483,7 +483,7 @@ export class TileWindowManager {
             if (this._settings?.get_int('tile-insertion-behavior') === 0) {
                 _monitors[index].root?.addWindowOnBlock(window);
             } else {
-                let focusWindow = this.getFocusedWindow();
+                let focusWindow = null; // this.getFocusedWindow();
                 if (focusWindow) {
                     let tile: Tile = (focusWindow as any).tile;
                     tile.addWindowOnBlock(window);
@@ -856,7 +856,7 @@ export class TileWindowManager {
 
 
     public moveTile(dir : Direction) {
-        let window : Meta.Window | null = this.getFocusedWindow();
+        let window : Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
         
@@ -880,7 +880,7 @@ export class TileWindowManager {
 
 
     public changeFocus(dir : Direction) {
-        let window : Meta.Window | null = this.getFocusedWindow();
+        let window : Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
         
