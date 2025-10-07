@@ -14,7 +14,7 @@ import Shell from 'gi://Shell';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import {Shortcut} from '../prefs/settings.js';
+import {Shortcut} from '../common.js';
 import { TileWindowManager, Direction } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
@@ -39,16 +39,16 @@ export default class KeybindingHandler {
     _prevArrowTyped : [Direction, number];
 
 
-    constructor(windowManager : TileWindowManager, settings : Gio.Settings) {
-        this._settings = settings;
-        this._extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
+    constructor(windowManager : TileWindowManager, extension : Extension) {
+        this._extensionObject = extension;
+        this._settings = this._extensionObject?.getSettings();
         this._windowManager = windowManager;
         this._prevArrowTyped = [Direction.North, 0];
         this._keyBindings = Shortcut.getShortcuts();
         this._keyBindings.forEach(key => {
             Main.wm.addKeybinding(
                 key,
-                settings,
+                this._settings,
                 Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                 Shell.ActionMode.NORMAL,
                 this._onCustomKeybindingPressed.bind(this, key)

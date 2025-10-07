@@ -23,10 +23,10 @@ export default class Grimble extends Extension {
     ExtensionTheme.enableWindowTheme();
     Tile.padding = this._settings.get_int('tile-padding');
 
-    this._tileWindowManager = new TileWindowManager();
-    this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this._settings);
-    this._switchHandler = new SwitchHandler(this._tileWindowManager, this._settings);
-    this._spinHandler = new SpinHandler(this._tileWindowManager, this._settings);
+    this._tileWindowManager = new TileWindowManager(this);
+    this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this);
+    this._switchHandler = new SwitchHandler(this._tileWindowManager, this);
+    this._spinHandler = new SpinHandler(this._tileWindowManager, this);
 
     loadExecutables();
   }
@@ -43,6 +43,8 @@ export default class Grimble extends Extension {
     this._keybindingHandler?.destroy();
     this._keybindingHandler = undefined;
 
-    
+    this._spinHandler = undefined;
+    this._switchHandler = undefined;
+    this._settings = null;    
   }
 }

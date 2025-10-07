@@ -2,14 +2,12 @@ import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import './prefs/shortcutListener.js';
-import {Shortcut, Switches, Radio, Spin} from './prefs/settings.js';
+import {Shortcut, Switches, Radio, Spin} from './common.js';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 
 export default class GrimblePreferences extends ExtensionPreferences {
-    _settings: Gio.Settings | null = null;
-    _prefWindow: Adw.PreferencesWindow | null = null;
 
     fillPreferencesWindow(window: Adw.PreferencesWindow): Promise<void> {
         const settings = this.getSettings();

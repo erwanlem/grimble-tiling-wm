@@ -4,8 +4,7 @@ import { Button as PanelButton } from 'resource:///org/gnome/shell/ui/panelMenu.
 import Clutter from 'gi://Clutter';
 import { gnomeExecutables, autocomplete, clear } from './autocomplete.js';
 import { launchApp } from './utils.js';
-import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-import GLib from 'gi://GLib';
+import Gio from 'gi://Gio'
 
 export class TopBarSearchEntry {
     _searchButton : PanelButton | undefined;
@@ -14,7 +13,7 @@ export class TopBarSearchEntry {
     _searchSuggestion : St.Label | undefined;
     _alive : boolean;
 
-    constructor() {
+    constructor(settings : Gio.Settings) {
         this._alive = true;
         this._searchButton = new PanelButton(0.0, 'searchEntry', false);
 
@@ -112,7 +111,7 @@ export class TopBarSearchEntry {
             
             if (query === "") {
                 this.destroy();
-            } else if (gnomeExecutables.get(query)) {
+            } else if (gnomeExecutables?.get(query)) {
                 gnomeExecutables.get(query)?.launch([], null);
                 this.destroy();
             } else if (launchApp([query])) {
@@ -125,8 +124,7 @@ export class TopBarSearchEntry {
 
         this._searchButton.add_child(this._searchContainer);
 
-        let extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
-        let positionInt = extensionObject?.getSettings().get_int('search-entry-position');
+        let positionInt = settings.get_int('search-entry-position');
         let position;
         if (positionInt === 0)
             position = 'left';

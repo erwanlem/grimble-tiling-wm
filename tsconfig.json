@@ -24,7 +24,7 @@
     "src/resize.ts",
     "src/prefs.ts",
     "src/prefs/shortcutListener.ts",
-    "src/prefs/settings.ts",
+    "src/common.ts",
     "src/monitor.ts",
     "src/utils.ts",
     "src/settingsHandlers/keybindingHandler.ts",

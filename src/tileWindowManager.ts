@@ -60,9 +60,8 @@ export class TileWindowManager {
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
 
 
-    constructor() {
-        let _extensionObject = Extension.lookupByUUID('grimble@lmt.github.io');
-        this._settings = _extensionObject?.getSettings();
+    constructor(extension : Extension) {
+        this._settings = extension?.getSettings();
 
         this._focusHistory = new Map();
         this._nMonitors = global.display.get_n_monitors();
@@ -257,6 +256,8 @@ export class TileWindowManager {
         this._wrappedWindows.clear();
         
         this._topBarSearchEntry?.destroy();
+
+        (TileWindowManager._workspaces as any) = null;
     }
 
     
@@ -901,7 +902,8 @@ export class TileWindowManager {
             return ;
         }
 
-        this._topBarSearchEntry = new TopBarSearchEntry();
+        if (this._settings)
+            this._topBarSearchEntry = new TopBarSearchEntry(this._settings);
     }
 
 
