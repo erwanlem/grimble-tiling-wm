@@ -21,5 +21,7 @@ cp src/stylesheet.css ${DEST_FOLDER}
 cp -r dist/* ${DEST_FOLDER}
 cp LICENSE ${DEST_FOLDER}
 
+rm Grimble/modalSearchEntry.js
+
 (cd Grimble && zip -r ../grimble@lmt.github.io.shell-extension.zip ./*)
 rm -rf Grimble

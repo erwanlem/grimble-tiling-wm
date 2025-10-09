@@ -1,5 +1,3 @@
-import Gio from 'gi://Gio';
-
 import {Switches} from '../common.js';
 import { TileWindowManager } from '../tileWindowManager.js';
 import { enableWindowTheme } from '../theme.js';

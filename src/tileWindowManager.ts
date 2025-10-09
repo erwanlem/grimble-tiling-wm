@@ -48,8 +48,6 @@ export class TileWindowManager {
     // Alternate windows rotation
     static rotateEven = [0, 0];
 
-    _focusHistory: Map<number, Array<Meta.Window>>;
-
     // Search bar widgets
     _topBarSearchEntry : TopBarSearchEntry | undefined;
     _modalSearchEntry : ModalSearchEntry | undefined;
@@ -66,7 +64,6 @@ export class TileWindowManager {
 
         this._settings = extension?.getSettings();
 
-        this._focusHistory = new Map();
         this._nMonitors = global.display.get_n_monitors();
 
         for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
@@ -75,7 +72,6 @@ export class TileWindowManager {
                 _monitors[j] = new Monitor(j);
             }
             TileWindowManager._workspaces.set(i, _monitors);
-            this._focusHistory.set(i, []);
         }
 
         this._wrappedWindows = new Map();
@@ -198,39 +194,6 @@ export class TileWindowManager {
         });
     }
 
-    /**
-     * @returns Meta.Window or null
-     */
-    // private getFocusedWindow() {
-    //     let index = global.workspace_manager.get_active_workspace_index();
-    //     let history = this._focusHistory.get(index);
-    //     if (history?.length && history.length > 0) {
-    //         return history[0];
-    //     } else {
-    //         return null;
-    //     }
-    // }
-    
-    /** We keep track of the focused window using the `focus` signal
-     * because it is more reliable than global.display.focusWindow
-     * 
-     * @param {Meta.Window} window 
-     * @param {boolean} focused false to remove the focused window
-     */
-    private updateFocusHistory(window: Meta.Window, focused = true) {
-        let index = global.workspace_manager.get_active_workspace_index();
-        if (!this._focusHistory.has(index)) {
-            this._focusHistory.set(index, []);
-        }
-        let history = this._focusHistory.get(index);
-        if (history) {
-            history = history.filter((w) => w !== window)
-            if (focused)
-                history.unshift(window)
-            this._focusHistory.set(index, history);
-        }
-    }
-
 
     public destroy() {
         global.display.disconnect(this._windowCreatedSignal);
@@ -316,19 +279,15 @@ export class TileWindowManager {
     private _onWorkspaceRemoved(index : number) {
         TileWindowManager._workspaces.delete(index);
         let newMap = new Map();
-        let newFocus = new Map();
         TileWindowManager._workspaces.forEach((value, key) => {
             if (key > index) {
-                newFocus.set(key-1, this._focusHistory.get(key));
                 value.forEach(el => el.root?.forEach(t => {t.workspace = key-1;}));
                 newMap.set(key-1, value);
             } else {
-                newFocus.set(key, this._focusHistory.get(key));
                 newMap.set(key, value);
             }
         });
 
-        this._focusHistory = newFocus;
         TileWindowManager._workspaces = newMap;
 
         this.updateMonitors();

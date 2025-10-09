@@ -1,5 +1,3 @@
-import Gio from 'gi://Gio';
-
 import {Spin} from '../common.js';
 import { TileWindowManager } from '../tileWindowManager.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';

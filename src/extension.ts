@@ -11,11 +11,11 @@ import { loadExecutables, destroy as unloadExecutables } from './autocomplete.js
 
 
 export default class Grimble extends Extension {
-  _tileWindowManager?: TileWindowManager;
+  _tileWindowManager: TileWindowManager | null = null;
   _settings : Gio.Settings | null = null;
-  _keybindingHandler : KeybindingHandler | undefined;
-  _switchHandler : SwitchHandler | undefined;
-  _spinHandler : SpinHandler | undefined;
+  _keybindingHandler : KeybindingHandler | null = null;
+  _switchHandler : SwitchHandler | null = null;
+  _spinHandler : SpinHandler | null = null;
 
   enable() {
     this._settings = this.getSettings();
@@ -39,13 +39,13 @@ export default class Grimble extends Extension {
     ExtensionTheme.disableWindowTheme();
 
     this._tileWindowManager?.destroy();
-    this._tileWindowManager = undefined;
+    this._tileWindowManager = null;
 
     this._keybindingHandler?.destroy();
-    this._keybindingHandler = undefined;
+    this._keybindingHandler = null;
 
-    this._spinHandler = undefined;
-    this._switchHandler = undefined;
+    this._spinHandler = null;
+    this._switchHandler = null;
     this._settings = null;    
   }
 }
