@@ -90,7 +90,9 @@ export function clear() {
     if (sourceId !== null)
         GLib.Source.remove(sourceId);
     sourceId = null;
+}
 
+export function destroy() {
     executables = null;
     gnomeExecutables = null;
 }

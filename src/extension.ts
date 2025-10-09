@@ -7,7 +7,7 @@ import KeybindingHandler from './settingsHandlers/keybindingHandler.js';
 import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
 import { Tile } from './tile.js';
-import { loadExecutables } from './autocomplete.js';
+import { loadExecutables, destroy as unloadExecutables } from './autocomplete.js';
 
 
 export default class Grimble extends Extension {
@@ -32,6 +32,7 @@ export default class Grimble extends Extension {
   }
 
   disable() {
+    unloadExecutables();
     this._tileWindowManager?._saveBeforeSessionLock();
 
     // Restore theme

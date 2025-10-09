@@ -61,6 +61,9 @@ export class TileWindowManager {
 
 
     constructor(extension : Extension) {
+        if (!TileWindowManager._workspaces)
+            TileWindowManager._workspaces = new Map();
+
         this._settings = extension?.getSettings();
 
         this._focusHistory = new Map();
