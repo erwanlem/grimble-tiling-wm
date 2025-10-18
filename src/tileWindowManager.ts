@@ -4,11 +4,11 @@ import { Orientation, Tile, TileState } from "./tile.js";
 import { Position } from "./position.js";
 import * as Resize from "./resize.js";
 import Gio from 'gi://Gio';
-import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Monitor } from './monitor.js';
 import Shell from 'gi://Shell';
 import Mtk from 'gi://Mtk';
+import Grimble from './extension.js'
 
 import {TopBarSearchEntry} from './topBarSearchEntry.js';
 import {ModalSearchEntry} from './modalSearchEntry.js';
@@ -39,7 +39,7 @@ export class TileWindowManager {
     _monitorChangedSignal : number;
     _workareasChangedSignal : number;
     /**************************************************/
-    _settings: Gio.Settings | undefined;
+    _settings: Gio.Settings | null;
 
     _userResize : Set<Meta.Window>;
 
@@ -58,11 +58,11 @@ export class TileWindowManager {
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
 
 
-    constructor(extension : Extension) {
+    constructor(extension : Grimble) {
         if (!TileWindowManager._workspaces)
             TileWindowManager._workspaces = new Map();
 
-        this._settings = extension?.getSettings();
+        this._settings = extension._settings;
 
         this._nMonitors = global.display.get_n_monitors();
 
@@ -145,8 +145,12 @@ export class TileWindowManager {
 
 
 
-    public static getMonitors() : Monitor[] {
-        let wk = TileWindowManager._workspaces.get(global.workspace_manager.get_active_workspace_index());
+    public static getMonitors(workspaceIndex : number | undefined = undefined) : Monitor[] {
+        let wk;
+        if (!workspaceIndex)
+            wk = TileWindowManager._workspaces.get(global.workspace_manager.get_active_workspace_index());
+        else
+            wk = TileWindowManager._workspaces.get(workspaceIndex);
         if (wk)
             return wk;
         else
@@ -313,10 +317,10 @@ export class TileWindowManager {
         if (tile) {
             let w = window.get_workspace()?.index();
             if (w !== null && tile.workspace !== w) {
-                tile.workspace = w;
                 window.change_workspace_by_index(w, false);
                 this._removeWindow(window);
                 this._insertWindow(window, w);
+                tile.workspace = w;
 
                 this.updateMonitors();
                 this.updateAdjacents();
@@ -422,6 +426,7 @@ export class TileWindowManager {
 
         let selectedMonitor: Monitor;
 
+
         // Select monitor
         if (this._settings?.get_int('monitor-tile-insertion-behavior') === 0) {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
@@ -500,10 +505,11 @@ export class TileWindowManager {
             });
         }
 
-        if (tile.removeTile() === null)
-            TileWindowManager.getMonitors()[m].root = null;
-        else
+        if (tile.removeTile() === null) {
+            TileWindowManager.getMonitors(tile.workspace)[m].root = null;
+        } else {
             TileWindowManager.getMonitors()[m].root?.update();
+        }
 
     }
 

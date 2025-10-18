@@ -16,8 +16,7 @@ import GLib from 'gi://GLib';
 
 import {Shortcut} from '../common.js';
 import { TileWindowManager, Direction } from '../tileWindowManager.js';
-import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-
+import Grimble from "../extension.js"
 
 const MAX_RESIZE_GAP = 50;
 const MIN_RESIZE_GAP = 10;
@@ -31,7 +30,7 @@ const MIN_RESIZE_GAP = 10;
 export default class KeybindingHandler {
     _keyBindings : Array<string>;
     _windowManager : TileWindowManager;
-    _extensionObject : Extension | null = null;
+    _extensionObject : Grimble | null = null;
     _settings : Gio.Settings;
 
     _waitingAction : string | undefined;
@@ -39,9 +38,9 @@ export default class KeybindingHandler {
     _prevArrowTyped : [Direction, number];
 
 
-    constructor(windowManager : TileWindowManager, extension : Extension) {
+    constructor(windowManager : TileWindowManager, extension : Grimble) {
         this._extensionObject = extension;
-        this._settings = this._extensionObject?.getSettings();
+        this._settings = extension.getSettings();
         this._windowManager = windowManager;
         this._prevArrowTyped = [Direction.North, 0];
         this._keyBindings = Shortcut.getShortcuts();
