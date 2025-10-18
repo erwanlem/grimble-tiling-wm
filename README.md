@@ -32,6 +32,9 @@ This extension is available on all Linux distributions using GNOME.
 Currently supports GNOME **46, 47 and 48**.
 
 ## Installation
+Grimble is available on Gnome Extensions website!
+
+[<img src="https://camo.githubusercontent.com/3afc570a747c1316c234190809a8c4dce26da26ae4e11b913ab7189f4674e366/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e7374616c6c25323066726f6d2d657874656e73696f6e732e676e6f6d652e6f72672d3441383643463f7374796c653d666f722d7468652d6261646765266c6f676f3d476e6f6d65266c6f676f436f6c6f723d7768697465"/>](https://extensions.gnome.org/extension/8645/grimble-tiling-wm/)
 
 ### Manual
 
