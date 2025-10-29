@@ -280,6 +280,7 @@ export class TileWindowManager {
             TileWindowManager._workspaces.set(index, _monitors);
     }
 
+
     private _onWorkspaceRemoved(index : number) {
         TileWindowManager._workspaces.delete(index);
         let newMap = new Map();
@@ -316,7 +317,7 @@ export class TileWindowManager {
         let tile : Tile = (window as any).tile;
         if (tile) {
             let w = window.get_workspace()?.index();
-            if (w !== null && tile.workspace !== w) {
+            if (w !== null) {
                 window.change_workspace_by_index(w, false);
                 this._removeWindow(window);
                 this._insertWindow(window, w);

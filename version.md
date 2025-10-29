@@ -14,3 +14,11 @@ First release. Basic features.
 - Search bar now integrates Gnome desktop apps.
 - New option to insert tile on multiple monitors.
 - Handle monitors hotplug and resolution update.
+
+## 1.0.3
+- Fix bug when creating new workspace on the left side.
+
+## 1.1.0
+- French translation
+- Update for GNOME 49
+- Fix bug that happened when changing workspace using system shortcut (not Grimble shortcut).
