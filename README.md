@@ -29,7 +29,7 @@ This extension provides the following features:
 ## System Requirements
 This extension is available on all Linux distributions using GNOME.
 
-Currently supports GNOME **46, 47 and 48**.
+Currently supports GNOME **46, 47, 48 and 49**.
 
 ## Installation
 Grimble is available on Gnome Extensions website!

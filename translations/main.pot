@@ -1,0 +1,260 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 16:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Translators: This is the name of a tab in the prefs window
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:6 src/ui/prefs.ui:127
+msgid "General"
+msgstr ""
+
+#. Translators: This is the header for a preference group in the 'General' tab
+#: src/ui/prefs.ui:14
+msgid "Appearance"
+msgstr ""
+
+#. Translators: This is the name of setting to set tile padding in the 'General' tab
+#: src/ui/prefs.ui:26
+msgid "Tile padding"
+msgstr ""
+
+#. Translators: This is the header for the insertion group in the 'General' tab
+#: src/ui/prefs.ui:43
+msgid "Search bar position"
+msgstr ""
+
+#. Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab
+#: src/ui/prefs.ui:47
+msgid "Left"
+msgstr ""
+
+#. Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab
+#: src/ui/prefs.ui:57
+msgid "Center"
+msgstr ""
+
+#. Translators: This setting is under the preference group 'Tile insertion' in the 'General' tab
+#: src/ui/prefs.ui:69
+msgid "Right"
+msgstr ""
+
+#. Translators: This is the header for the insertion group in the 'General' tab
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:85 src/ui/prefs.ui:296
+msgid "Multiple monitors"
+msgstr ""
+
+#. Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:86
+msgid "Define tile insertion behavior when using multiple monitors."
+msgstr ""
+
+#. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:89
+msgid "Best fit"
+msgstr ""
+
+#. Translators: This is an explanation for the 'Best fit' option for the 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:90
+msgid "Select the less filled monitor."
+msgstr ""
+
+#. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:99
+msgid "Focus"
+msgstr ""
+
+#. Translators: This is an explanation for the 'Focus' option for the 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:100
+msgid "Select the focused monitor."
+msgstr ""
+
+#. Translators: This is the name of a tab in the prefs window
+#: src/ui/prefs.ui:119
+msgid "Keybindings"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to close tile
+#: src/ui/prefs.ui:132
+msgid "Close tile"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open search bar
+#: src/ui/prefs.ui:138
+msgid "Search bar"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open settings
+#: src/ui/prefs.ui:144
+msgid "Grimble settings"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize
+#: src/ui/prefs.ui:150
+msgid "Maximize tile"
+msgstr ""
+
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:159
+msgid "Tile Focus"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus
+#: src/ui/prefs.ui:163
+msgid "Change focus"
+msgstr ""
+
+#. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:164
+msgid ""
+"Press this shortcut, then use directional arrows to change the focus. Press "
+"`Escape` to abort."
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus left
+#: src/ui/prefs.ui:170
+msgid "Change focus left"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus right
+#: src/ui/prefs.ui:176
+msgid "Change focus right"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top
+#: src/ui/prefs.ui:182
+msgid "Change focus top"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom
+#: src/ui/prefs.ui:188
+msgid "Change focus bottom"
+msgstr ""
+
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:198
+msgid "Tile movement"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile
+#: src/ui/prefs.ui:202
+msgid "Move tile"
+msgstr ""
+
+#. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:203
+msgid ""
+"Press this shortcut, then use a directional arrow to move a tile. Press "
+"`Escape` to abort."
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
+#: src/ui/prefs.ui:209
+msgid "Move Left"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right
+#: src/ui/prefs.ui:215
+msgid "Move Right"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top
+#: src/ui/prefs.ui:221
+msgid "Move Top"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
+#: src/ui/prefs.ui:227
+msgid "Move Bottom"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
+#: src/ui/prefs.ui:233
+msgid "Tile Rotation"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
+#: src/ui/prefs.ui:239
+msgid "Move to next workspace"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
+#: src/ui/prefs.ui:245
+msgid "Move to previous workspace"
+msgstr ""
+
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:255
+msgid "Tile resizing"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing
+#: src/ui/prefs.ui:259
+msgid "Resize tile"
+msgstr ""
+
+#. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:260
+msgid ""
+"Press this shortcut, then use directional arrows to resize a tile. Press "
+"`Escape` to abort."
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
+#: src/ui/prefs.ui:267
+msgid "Resize Left"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right
+#: src/ui/prefs.ui:273
+msgid "Resize Right"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top
+#: src/ui/prefs.ui:279
+msgid "Resize Top"
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
+#: src/ui/prefs.ui:285
+msgid "Resize Bottom"
+msgstr ""
+
+#. Translators: This is a header for a preference group in the 'Keybindings' tab
+#: src/ui/prefs.ui:298
+msgid "Keybindings related to multiple monitors actions."
+msgstr ""
+
+#. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
+#: src/ui/prefs.ui:302
+msgid "Move tile to next monitor"
+msgstr ""
+
+#: src/ui/shortcutListener.ui:11
+msgid ""
+"Replace the keyboard shortcuts. Press 'space' or 'return' when listening for "
+"a shortcut to append a new one to the existing shortcuts instead."
+msgstr ""
+
+#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:92
+msgid "Disabled"
+msgstr ""
+
+#: src/ui/shortcutListener.ui:23
+msgid "Clear the keyboard shortcuts"
+msgstr ""

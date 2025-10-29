@@ -12,6 +12,13 @@ glib-compile-schemas schemas/
 make clean
 make
 
+# compile tl: requires gettext
+for FILE in translations/*.po; do
+    LANG=$(basename "$FILE" .po)
+    mkdir -p "dist/locale/$LANG/LC_MESSAGES"
+    msgfmt -c "$FILE" -o "dist/locale/$LANG/LC_MESSAGES/grimble@lmt.github.io.mo"
+done
+
 ./tools/run-eslint.sh dist/*.js dist/prefs/*.js dist/settingsHandlers/*.js --fix
 
 cp metadata.json ${DEST_FOLDER}
