@@ -18,3 +18,8 @@ export function launchApp(command : string[]) {
         return false;
     }
 }
+
+
+export function saveObject(o : Object, path : string) {
+    
+}
