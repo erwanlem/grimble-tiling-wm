@@ -289,6 +289,27 @@
       </object>
     </child>
 
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes"
+          comments="Translators: This is a header for a preference group in the 'Keybindings' tab">Environments</property>
+        <property name="description" translatable="yes"
+          comments="Translators: This is a header for a preference group in the 'Keybindings' tab">"Environments" are saved desktop configurations. Opened applications and their positions can be stored as an environment and restore by loading the saved environment.</property>
+        <child>
+          <object class="ShortcutListener" id="keybinding_save_environment">
+            <property name="title" translatable="yes"
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that save environment">Save environment</property>
+          </object>
+        </child>
+        <child>
+          <object class="ShortcutListener" id="keybinding_load_environment">
+            <property name="title" translatable="yes"
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that load environment">Load environment</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
     <!-- Multiple monitors bindings -->
     <child>
       <object class="AdwPreferencesGroup">

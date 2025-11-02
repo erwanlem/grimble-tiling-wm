@@ -24,7 +24,9 @@ export class Shortcut {
         'keybinding-focus-left',
         'keybinding-focus-right',
         'keybinding-focus-top',
-        'keybinding-focus-bottom'
+        'keybinding-focus-bottom',
+        'keybinding-save-environment',
+        'keybinding-load-environment'
     ];
 
     public static getShortcuts() {

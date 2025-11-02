@@ -150,6 +150,17 @@
       <description>Custom shortcut</description>
     </key>
 
+    <key name="keybinding-save-environment" type="as">
+      <default>[]</default>
+      <summary>Save environment</summary>
+      <description>Custom shortcut</description>
+    </key>
+    <key name="keybinding-load-environment" type="as">
+      <default>[]</default>
+      <summary>Load environment</summary>
+      <description>Custom shortcut</description>
+    </key>
+
 
 
     <!-- Default keybindings -->

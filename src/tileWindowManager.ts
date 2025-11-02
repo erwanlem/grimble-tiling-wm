@@ -8,10 +8,11 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Monitor } from './monitor.js';
 import Shell from 'gi://Shell';
 import Mtk from 'gi://Mtk';
-import Grimble from './extension.js'
+import Grimble from './extension.js';
 
 import {TopBarSearchEntry} from './topBarSearchEntry.js';
 import {ModalSearchEntry} from './modalSearchEntry.js';
+import { ItemListDialog} from './itemDialog.js';
 
 export enum Direction {
     North = 1,
@@ -50,7 +51,7 @@ export class TileWindowManager {
 
     // Search bar widgets
     _topBarSearchEntry : TopBarSearchEntry | undefined;
-    _modalSearchEntry : ModalSearchEntry | undefined;
+    _modalSearchEntry : typeof ModalSearchEntry | undefined;
 
     _sourceId : number | null;
 
@@ -1037,5 +1038,72 @@ export class TileWindowManager {
         this.updateMonitors();
     }
 
+
+
+    public saveEnvironment() {
+        let f = (txt : String) => {
+            const userPath = GLib.get_user_config_dir();
+            const path = GLib.build_filenamev([userPath, `/grimble/env_${txt}.json`]);
+            const file = Gio.File.new_for_path(path);
+
+            try {
+                file.create(Gio.FileCreateFlags.NONE, null);
+            } catch (e: any) {
+                if (e.code !== Gio.IOErrorEnum.EXISTS)
+                    throw e;
+            }
+
+            file.replace_contents(
+                JSON.stringify({
+                    window: Array.from(TileWindowManager._workspaces.entries()).at(global.workspaceManager.get_active_workspace_index()??0),
+                }, (key, value) => {
+                    if (value instanceof Meta.Window) {
+                        const app = Shell.WindowTracker.get_default().get_window_app(value);
+                        const appInfo = app.get_app_info();
+                        return appInfo.get_filename();
+                        
+                    } else if (key === "_parent") { // remove cyclic references
+                        return undefined;
+                    } else {
+                        return value;
+                    }
+                }),
+                null,
+                false,
+                Gio.FileCreateFlags.REPLACE_DESTINATION,
+                null
+            );
+            console.warn(`save at ${path}`);
+            modal.close();
+        }
+
+        let modal = new ModalSearchEntry("Save environment", "environment name", f);
+        modal.openWithFocus();
+    }
+
+    public loadEnvironment() {
+        const userPath = GLib.get_user_config_dir();
+        const dirPath = GLib.build_filenamev([userPath, `/grimble`]);
+        const result = [];
+        try {
+            const dir = GLib.Dir.open(dirPath, 0);
+            let name;
+
+            while ((name = dir.read_name()) !== null) {
+                // Filter files matching pattern
+                if (name.startsWith('env_') && name.endsWith('.json')) {
+                    result.push(name.substring(4, name.length-5));
+                }
+            }
+
+            dir.close();
+        } catch (e : any) {
+            logError(e, `Failed to read directory: ${dirPath}`);
+            return [];
+        }
+
+        const dialog = new ItemListDialog(result);
+        dialog.open();
+    }
 
 }

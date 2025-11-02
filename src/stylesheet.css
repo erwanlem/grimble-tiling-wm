@@ -17,3 +17,41 @@
     margin: 0;
     border-width: 0;
 }
+
+
+
+
+
+.item-list-dialog {
+  min-width: 400px;
+}
+
+.item-list-box {
+  spacing: 4px;
+  margin: 6px;
+}
+
+.item-row {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 150ms ease;
+}
+
+.item-row:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.item-row-button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.item-row-icon {
+  -st-icon-style: symbolic; /* ensures it's monochrome and scales correctly */
+}
+
+.item-row-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

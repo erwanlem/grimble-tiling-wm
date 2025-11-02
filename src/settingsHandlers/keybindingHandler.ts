@@ -187,6 +187,14 @@ export default class KeybindingHandler {
                 this._windowManager.moveToNextMonitor();
                 break;
 
+            case 'keybinding-save-environment':
+                this._windowManager.saveEnvironment();
+                break;
+
+            case 'keybinding-load-environment':
+                this._windowManager.loadEnvironment();
+                break;
+
             case 'arrow-up':
                 if (this._waitingAction === 'keybinding-move') {
                     this._windowManager.moveTile(Direction.North);
