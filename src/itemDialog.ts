@@ -6,57 +6,61 @@ import St from 'gi://St';
 
 export const ItemListDialog = GObject.registerClass(
 class ItemListDialog extends ModalDialog.ModalDialog {
+
     constructor(items : string[]) {
         super({ styleClass: 'item-list-dialog' });
 
-        const scroll = new St.ScrollView({ style_class: 'dialog-scroll-view' });
-        const vbox = new St.BoxLayout({
-            vertical: true,
-            style_class: 'item-list-box',
-            x_expand: true,
+        const listLayout = new Dialog.ListSection({
+            title: 'Environments',
+            reactive: true,
+            track_hover: true,
+            can_focus: true,
         });
-        scroll.add_child(vbox);
 
-        items.forEach(i => {
-             const row = new St.BoxLayout({
-                style_class: 'item-row',
-                vertical: false,
+        this.contentLayout.add_child(listLayout);
+
+        items.forEach(item => {
+            const i = new Dialog.ListSectionItem({});
+
+            const box = new St.BoxLayout({
+                style_class: 'dialog-list-section-item',
+                vertical: true,
                 x_expand: true,
-                y_align: Clutter.ActorAlign.CENTER,
+                y_expand: true,
                 reactive: true,
                 can_focus: true,
-                track_hover: true, // allows hover styling
+                track_hover: true
             });
 
-            // Label
-            const label = new St.Label({
-                text: i,
-                x_expand: true,
+            box.connect('button-press-event', () => {
+                this.close();
+                return Clutter.EVENT_STOP;
+            });
+
+            const titleLabel = new St.Label({
+                text: item,
+                style_class: 'item-title',
                 x_align: Clutter.ActorAlign.START,
             });
-            row.add_child(label);
 
-            const icon = new St.Icon({
-                icon_name: 'user-trash-symbolic',
-                icon_size: 18,
-                style_class: 'item-row-icon',
-            });
+            // const descLabel = new St.Label({
+            //     text: 'The first thing I need to do',
+            //     style_class: 'item-description',
+            //     x_align: Clutter.ActorAlign.START,
+            // });
 
-            // Button
-            const actionButton = new St.Button({
-                style_class: 'item-row-button',
-            });
-            actionButton.set_child(icon);
-
-            row.add_child(actionButton);
-
-            // Click handlers
-            actionButton.connect('clicked', () => log(`Clicked "Run" on ${i}`));
-            row.connect('button-release-event', () => log(`Clicked row: ${i}`));
-
-            vbox.add_child(row);
+            box.add_child(titleLabel);
+            //box.add_child(descLabel);
+            i.add_child(box);
+            
+            listLayout.list.add_child(i);
         });
 
-        this.contentLayout.add_child(scroll);
+        // Add buttons at bottom
+        this.addButton({
+            label: 'Close',
+            action: () => this.close(),
+            key: Clutter.KEY_Escape,
+        });
     }
 });

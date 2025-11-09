@@ -19,39 +19,25 @@
 }
 
 
-
-
-
-.item-list-dialog {
-  min-width: 400px;
-}
-
-.item-list-box {
-  spacing: 4px;
-  margin: 6px;
-}
-
-.item-row {
-  padding: 8px 12px;
+.dialog-list-section-item {
+  min-width: 300px;
+  padding: 8px 6px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background-color 150ms ease;
+  background-color: rgba(255,255,255,0.05);
+  transition: background-color 150ms ease, border-color 150ms ease;
+  border: 1px solid transparent;
 }
 
-.item-row:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+.dialog-list-section-item:hover {
+  background-color: rgba(255,255,255, 0.15);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
-.item-row-button {
-  padding: 4px 10px;
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.1);
+.item-title {
+  font-weight: bold;
 }
 
-.item-row-icon {
-  -st-icon-style: symbolic; /* ensures it's monochrome and scales correctly */
-}
-
-.item-row-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.item-description {
+  font-size: 0.9em;
+  opacity: 0.8;
 }
