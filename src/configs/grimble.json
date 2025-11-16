@@ -18,8 +18,8 @@
     "keybinding-next-workspace": "",
     "keybinding-previous-workspace": "",
     "keybinding-focus": "",
-    "keybinding-focus-left": "<Super>Left",
-    "keybinding-focus-right": "<Super>Right",
-    "keybinding-focus-top": "<Super>Up",
-    "keybinding-focus-bottom": "<Super>Down"
+    "keybinding-focus-left": "<Ctrl><Super>Left",
+    "keybinding-focus-right": "<Ctrl><Super>Right",
+    "keybinding-focus-top": "<Ctrl><Super>Up",
+    "keybinding-focus-bottom": "<Ctrl><Super>Down"
 }
