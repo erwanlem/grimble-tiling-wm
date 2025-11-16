@@ -2,7 +2,9 @@ import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import './prefs/shortcutListener.js';
-import {Shortcut, Switches, Radio, Spin} from './common.js';
+import {Shortcut, Switches, Radio, Spin, Combo} from './common.js';
+import { keybindingController } from './keybindingController.js';
+import {saveConfiguration} from './utils.js';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
@@ -38,6 +40,30 @@ export default class GrimblePreferences extends ExtensionPreferences {
     createKeybindingsPage(builder: any, settings : Gio.Settings) {
 
         const page2 : Adw.PreferencesPage = builder.get_object('keybindings');
+
+        const comboRow = Combo.getCombo();
+        comboRow.forEach(({ key, rowNames }) => {
+            const combo = builder.get_object(key.replaceAll('-', '_'));
+            let lastValue = settings.get_string(key);
+            let row = rowNames.findIndex(item => lastValue === item);
+            if (row === -1)
+                row = 0;
+            combo.set_selected(row);
+            
+            combo.connect('notify::selected-item', (widget : any) => {
+                settings.set_string(key, rowNames[widget.get_selected()]);
+            });
+
+            keybindingController.connect('keybinding-changed', () => {
+                combo.set_selected(rowNames.findIndex(item => 'Custom' === item));
+                const shortcuts = Shortcut.getShortcuts();
+                let o : Record<string, string[]> = {};
+                for (const p of shortcuts) {
+                    o[p] = settings.get_strv(p)??[];
+                }
+                saveConfiguration("custom.json", o);
+            });
+        });
 
         let keys = Shortcut.getShortcuts();
         keys.forEach(key => {

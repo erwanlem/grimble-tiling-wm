@@ -26,7 +26,6 @@ const MIN_RESIZE_GAP = 10;
  * Class to handle the keyboard shortcuts (on the extension side) except the
  * ones related to the Layouts. For those, see layoutsManager.js.
  */
-
 export default class KeybindingHandler {
     _keyBindings : Array<string>;
     _windowManager : TileWindowManager;

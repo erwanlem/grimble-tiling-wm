@@ -46,11 +46,30 @@ export class Switches {
 export class Spin {
 
     private static _spinList : Array<string> = [
-        'tile-padding'
+        'tile-padding',
     ];
 
     public static getSpins() {
         return Spin._spinList;
+    }
+}
+
+export class Combo {
+
+    private static _comboList = [
+        {
+            key: 'keybinding-config',
+            rowNames: [
+                'None',
+                'i3',
+                'Grimble',
+                'Custom',
+            ]
+        },
+    ];
+
+    public static getCombo() {
+        return Combo._comboList;
     }
 }
 

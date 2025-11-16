@@ -6,6 +6,7 @@ import { TileWindowManager } from './tileWindowManager.js';
 import KeybindingHandler from './settingsHandlers/keybindingHandler.js';
 import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
+import ComboRowHandler from './settingsHandlers/comboRowHandler.js';
 import { Tile } from './tile.js';
 import { loadExecutables, destroy as unloadExecutables } from './autocomplete.js';
 
@@ -16,6 +17,7 @@ export default class Grimble extends Extension {
   _keybindingHandler : KeybindingHandler | null = null;
   _switchHandler : SwitchHandler | null = null;
   _spinHandler : SpinHandler | null = null;
+  _comboHandler : ComboRowHandler | null = null;
 
   enable() {
     this._settings = this.getSettings();
@@ -27,6 +29,7 @@ export default class Grimble extends Extension {
     this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this);
     this._switchHandler = new SwitchHandler(this._tileWindowManager, this);
     this._spinHandler = new SpinHandler(this._tileWindowManager, this);
+    this._comboHandler = new ComboRowHandler(this._tileWindowManager, this);
 
     loadExecutables();
   }
@@ -46,6 +49,7 @@ export default class Grimble extends Extension {
 
     this._spinHandler = null;
     this._switchHandler = null;
+    this._comboHandler = null;
     this._settings = null;    
   }
 }

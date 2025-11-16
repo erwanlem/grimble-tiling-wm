@@ -62,9 +62,12 @@ or remove the extension with the GNOME Shell Extensions app.
 
 ## User Guide
 
-Once the extension is installed, you can activate it with the `Extensions` app or via in command line. It will detect existing windows and tile them. It's now time to take a look at the extension settings. You can open the settings from the `Extensions` app or with the shortcut `Ctrl+Super+g`. The settings will show you all the keybindings (which can be modified) and general options of the extension.
+Once the extension is installed, you can activate it with the `Extensions` app or via the command line. It will detect existing windows and tile them. It's now time to take a look at the extension settings. You can open the settings from the `Extensions` app or with the shortcut `Ctrl+Super+g`. The settings will show you all the keybindings (which can be modified) and general options of the extension.
 
 **You are now ready to use Grimble!**
+
+### Export keybindings
+Custom keybindings can be easily exported to another session by copying `~/.config/grimble/config/custom.json` on the target session. Once this file is copied select the `Custom` configuration in Grimble settings to load it.
 
 ## Bug Reports
 

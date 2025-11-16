@@ -1036,6 +1036,4 @@ export class TileWindowManager {
 
         this.updateMonitors();
     }
-
-
 }

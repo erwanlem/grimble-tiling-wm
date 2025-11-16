@@ -12,6 +12,7 @@ for FILE in translations/*.po; do
 done
 
 cp metadata.json dist/
+cp -r src/configs dist/
 cp -r schemas dist/
 cp -r src/ui dist/
 cp src/stylesheet.css dist/

@@ -22,3 +22,4 @@ First release. Basic features.
 - French translation
 - Update for GNOME 49
 - Fix bug that happened when changing workspace using system shortcut (not Grimble shortcut).
+- Predefined configurations

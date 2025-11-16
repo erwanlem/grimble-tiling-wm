@@ -29,6 +29,12 @@
 			<default>0</default>
 		</key>
 
+    <key name="keybinding-config" type="s">
+      <default>'None'</default>
+      <summary>Window manager configuration</summary>
+      <description>Stores which configuration to use (None, i3, Grimble, Custom).</description>
+    </key>
+
     <key name="keybinding-rotation" type="as">
       <default>[]</default>
       <summary>Tile roration</summary>
@@ -178,8 +184,6 @@
       <summary>Escape action</summary>
       <description>Triggered when pressing Super+Down</description>
     </key>
-    
-
 
   </schema>
 </schemalist>

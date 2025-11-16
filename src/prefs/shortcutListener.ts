@@ -12,6 +12,7 @@ import Gtk from 'gi://Gtk';
 import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { keybindingController } from '../keybindingController.js';
 
 /**
  * A Widget to implement the shortcuts in the preference window.
@@ -35,7 +36,7 @@ export const ShortcutListener = GObject.registerClass({
             GObject.ParamFlags.READWRITE,
             null
         )
-    }
+    },
 }, class ShortcutListener extends Adw.ActionRow {
     /**
      * Only allow 1 active ShortcutListener at a time
@@ -85,6 +86,12 @@ export const ShortcutListener = GObject.registerClass({
         this.connect('realize', () => this.get_root().add_controller(this._eventKeyController));
 
         this.keybinding = this._setting.get_strv(key) ?? [];
+
+        this._settingChangedId = this._setting.connect(`changed::${key}`, () => {   
+            this.keybinding = this._setting.get_strv(key) ?? [];
+            this.setKeybindingLabel(this.getKeybindingLabel());
+            this._clearButton.set_sensitive(this.keybinding.length);
+        });
     }
 
     /*
@@ -126,6 +133,10 @@ export const ShortcutListener = GObject.registerClass({
 
     _onClearButtonClicked() {
         this.keybinding = [];
+
+        this._setting.set_string('keybinding-config', 'Custom');
+        keybindingController.update("");
+        
         ShortcutListener.stopListening();
     }
 
@@ -163,7 +174,11 @@ export const ShortcutListener = GObject.registerClass({
         const sc = Gtk.accelerator_name_with_keycode(null, keyval, keycode, mask);
         this.keybinding = ShortcutListener.isAppendingShortcut ? [...this.keybinding, sc] : [sc];
 
+        this._setting.set_string('keybinding-config', 'Custom');
+        keybindingController.update("");
+
         ShortcutListener.stopListening();
+
         return Gdk.EVENT_STOP;
     }
 
