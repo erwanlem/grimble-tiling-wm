@@ -517,9 +517,14 @@ export class TileWindowManager {
         if (TileWindowManager.getMonitors()[m].fullscreen) {
             TileWindowManager.getMonitors()[m].fullscreen = false;
 
+            let focus: null | Tile = null;
             TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
                 el.window?.unminimize();
+                if (!focus && el.window !== window) {
+                    el.window?.focus(0);
+                    focus = el;
+                }
             });
         }
 
@@ -879,17 +884,62 @@ export class TileWindowManager {
     }
 
 
-    public changeFocus(dir : Direction) {
-        let window : Meta.Window | null = global.display.get_focus_window();
+        public changeFocus(dir: Direction) {
+        let window: Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
-        
-        let tile : Tile = (window as any).tile;
+
+        let tile: Tile = (window as any).tile;
         if (!tile.window)
             return;
 
-        let newFocus = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
-        newFocus?.window?.focus(0);
+
+        if (TileWindowManager.getMonitors()[tile.monitor].fullscreen === true) {
+
+            let mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
+            if (mon === null)
+                return;
+            let newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.South);
+            if (newFocus)
+                newFocus?.window?.focus(0);
+
+        } else {
+            
+            let newFocus = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
+            if (newFocus === null) {
+                let mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
+
+                if (mon === null)
+                    return;
+                switch (dir) {
+                    case Direction.North:
+                        newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.South);
+                        if (newFocus)
+                            newFocus?.window?.focus(0);
+                        break;
+                    case Direction.South:
+                        newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.North);
+                        if (newFocus)
+                            newFocus?.window?.focus(0);
+                        break;
+                    case Direction.East:
+                        newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.West);
+                        if (newFocus)
+                            newFocus?.window?.focus(0);
+                        break;
+                    case Direction.West:
+                        newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.East);
+                        if (newFocus)
+                            newFocus?.window?.focus(0);
+                        break;
+
+                    default:
+                        return;
+                }
+            } else {
+                newFocus?.window?.focus(0);
+            }
+        }
     }
 
 

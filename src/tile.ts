@@ -299,6 +299,28 @@ export class Tile {
     }
 
 
+    /** Classic recursive traversal on tree
+     * 
+     * @param {(el : Tile) => boolean} fn
+     * @returns 
+     */
+    public find(fn : (el : Tile) => boolean) : Tile | null {
+        if (fn(this)) {
+            return this;
+        } else {
+            let r1 = this.child1?.find(fn);
+            if (r1)
+                return r1;
+
+            let r2 = this.child2?.find(fn);
+            if (r2)
+                return r2;
+
+            return null;
+        }
+    }
+
+
     public getSibling() {
         if (this === this?._parent?._child1)
             return this?._parent?._child2;

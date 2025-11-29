@@ -1,4 +1,4 @@
-import { Tile } from './tile.js';
+import { Tile, TileState } from './tile.js';
 import { Direction } from './tileWindowManager.js';
 import { Position } from './position.js';
 
@@ -181,5 +181,127 @@ export class Monitor {
 
         return monitor;
     }
+
+
+
+    public closestMonitor(dir: Direction): number | null {
+        let nMonitors = global.display.get_n_monitors();
+        let _currGeo = global.display.get_monitor_geometry(this.index);
+        let min = undefined;
+        let best: number | null = null;
+        
+        switch (dir) {
+            case Direction.North:
+
+                for (let i = 0; i < nMonitors; i++) {
+                    if (this.index !== i) {
+                        let _geometry = global.display.get_monitor_geometry(i);
+                        if (_geometry.y < _currGeo.y && (min === undefined || _geometry.y > min)) {
+                            min = _geometry.y;
+                            best = i;
+                        }
+                    }
+                }
+                return best;
+            case Direction.South:
+                for (let i = 0; i < nMonitors; i++) {
+                    if (this.index !== i) {
+                        let _geometry = global.display.get_monitor_geometry(i);
+                        if (_geometry.y > _currGeo.y && (min === undefined || _geometry.y < min)) {
+                            min = _geometry.y;
+                            best = i;
+                        }
+                    }
+                }
+                return best;
+
+            case Direction.East:
+                for (let i = 0; i < nMonitors; i++) {
+                    if (this.index !== i) {
+                        let _geometry = global.display.get_monitor_geometry(i);
+                        if (_geometry.x > _currGeo.x && (min === undefined || _geometry.x < min)) {
+                            min = _geometry.x;
+                            best = i;
+                        }
+                    }
+                }
+                return best;
+
+            case Direction.West:
+                for (let i = 0; i < nMonitors; i++) {
+                    if (this.index !== i) {
+                        let _geometry = global.display.get_monitor_geometry(i);
+                        if (_geometry.x < _currGeo.x && (!min || _geometry.x > min)) {
+                            min = _geometry.x;
+                            best = i;
+                        }
+                    }
+                }
+                return best;
+
+            default:
+                return null;
+        }
+    }
+
+
+
+
+    public getTile(dir: Direction): null | Tile {
+
+        if (this.root === null)
+            return null;
+
+        if (this.fullscreen)
+            return this.root.find((t) => t.state === TileState.MAXIMIZED);
+
+        let getTileBis = (t : Tile) : Tile | null => {
+            switch (dir) {
+                case Direction.East:
+                    if (t.child2 !== null && t.child1 !== null)
+                        return t.child1.position.x > t.child2.position.x ? getTileBis(t.child1) : getTileBis(t.child2);
+                    else if (t.child1 !== null)
+                        return getTileBis(t.child1);
+                    else if (t.child2 !== null)
+                        return getTileBis(t.child2);
+                    else
+                        return t;
+                case Direction.West:
+                    if (t.child2 !== null && t.child1 !== null)
+                        return t.child1.position.x < t.child2.position.x ? getTileBis(t.child1) : getTileBis(t.child2);
+                    else if (t.child1 !== null)
+                        return getTileBis(t.child1);
+                    else if (t.child2 !== null)
+                        return getTileBis(t.child2);
+                    else
+                        return t;
+                case Direction.North:
+                    if (t.child2 !== null && t.child1 !== null)
+                        return t.child1.position.y < t.child2.position.y ? getTileBis(t.child1) : getTileBis(t.child2);
+                    else if (t.child1 !== null)
+                        return getTileBis(t.child1);
+                    else if (t.child2 !== null)
+                        return getTileBis(t.child2);
+                    else
+                        return t;
+                case Direction.South:
+                    if (t.child2 !== null && t.child1 !== null)
+                        return t.child1.position.y > t.child2.position.y ? getTileBis(t.child1) : getTileBis(t.child2);
+                    else if (t.child1 !== null)
+                        return getTileBis(t.child1);
+                    else if (t.child2 !== null)
+                        return getTileBis(t.child2);
+                    else
+                        return t;
+
+                default:
+                    return t;
+            }
+        };
+
+        return getTileBis(this.root);
+    }
+
+
 
 }
