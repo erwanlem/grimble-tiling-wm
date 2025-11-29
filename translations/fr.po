@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-21 01:01+0100\n"
+"POT-Creation-Date: 2025-11-23 15:41+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -87,11 +87,9 @@ msgstr "Plein écran"
 #. Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab
 #: src/ui/prefs.ui:115
 msgid ""
-"You can whether stay in fullscreen when switching between two windows "
+"You can either stay in fullscreen when switching between two windows "
 "(default) or quit the fullscreen mode."
 msgstr ""
-"Deux options lors d'un changement de fenêtre en plein écran: rester en plein "
-"écran ou quitter le mode plein écran. "
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:118
@@ -298,13 +296,20 @@ msgstr ""
 "Remplace le raccourcis clavier. Presser `Espace` ou `Entrée` lors de l'ajout "
 "d'un raccourcis pour ajouter un raccourcis en plus de celui déjà existant."
 
-#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:102
+#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:98
 msgid "Disabled"
 msgstr "Désactivé"
 
 #: src/ui/shortcutListener.ui:23
 msgid "Clear the keyboard shortcuts"
 msgstr "Supprime le raccourcis"
+
+#~ msgid ""
+#~ "You can whether stay in fullscreen when switching between two windows "
+#~ "(default) or quit the fullscreen mode."
+#~ msgstr ""
+#~ "Deux options lors d'un changement de fenêtre en plein écran: rester en "
+#~ "plein écran ou quitter le mode plein écran. "
 
 #~ msgid "Define tile insertion behavior when using multiple monitors."
 #~ msgstr "Définie la méthode d'insertion d'une fenêtre sur plusieurs écrans."

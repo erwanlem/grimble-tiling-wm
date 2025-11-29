@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-21 01:01+0100\n"
+"POT-Creation-Date: 2025-11-23 15:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,7 +92,7 @@ msgstr ""
 #. Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab
 #: src/ui/prefs.ui:115
 msgid ""
-"You can whether stay in fullscreen when switching between two windows "
+"You can either stay in fullscreen when switching between two windows "
 "(default) or quit the fullscreen mode."
 msgstr ""
 
@@ -293,7 +293,7 @@ msgid ""
 "a shortcut to append a new one to the existing shortcuts instead."
 msgstr ""
 
-#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:102
+#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:98
 msgid "Disabled"
 msgstr ""
 

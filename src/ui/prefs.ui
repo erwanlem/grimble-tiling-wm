@@ -112,7 +112,7 @@
     <child>
       <object class="AdwPreferencesGroup">
         <property name="title" translatable="yes" comments="Translators: This is the header for the fullscreen group in the 'General' tab">Fullscreen behavior</property>
-        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab">You can whether stay in fullscreen when switching between two windows (default) or quit the fullscreen mode.</property>
+        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab">You can either stay in fullscreen when switching between two windows (default) or quit the fullscreen mode.</property>
         <child>
           <object class="AdwActionRow" id="keep_fullscreen">
             <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Keep fullscreen</property>
