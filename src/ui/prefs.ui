@@ -108,6 +108,33 @@
         </child>
       </object>
     </child>
+
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes" comments="Translators: This is the header for the fullscreen group in the 'General' tab">Fullscreen behavior</property>
+        <property name="description" translatable="yes" comments="Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab">You can whether stay in fullscreen when switching between two windows (default) or quit the fullscreen mode.</property>
+        <child>
+          <object class="AdwActionRow" id="keep_fullscreen">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Keep fullscreen</property>
+            <property name="activatable-widget">fullscreen_keep_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="fullscreen_keep_button"/>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwActionRow" id="quit_fullscreen">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Quit fullscreen</property>
+            <property name="activatable-widget">fullscreen_quit_button</property>
+            <child type="prefix">
+              <object class="GtkCheckButton" id="fullscreen_quit_button">
+                <property name="group">fullscreen_keep_button</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
 
 
@@ -200,13 +227,13 @@
         <child>
           <object class="ShortcutListener" id="keybinding_focus_top">
             <property name="title" translatable="yes"
-              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top">Focus top</property>
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top">Focus Up</property>
           </object>
         </child>
         <child>
           <object class="ShortcutListener" id="keybinding_focus_bottom">
             <property name="title" translatable="yes"
-              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom">Focus bottom</property>
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom">Focus Down</property>
           </object>
         </child>
       </object>
@@ -239,13 +266,13 @@
         <child>
           <object class="ShortcutListener" id="keybinding_move_top">
             <property name="title" translatable="yes"
-              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Top</property>
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top">Move Up</property>
           </object>
         </child>
         <child>
           <object class="ShortcutListener" id="keybinding_move_bottom">
             <property name="title" translatable="yes"
-              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Bottom</property>
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom">Move Down</property>
           </object>
         </child>
         <child>

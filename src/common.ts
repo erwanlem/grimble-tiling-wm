@@ -97,7 +97,14 @@ export class Radio {
                     'search_entry_center',
                     'search_entry_right'
                 ]
-            }
+            },
+            {
+                key: 'fullscreen-switch',
+                rowNames: [
+                    'keep_fullscreen',
+                    'quit_fullscreen'
+                ]
+            },
         ];
 
     public static getRadios() : Array<{key: string, rowNames: Array<string>}> {

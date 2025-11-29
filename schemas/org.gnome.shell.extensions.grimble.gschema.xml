@@ -29,6 +29,11 @@
 			<default>0</default>
 		</key>
 
+    <key name="fullscreen-switch" type="i">
+			<!-- 0: keep fullscreen, 1: quit fullscrenn -->
+			<default>0</default>
+		</key>
+
     <key name="keybinding-config" type="s">
       <default>'None'</default>
       <summary>Window manager configuration</summary>

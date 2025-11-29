@@ -20,6 +20,11 @@ export function launchApp(command : string[]) {
     }
 }
 
+/** Load the configuration stored at `name`.
+ * 
+ * @param {string} name configuration file path
+ * @returns 
+ */
 export function loadConfiguration(name : string) {
     const file = Gio.File.new_for_path(name);
     if (!file.query_exists(null))
@@ -36,7 +41,11 @@ export function loadConfiguration(name : string) {
 
 
 
-
+/** Save the keybinding configuration stored in `obj` in the file `name`.
+ * 
+ * @param {string} name configuration file name
+ * @param {Object} obj Object to save
+ */
 export function saveConfiguration(name : String, obj : Object) {
     const userPath = GLib.get_user_config_dir();
     const parentPath = GLib.build_filenamev([userPath, '/grimble/config']);

@@ -14,10 +14,6 @@ export class Monitor {
     }
 
     public set root(root : Tile | null) {
-        if (!root && this._root && this._root?._nr_tiles > 1) {
-            console.error("Can't remove non empty root");
-            return ;
-        }
         this._root = root;
     }
 
@@ -176,7 +172,7 @@ export class Monitor {
 
     public static fromObject(obj : Monitor) {
         let monitor = new Monitor(obj._index);
-        monitor.fullscreen = obj.fullscreen;
+        monitor.fullscreen = obj._fullscreenState;
 
         if (!obj._root)
             monitor.root = null;

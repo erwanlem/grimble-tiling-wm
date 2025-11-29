@@ -1,7 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-21 01:01+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,11 +10,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. Translators: This is the name of a tab in the prefs window
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:6 src/ui/prefs.ui:127
+#: src/ui/prefs.ui:6 src/ui/prefs.ui:175
 msgid "General"
 msgstr "Général"
 
@@ -49,14 +50,14 @@ msgstr "Droite"
 
 #. Translators: This is the header for the insertion group in the 'General' tab
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:85 src/ui/prefs.ui:296
+#: src/ui/prefs.ui:85 src/ui/prefs.ui:344
 msgid "Multiple monitors"
 msgstr "Plusieurs écrans"
 
 #. Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:86
-msgid "Define tile insertion behavior when using multiple monitors."
-msgstr "Définie la méthode d'insertion d'une fenêtre sur plusieurs écrans."
+msgid "Defines tile insertion behavior while using multiple monitors."
+msgstr "Définis le comportement d'insertion sur plusieurs écrans."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:89
@@ -65,8 +66,8 @@ msgstr "Meilleur ajustement"
 
 #. Translators: This is an explanation for the 'Best fit' option for the 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:90
-msgid "Select the less filled monitor."
-msgstr "Sélectionne l'écran le moins utilisé."
+msgid "Selects the least filled monitor."
+msgstr "Sélectionne l'écran le moins rempli."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:99
@@ -75,46 +76,90 @@ msgstr ""
 
 #. Translators: This is an explanation for the 'Focus' option for the 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:100
-msgid "Select the focused monitor."
-msgstr "Sélectionne l'écran couramment utilisé."
+msgid "Selects the focused monitor."
+msgstr "Sélectionne l'écran actuelle."
+
+#. Translators: This is the header for the fullscreen group in the 'General' tab
+#: src/ui/prefs.ui:114
+msgid "Fullscreen behavior"
+msgstr "Plein écran"
+
+#. Translators: This is the explanation for the preference group 'Fullscreen behavior' in the 'General' tab
+#: src/ui/prefs.ui:115
+msgid ""
+"You can whether stay in fullscreen when switching between two windows "
+"(default) or quit the fullscreen mode."
+msgstr ""
+"Deux options lors d'un changement de fenêtre en plein écran: rester en plein "
+"écran ou quitter le mode plein écran. "
+
+#. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:118
+msgid "Keep fullscreen"
+msgstr "Garder plein écran"
+
+#. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
+#: src/ui/prefs.ui:127
+msgid "Quit fullscreen"
+msgstr "Quitter plein écran"
 
 #. Translators: This is the name of a tab in the prefs window
-#: src/ui/prefs.ui:119
+#: src/ui/prefs.ui:146
 msgid "Keybindings"
 msgstr "Raccourcis clavier"
 
+#: src/ui/prefs.ui:156
+msgid "Configuration"
+msgstr ""
+
+#: src/ui/prefs.ui:160
+msgid "None"
+msgstr ""
+
+#: src/ui/prefs.ui:161
+msgid "i3"
+msgstr ""
+
+#: src/ui/prefs.ui:162
+msgid "Grimble"
+msgstr ""
+
+#: src/ui/prefs.ui:163
+msgid "Custom"
+msgstr ""
+
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to close tile
-#: src/ui/prefs.ui:132
+#: src/ui/prefs.ui:180
 msgid "Close tile"
 msgstr "Fermer la fenêtre"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open search bar
-#: src/ui/prefs.ui:138
+#: src/ui/prefs.ui:186
 msgid "Search bar"
 msgstr "Barre de recherche"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open settings
-#: src/ui/prefs.ui:144
+#: src/ui/prefs.ui:192
 msgid "Grimble settings"
 msgstr "Paramètres de Grimble"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize
-#: src/ui/prefs.ui:150
+#: src/ui/prefs.ui:198
 msgid "Maximize tile"
 msgstr "Maximiser la fenêtre"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:159
+#: src/ui/prefs.ui:207
 msgid "Tile Focus"
 msgstr "Fenêtre courante"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus
-#: src/ui/prefs.ui:163
+#: src/ui/prefs.ui:211
 msgid "Change focus"
 msgstr "Changer la fenêtre courante"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:164
+#: src/ui/prefs.ui:212
 msgid ""
 "Press this shortcut, then use directional arrows to change the focus. Press "
 "`Escape` to abort."
@@ -123,37 +168,37 @@ msgstr ""
 "changer le focus. Presser `Echap` pour annuler l'opération."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus left
-#: src/ui/prefs.ui:170
-msgid "Change focus left"
-msgstr "Fenêtre gauche"
+#: src/ui/prefs.ui:218
+msgid "Focus left"
+msgstr "Focus gauche"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus right
-#: src/ui/prefs.ui:176
-msgid "Change focus right"
-msgstr "Fenêtre droite"
+#: src/ui/prefs.ui:224
+msgid "Focus right"
+msgstr "Focus droite"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top
-#: src/ui/prefs.ui:182
-msgid "Change focus top"
-msgstr "Fenêtre du haut"
+#: src/ui/prefs.ui:230
+msgid "Focus Up"
+msgstr "Focus haut"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom
-#: src/ui/prefs.ui:188
-msgid "Change focus bottom"
-msgstr "Fenêtre du bas"
+#: src/ui/prefs.ui:236
+msgid "Focus Down"
+msgstr "Focus bas"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:198
+#: src/ui/prefs.ui:246
 msgid "Tile movement"
 msgstr "Déplacement"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile
-#: src/ui/prefs.ui:202
+#: src/ui/prefs.ui:250
 msgid "Move tile"
 msgstr "Déplacer une fenêtre"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:203
+#: src/ui/prefs.ui:251
 msgid ""
 "Press this shortcut, then use a directional arrow to move a tile. Press "
 "`Escape` to abort."
@@ -162,52 +207,52 @@ msgstr ""
 "la fenêtre. Presser `Echap` pour annuler."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
-#: src/ui/prefs.ui:209
+#: src/ui/prefs.ui:257
 msgid "Move Left"
 msgstr "Déplacer à gauche"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right
-#: src/ui/prefs.ui:215
+#: src/ui/prefs.ui:263
 msgid "Move Right"
 msgstr "Déplacer à droite"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top
-#: src/ui/prefs.ui:221
-msgid "Move Top"
+#: src/ui/prefs.ui:269
+msgid "Move Up"
 msgstr "Déplacer en haut"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
-#: src/ui/prefs.ui:227
-msgid "Move Bottom"
+#: src/ui/prefs.ui:275
+msgid "Move Down"
 msgstr "Déplacer en bas"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
-#: src/ui/prefs.ui:233
+#: src/ui/prefs.ui:281
 msgid "Tile Rotation"
 msgstr "Rotation des fenêtres"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
-#: src/ui/prefs.ui:239
-msgid "Move to next workspace"
+#: src/ui/prefs.ui:287
+msgid "Switch to next workspace"
 msgstr "Déplacer vers l'espace de travail suivant"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile rotation
-#: src/ui/prefs.ui:245
-msgid "Move to previous workspace"
+#: src/ui/prefs.ui:293
+msgid "Switch to previous workspace"
 msgstr "Déplacer vers l'espace de travail précédent"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:255
+#: src/ui/prefs.ui:303
 msgid "Tile resizing"
 msgstr "Redimensionnement"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing
-#: src/ui/prefs.ui:259
+#: src/ui/prefs.ui:307
 msgid "Resize tile"
 msgstr "Redimensionner la fenêtre"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:260
+#: src/ui/prefs.ui:308
 msgid ""
 "Press this shortcut, then use directional arrows to resize a tile. Press "
 "`Escape` to abort."
@@ -216,32 +261,32 @@ msgstr ""
 "redimensionner la fenêtre. Presser `Echap` pour annuler."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
-#: src/ui/prefs.ui:267
+#: src/ui/prefs.ui:315
 msgid "Resize Left"
 msgstr "Redimensionner vers la gauche"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move right
-#: src/ui/prefs.ui:273
+#: src/ui/prefs.ui:321
 msgid "Resize Right"
 msgstr "Redimensionner vers la droite"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move top
-#: src/ui/prefs.ui:279
+#: src/ui/prefs.ui:327
 msgid "Resize Top"
 msgstr "Redimensionner vers le haut"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
-#: src/ui/prefs.ui:285
+#: src/ui/prefs.ui:333
 msgid "Resize Bottom"
 msgstr "Redimensionner vers le bas"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
-#: src/ui/prefs.ui:298
+#: src/ui/prefs.ui:346
 msgid "Keybindings related to multiple monitors actions."
 msgstr "Raccourcis liés à l'utilisation de plusieurs écrans."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
-#: src/ui/prefs.ui:302
+#: src/ui/prefs.ui:350
 msgid "Move tile to next monitor"
 msgstr "Déplacer la fenêtre sur l'écran suivant"
 
@@ -253,10 +298,43 @@ msgstr ""
 "Remplace le raccourcis clavier. Presser `Espace` ou `Entrée` lors de l'ajout "
 "d'un raccourcis pour ajouter un raccourcis en plus de celui déjà existant."
 
-#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:92
+#: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:102
 msgid "Disabled"
 msgstr "Désactivé"
 
 #: src/ui/shortcutListener.ui:23
 msgid "Clear the keyboard shortcuts"
 msgstr "Supprime le raccourcis"
+
+#~ msgid "Define tile insertion behavior when using multiple monitors."
+#~ msgstr "Définie la méthode d'insertion d'une fenêtre sur plusieurs écrans."
+
+#~ msgid "Select the less filled monitor."
+#~ msgstr "Sélectionne l'écran le moins utilisé."
+
+#~ msgid "Select the focused monitor."
+#~ msgstr "Sélectionne l'écran couramment utilisé."
+
+#~ msgid "Change focus left"
+#~ msgstr "Fenêtre gauche"
+
+#~ msgid "Change focus right"
+#~ msgstr "Fenêtre droite"
+
+#~ msgid "Change focus top"
+#~ msgstr "Fenêtre du haut"
+
+#~ msgid "Change focus bottom"
+#~ msgstr "Fenêtre du bas"
+
+#~ msgid "Move Top"
+#~ msgstr "Déplacer en haut"
+
+#~ msgid "Move Bottom"
+#~ msgstr "Déplacer en bas"
+
+#~ msgid "Move to next workspace"
+#~ msgstr "Déplacer vers l'espace de travail suivant"
+
+#~ msgid "Move to previous workspace"
+#~ msgstr "Déplacer vers l'espace de travail précédent"

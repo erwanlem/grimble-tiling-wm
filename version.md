@@ -20,6 +20,9 @@ First release. Basic features.
 
 ## 1.1.0
 - French translation
+- Spanish translation
 - Update for GNOME 49
 - Fix bug that happened when changing workspace using system shortcut (not Grimble shortcut).
 - Predefined configurations
+- Fullscreen transition
+- Multiple monitor: When a new monitor is plugged in the windows on the main monitor are transfered on the new main monitor (which may be the same for the user but its index has possibly changed).

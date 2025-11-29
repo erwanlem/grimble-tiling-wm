@@ -12,7 +12,7 @@ export default class ComboRowHandler {
         this._windowManager = windowManager;
         this._combos = Combo.getCombo();
 
-        this._combos.forEach(({ key, rowNames }) => {
+        this._combos.forEach(({ key }) => {
             extension._settings?.connect(
                 "changed::" + key,
                 () => this._onComboChanged(key, extension)
@@ -29,41 +29,41 @@ export default class ComboRowHandler {
                     let conf = extension._settings?.get_string('keybinding-config');
 
                     if (conf === "i3") {
-                        let conf = loadConfiguration(`${extension.path}/configs/i3.json`);
+                        let c = loadConfiguration(`${extension.path}/configs/i3.json`);
                         for (const p of shortcuts) {
-                            if (conf[p]) {
-                                extension._settings.set_strv(p, [conf[p]]);
+                            if (c[p]) {
+                                extension._settings.set_strv(p, [c[p]]);
                             } else {
                                 extension._settings.set_strv(p, []);
                             }
                         }
                     } else if (conf === "Grimble") {
-                        let conf = loadConfiguration(`${extension.path}/configs/grimble.json`);
+                        let c = loadConfiguration(`${extension.path}/configs/grimble.json`);
                         for (const p of shortcuts) {
-                            if (conf[p]) {
-                                extension._settings.set_strv(p, [conf[p]]);
+                            if (c[p]) {
+                                extension._settings.set_strv(p, [c[p]]);
                             } else {
                                 extension._settings.set_strv(p, []);
                             }
                         }
                     } else if (conf === "None") {
-                        let conf = loadConfiguration(`${extension.path}/configs/default.json`);
+                        let c = loadConfiguration(`${extension.path}/configs/default.json`);
                         for (const p of shortcuts) {
-                            if (conf[p]) {
-                                extension._settings.set_strv(p, [conf[p]]);
+                            if (c[p]) {
+                                extension._settings.set_strv(p, [c[p]]);
                             } else {
                                 extension._settings.set_strv(p, []);
                             }
                         }
                     } else if (conf === "Custom") {
                         const userPath = GLib.get_user_config_dir();
-                        let conf = loadConfiguration(`${userPath}/grimble/config/custom.json`);
-                        if (conf === null)
+                        let c = loadConfiguration(`${userPath}/grimble/config/custom.json`);
+                        if (c === null)
                             return;
  
                         for (const p of shortcuts) {
-                            if (conf[p]) {
-                                extension._settings.set_strv(p, conf[p]);
+                            if (c[p]) {
+                                extension._settings.set_strv(p, c[p]);
                             } else {
                                 extension._settings.set_strv(p, []);
                             }

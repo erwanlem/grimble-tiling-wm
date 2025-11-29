@@ -56,11 +56,14 @@ export class TileWindowManager {
 
     // Tiles structures
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
+    private static _main_monitor : number;
 
 
     constructor(extension : Grimble) {
         if (!TileWindowManager._workspaces)
             TileWindowManager._workspaces = new Map();
+
+        TileWindowManager._main_monitor = global.display.get_primary_monitor();
 
         this._settings = extension._settings;
 
@@ -158,11 +161,26 @@ export class TileWindowManager {
     }
 
     private _addMonitors(n : number) {
+        let new_prim_monitor = global.display.get_primary_monitor();
         TileWindowManager._workspaces.forEach((val, _, __) => {
+            let curr_prim : Monitor | null = null;
+            if (new_prim_monitor !== TileWindowManager._main_monitor)
+                curr_prim = val.filter(e => e.index === TileWindowManager._main_monitor)[0];
             for (let i = 0; i < n; i++) {
-                val.push(new Monitor(val.length));
+                const index = val.length;
+                val.push(new Monitor(index));
+                // Move content on the new primary screen
+                if (index === new_prim_monitor) {
+                    val[index].fullscreen = curr_prim?.fullscreen ?? false;
+                    val[index].root = curr_prim?.root ?? null;
+                    val[index].root?.forEach(el => el.monitor = index);
+
+                    if (curr_prim?.fullscreen) curr_prim.fullscreen = false;
+                    if (curr_prim?.root) curr_prim.root = null;
+                }
             }
         });
+        TileWindowManager._main_monitor = new_prim_monitor;
     }
 
     private _removeMonitors(n : number) {
@@ -171,12 +189,15 @@ export class TileWindowManager {
             for (let i = 0; i < n; i++) {
                 windows.push(val.pop());
             }
+            console.warn(`remove monitor ${windows[0]?.index}`);
             for (let i = 0; i < windows.length; i++) {
                 windows[i]?.root?.forEach(t => {
                     if (t.window) this._insertWindow(t.window);
                 });
             }
         });
+        TileWindowManager._main_monitor = global.display.get_primary_monitor();
+        //console.warn(`Main monitor ${TileWindowManager._main_monitor}`);
 
         this.updateMonitors();
         this.updateAdjacents();
@@ -227,6 +248,7 @@ export class TileWindowManager {
         
         this._topBarSearchEntry?.destroy();
 
+        (TileWindowManager._main_monitor as any) = null;
         (TileWindowManager._workspaces as any) = null;
     }
 
@@ -343,7 +365,10 @@ export class TileWindowManager {
                 let tile : Tile = (window as any).tile;
                 if (tile.state === TileState.MINIMIZED) {
                     if (TileWindowManager.getMonitors()[tile.monitor].fullscreen) {
-                        this.maximizeTile(window);
+                        if (this._settings?.get_int('fullscreen-switch') === 0)
+                            this.maximizeTile(window, true);
+                        else
+                            this.maximizeTile(window);
                     }
                 }
             } else {
@@ -433,6 +458,7 @@ export class TileWindowManager {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
         } else {
             let m = global.display.get_current_monitor();
+            console.warn(`current monitor = ${m}`);
             selectedMonitor = _monitors[m];
         }
 
@@ -441,25 +467,16 @@ export class TileWindowManager {
 
         // Now insert tile on selected monitor
         if (selectedMonitor.size() === 0) {
+            console.warn(`create root ${index}`);
             let tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), index);
             tile.workspace = window.get_workspace().index();
 
             (window as any).tile = tile;
 
-            _monitors[index].root = tile;            
+            _monitors[index].root = tile;
             _monitors[index].root?.update();
         } else {
-            if (this._settings?.get_int('tile-insertion-behavior') === 0) {
-                _monitors[index].root?.addWindowOnBlock(window);
-            } else {
-                let focusWindow = null; // this.getFocusedWindow();
-                if (focusWindow) {
-                    let tile: Tile = (focusWindow as any).tile;
-                    tile.addWindowOnBlock(window);
-                } else {
-                    _monitors[index].root?.addWindowOnBlock(window);
-                }
-            }
+            _monitors[index].root?.addWindowOnBlock(window);
             (window as any).tile.workspace = window.get_workspace().index();
 
             if (_monitors[index].fullscreen) {
@@ -525,6 +542,7 @@ export class TileWindowManager {
             return;
 
         let m = tile.monitor;
+        console.warn(`Monitor : ${m}, primary = ${global.display.get_primary_monitor()}`);
         let rect : Mtk.Rectangle;
         switch (op) {
             case Meta.GrabOp.MOVING:
@@ -790,9 +808,10 @@ export class TileWindowManager {
      * Others windows are reduced using tile specific state.
      * 
      * @param {Meta.Window} window 
+     * @param {boolean} replace true to stay in fullscreen and just replace the window otherwise false
      * @returns 
      */
-    public maximizeTile(window: Meta.Window) {
+    public maximizeTile(window: Meta.Window, replace = false) {
         let tile: Tile | undefined = (window as any).tile;
         if (!tile)
             return;
@@ -808,6 +827,17 @@ export class TileWindowManager {
                     el.window?.unminimize();
                 }
             });
+
+            if (replace) {
+                TileWindowManager.getMonitors()[m].fullscreen = true;
+                TileWindowManager.getMonitors()[m].root?.forEach(el => {
+                    if (el.id === tile.id) {
+                        el.state = TileState.MAXIMIZED;
+                    } else {
+                        el.state = TileState.MINIMIZED;
+                    }
+                });
+            }
         } else {
             TileWindowManager.getMonitors()[tile.monitor].fullscreen = true;
 
