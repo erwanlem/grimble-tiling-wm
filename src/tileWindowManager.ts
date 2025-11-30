@@ -161,26 +161,26 @@ export class TileWindowManager {
     }
 
     private _addMonitors(n : number) {
-        let new_prim_monitor = global.display.get_primary_monitor();
+        let newPrimMonitor = global.display.get_primary_monitor();
         TileWindowManager._workspaces.forEach((val, _, __) => {
-            let curr_prim : Monitor | null = null;
-            if (new_prim_monitor !== TileWindowManager._main_monitor)
-                curr_prim = val.filter(e => e.index === TileWindowManager._main_monitor)[0];
+            let currPrim : Monitor | null = null;
+            if (newPrimMonitor !== TileWindowManager._main_monitor)
+                currPrim = val.filter(e => e.index === TileWindowManager._main_monitor)[0];
             for (let i = 0; i < n; i++) {
                 const index = val.length;
                 val.push(new Monitor(index));
                 // Move content on the new primary screen
-                if (index === new_prim_monitor) {
-                    val[index].fullscreen = curr_prim?.fullscreen ?? false;
-                    val[index].root = curr_prim?.root ?? null;
-                    val[index].root?.forEach(el => el.monitor = index);
+                if (index === newPrimMonitor) {
+                    val[index].fullscreen = currPrim?.fullscreen ?? false;
+                    val[index].root = currPrim?.root ?? null;
+                    val[index].root?.forEach(el => {el.monitor = index});
 
-                    if (curr_prim?.fullscreen) curr_prim.fullscreen = false;
-                    if (curr_prim?.root) curr_prim.root = null;
+                    if (currPrim?.fullscreen) currPrim.fullscreen = false;
+                    if (currPrim?.root) currPrim.root = null;
                 }
             }
         });
-        TileWindowManager._main_monitor = new_prim_monitor;
+        TileWindowManager._main_monitor = newPrimMonitor;
     }
 
     private _removeMonitors(n : number) {
@@ -189,7 +189,7 @@ export class TileWindowManager {
             for (let i = 0; i < n; i++) {
                 windows.push(val.pop());
             }
-            console.warn(`remove monitor ${windows[0]?.index}`);
+
             for (let i = 0; i < windows.length; i++) {
                 windows[i]?.root?.forEach(t => {
                     if (t.window) this._insertWindow(t.window);
@@ -197,7 +197,6 @@ export class TileWindowManager {
             }
         });
         TileWindowManager._main_monitor = global.display.get_primary_monitor();
-        //console.warn(`Main monitor ${TileWindowManager._main_monitor}`);
 
         this.updateMonitors();
         this.updateAdjacents();
@@ -458,7 +457,6 @@ export class TileWindowManager {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
         } else {
             let m = global.display.get_current_monitor();
-            console.warn(`current monitor = ${m}`);
             selectedMonitor = _monitors[m];
         }
 
@@ -467,7 +465,6 @@ export class TileWindowManager {
 
         // Now insert tile on selected monitor
         if (selectedMonitor.size() === 0) {
-            console.warn(`create root ${index}`);
             let tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), index);
             tile.workspace = window.get_workspace().index();
 
@@ -547,7 +544,7 @@ export class TileWindowManager {
             return;
 
         let m = tile.monitor;
-        console.warn(`Monitor : ${m}, primary = ${global.display.get_primary_monitor()}`);
+
         let rect : Mtk.Rectangle;
         switch (op) {
             case Meta.GrabOp.MOVING:

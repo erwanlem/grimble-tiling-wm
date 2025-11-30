@@ -25,4 +25,6 @@ First release. Basic features.
 - Fix bug that happened when changing workspace using system shortcut (not Grimble shortcut).
 - Predefined configurations
 - Fullscreen transition
-- Multiple monitor: When a new monitor is plugged in the windows on the main monitor are transfered on the new main monitor (which may be the same for the user but its index has possibly changed).
+- Multiple monitors: When a new monitor is plugged in the windows on the main monitor are transfered on the new main monitor (which may be the same for the user but its index has possibly changed).
+- Multiple monitors: Change the focus between screens
+- Fix loss of focus when closing fullscreen window

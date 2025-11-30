@@ -246,7 +246,12 @@ export class Monitor {
 
 
 
-
+    /** Returns tile closest to the edge on a monitor
+     * - If the monitor is in fullscreen it returns the maximized window
+     * 
+     * @param {Direction} dir
+     * @returns {Tile | null}
+     */
     public getTile(dir: Direction): null | Tile {
 
         if (this.root === null)

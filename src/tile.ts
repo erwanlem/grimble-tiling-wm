@@ -209,9 +209,8 @@ export class Tile {
             if (this._position.proportion === 1) {
                 this.state = TileState.ALONE_MAXIMIZED;
 
-                if (this._window.maximized_horizontally || this._window.maximized_vertically) {
+                if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
-                }
 
                 const workspc = this._window.get_workspace();
                 const area = workspc?.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
@@ -244,9 +243,8 @@ export class Tile {
             } else {
                 this.state = TileState.DEFAULT;
 
-                if (this._window.maximized_horizontally || this._window.maximized_vertically) {
+                if (this._window.maximized_horizontally || this._window.maximized_vertically)
                     this._window.unmaximize(Meta.MaximizeFlags.BOTH);
-                }
 
                 const workspc = this._window.get_workspace();
                 const area = workspc?.get_work_area_for_monitor(this._monitor ? this._monitor : 0);
