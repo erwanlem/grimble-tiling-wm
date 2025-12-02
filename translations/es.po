@@ -57,7 +57,7 @@ msgstr "Múltiples monitores"
 #. Translators: This is the explanation for the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:86
 msgid "Defines tile insertion behavior while using multiple monitors."
-msgstr "Define insercion de ventana utilizando varios monitores"
+msgstr "Define insercion de ventana utilizando varios monitores."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:89
@@ -67,7 +67,7 @@ msgstr "Óptimo"
 #. Translators: This is an explanation for the 'Best fit' option for the 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:90
 msgid "Selects the least filled monitor."
-msgstr "Selecciona el monitor menos lleno"
+msgstr "Selecciona el monitor menos lleno."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:99
@@ -77,7 +77,7 @@ msgstr "Enfocado"
 #. Translators: This is an explanation for the 'Focus' option for the 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:100
 msgid "Selects the focused monitor."
-msgstr "Selecciona el monitor enfocado"
+msgstr "Selecciona el monitor enfocado."
 
 #. Translators: This is the header for the fullscreen group in the 'General' tab
 #: src/ui/prefs.ui:114
@@ -91,7 +91,7 @@ msgid ""
 "(default) or quit the fullscreen mode."
 msgstr ""
 "Puede permanecer en pantalla completa mientras cambie de ventana(opcion por "
-"defecto) o abandonar el modo pantalla completa"
+"defecto) o abandonar el modo pantalla completa."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:118
