@@ -90,6 +90,8 @@ msgid ""
 "You can either stay in fullscreen when switching between two windows "
 "(default) or quit the fullscreen mode."
 msgstr ""
+"Vous pouvez rester en plein écran lors du changement de fenêtre (par défaut) "
+"ou quitter le mode plein écran."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:118
