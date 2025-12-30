@@ -136,16 +136,31 @@ export class TileWindowManager {
 
         this._monitorChangedSignal = global.backend.get_monitor_manager().connect('monitors-changed', () => {
             const n = global.display.get_n_monitors();
+            console.warn("Monitors have changed");
             if (n !== this._nMonitors) {
                 let diff = n - this._nMonitors;
                 this._nMonitors = n;
                 if (diff > 0) {
-                    this._addMonitors(diff);
+                    this._addMonitors();
                 } else {
-                    this._removeMonitors(-diff);
+                    this._removeMonitors();
                 }
             }
         });
+
+
+        let struct = JSON.stringify({
+                windows: Array.from(TileWindowManager._workspaces.entries())
+            }, (key, value) => {
+                if (value instanceof Meta.Window)
+                    return value.get_id();
+                else if (key === "_parent") // remove cyclic references
+                    return undefined;
+                else
+                    return value;
+            });
+
+        console.warn(struct);
     }
 
 
@@ -162,13 +177,14 @@ export class TileWindowManager {
             return [];
     }
 
-    private _addMonitors(n : number) {
+    private _addMonitors() {
         let newPrimMonitor = global.display.get_primary_monitor();
         TileWindowManager._workspaces.forEach((val, _, __) => {
             let currPrim : Monitor | null = null;
             if (newPrimMonitor !== TileWindowManager._main_monitor)
                 currPrim = val.filter(e => e.index === TileWindowManager._main_monitor)[0];
-            for (let i = 0; i < n; i++) {
+
+            while (val.length !== this._nMonitors) {
                 const index = val.length;
                 val.push(new Monitor(index));
                 // Move content on the new primary screen
@@ -185,17 +201,18 @@ export class TileWindowManager {
         TileWindowManager._main_monitor = newPrimMonitor;
     }
 
-    private _removeMonitors(n : number) {
+    private _removeMonitors() {
+        console.warn(`Remove monitor`);
         TileWindowManager._workspaces.forEach((val, _, __) => {
             let windows = [];
-            for (let i = 0; i < n; i++) {
+
+            while (val.length !== this._nMonitors) {
                 windows.push(val.pop());
             }
 
             for (let i = 0; i < windows.length; i++) {
                 windows[i]?.root?.forEach(t => {
-                    console.warn("remove monitor");
-                    if (t.window) this._insertWindow(t.window);
+                    if (t.window) this._insertWindow(t.window, null, 0);
                 });
             }
         });
@@ -456,23 +473,27 @@ export class TileWindowManager {
         this._insertWindow(window);
     }
 
-    private _insertWindow(window: Meta.Window, workspace : number | null = null) {
+    private _insertWindow(window: Meta.Window, workspace : number | null = null, monitor : number | null = null) {
         let _monitors = TileWindowManager._workspaces.get(workspace != null ? workspace : window.get_workspace()?.index());
         if (!_monitors)
             return;
 
         let selectedMonitor: Monitor;
 
+        console.warn(`Monitors size : ${_monitors.length}`);
 
         // Select monitor
-        if (this._settings?.get_int('monitor-tile-insertion-behavior') === 0) {
+        if (monitor !== null) {
+            selectedMonitor = _monitors[monitor];
+            console.warn(`Get monitor ${monitor} ${selectedMonitor}`);
+        } else if (this._settings?.get_int('monitor-tile-insertion-behavior') === 0) {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
+            console.warn(`(2) Get monitor ${selectedMonitor}`);
         } else {
             let m = global.display.get_current_monitor();
             selectedMonitor = _monitors[m];
             console.warn(`Insert window in monitor ${m}`);
         }
-
 
         // Selected monitor index
         let index = selectedMonitor.index;
@@ -1142,6 +1163,7 @@ export class TileWindowManager {
                 });
             });
             
+            console.warn(`Monitors ${mapKey} : ${mapValue.length}`);
             TileWindowManager._workspaces.set(mapKey, mapValue);
         });
 
