@@ -1,6 +1,6 @@
 {
     "keybinding-rotation": "<Ctrl><Shift>r",
-    "keybinding-resize": "",
+    "keybinding-resize": "<Super>r",
     "keybinding-move": "",
     "keybinding-close": "<Ctrl><Shift>k",
     "keybinding-search": "<Ctrl><Alt>b",
