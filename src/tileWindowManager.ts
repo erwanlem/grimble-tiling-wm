@@ -58,6 +58,8 @@ export class TileWindowManager {
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
     private static _main_monitor : number;
 
+    private _restore : boolean = false;
+
 
     constructor(extension : Grimble) {
         if (!TileWindowManager._workspaces)
@@ -192,6 +194,7 @@ export class TileWindowManager {
 
             for (let i = 0; i < windows.length; i++) {
                 windows[i]?.root?.forEach(t => {
+                    console.warn("remove monitor");
                     if (t.window) this._insertWindow(t.window);
                 });
             }
@@ -287,6 +290,7 @@ export class TileWindowManager {
                 return false;
         }
 
+        console.warn("Window valid");
         return true;
     }
 
@@ -335,15 +339,22 @@ export class TileWindowManager {
 
 
     private _windowWorkspaceChanged(window : Meta.Window) {
+        // Do nothing during restore phase
+        if (this._restore)
+            return;
+
         let tile : Tile = (window as any).tile;
         if (tile) {
             let w = window.get_workspace()?.index();
             if (w !== null) {
                 window.change_workspace_by_index(w, false);
-                this._removeWindow(window);
-                this._insertWindow(window, w);
-                tile.workspace = w;
-
+                console.warn(`Workspace changed ${w} ${(window as any).tile.workspace}`);
+                if (w !== (window as any).tile.workspace) {
+                    this._removeWindow(window);
+                    this._insertWindow(window, w);
+                    tile.workspace = w;
+                }
+                
                 this.updateMonitors();
                 this.updateAdjacents();
             }
@@ -441,6 +452,7 @@ export class TileWindowManager {
 
         this.configureWindowSignals(window);
 
+        console.warn("Add new window");
         this._insertWindow(window);
     }
 
@@ -458,7 +470,9 @@ export class TileWindowManager {
         } else {
             let m = global.display.get_current_monitor();
             selectedMonitor = _monitors[m];
+            console.warn(`Insert window in monitor ${m}`);
         }
+
 
         // Selected monitor index
         let index = selectedMonitor.index;
@@ -518,7 +532,7 @@ export class TileWindowManager {
             TileWindowManager.getMonitors()[m].root?.forEach(el => {
                 el.state = TileState.DEFAULT;
                 el.window?.unminimize();
-                if (!focus && el.window !== window) {
+                if (!focus && el.window && el.window !== window) {
                     el.window?.focus(0);
                     focus = el;
                 }
@@ -881,7 +895,7 @@ export class TileWindowManager {
     }
 
 
-        public changeFocus(dir: Direction) {
+    public changeFocus(dir: Direction) {
         let window: Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
@@ -896,9 +910,29 @@ export class TileWindowManager {
             let mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
             if (mon === null)
                 return;
-            let newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.South);
-            if (newFocus)
-                newFocus?.window?.focus(0);
+            let newFocus;
+            switch (dir) {
+                case Direction.North:
+                    newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.South);
+                    if (newFocus)
+                        newFocus?.window?.focus(0);
+                    break;
+                case Direction.South:
+                    newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.North);
+                    if (newFocus)
+                        newFocus?.window?.focus(0);
+                    break;
+                case Direction.East:
+                    newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.West);
+                    if (newFocus)
+                        newFocus?.window?.focus(0);
+                    break;
+                case Direction.West:
+                    newFocus = TileWindowManager.getMonitors()[mon].getTile(Direction.East);
+                    if (newFocus)
+                        newFocus?.window?.focus(0);
+                    break;
+            }
 
         } else {
             
@@ -996,7 +1030,7 @@ export class TileWindowManager {
             newTile.workspace = window.get_workspace().index();
             (window as any).tile = newTile;
 
-            newMonitor.root = newTile;            
+            newMonitor.root = newTile;
             newMonitor.root?.update();
         } else {
             // Easier to create a new tile for insertion
@@ -1098,7 +1132,7 @@ export class TileWindowManager {
         let map : Map<number, Monitor[]> = new Map(states.windows);
         map.forEach((mapValue, mapKey, _) => {
             mapValue.forEach((value, index, array) => {
-                // We need to rebuild correct types from objects
+                // We have to rebuild correct types of each object
                 array[index] = Monitor.fromObject(value);
                 array[index].root?.forEach(el => {
                     if (el.window) {
