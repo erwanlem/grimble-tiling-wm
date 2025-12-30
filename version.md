@@ -26,5 +26,6 @@ First release. Basic features.
 - Predefined configurations
 - Fullscreen transition
 - Multiple monitors: When a new monitor is plugged in the windows on the main monitor are transfered on the new main monitor (which may be the same for the user but its index has possibly changed).
-- Multiple monitors: Change the focus between screens
+- Multiple monitors: Change the focus between screens.
+- Multiple monitors: Global stabilization of Grimble.
 - Fix loss of focus when closing fullscreen window

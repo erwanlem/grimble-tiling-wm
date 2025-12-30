@@ -58,8 +58,6 @@ export class TileWindowManager {
     private static _workspaces : Map<number, Array<Monitor>> = new Map();
     private static _main_monitor : number;
 
-    private _restore : boolean = false;
-
 
     constructor(extension : Grimble) {
         if (!TileWindowManager._workspaces)
@@ -136,7 +134,6 @@ export class TileWindowManager {
 
         this._monitorChangedSignal = global.backend.get_monitor_manager().connect('monitors-changed', () => {
             const n = global.display.get_n_monitors();
-            console.warn("Monitors have changed");
             if (n !== this._nMonitors) {
                 let diff = n - this._nMonitors;
                 this._nMonitors = n;
@@ -147,20 +144,6 @@ export class TileWindowManager {
                 }
             }
         });
-
-
-        let struct = JSON.stringify({
-                windows: Array.from(TileWindowManager._workspaces.entries())
-            }, (key, value) => {
-                if (value instanceof Meta.Window)
-                    return value.get_id();
-                else if (key === "_parent") // remove cyclic references
-                    return undefined;
-                else
-                    return value;
-            });
-
-        console.warn(struct);
     }
 
 
@@ -202,7 +185,6 @@ export class TileWindowManager {
     }
 
     private _removeMonitors() {
-        console.warn(`Remove monitor`);
         TileWindowManager._workspaces.forEach((val, _, __) => {
             let windows = [];
 
@@ -307,7 +289,6 @@ export class TileWindowManager {
                 return false;
         }
 
-        console.warn("Window valid");
         return true;
     }
 
@@ -356,16 +337,11 @@ export class TileWindowManager {
 
 
     private _windowWorkspaceChanged(window : Meta.Window) {
-        // Do nothing during restore phase
-        if (this._restore)
-            return;
-
         let tile : Tile = (window as any).tile;
         if (tile) {
             let w = window.get_workspace()?.index();
             if (w !== null) {
                 window.change_workspace_by_index(w, false);
-                console.warn(`Workspace changed ${w} ${(window as any).tile.workspace}`);
                 if (w !== (window as any).tile.workspace) {
                     this._removeWindow(window);
                     this._insertWindow(window, w);
@@ -469,7 +445,6 @@ export class TileWindowManager {
 
         this.configureWindowSignals(window);
 
-        console.warn("Add new window");
         this._insertWindow(window);
     }
 
@@ -480,19 +455,14 @@ export class TileWindowManager {
 
         let selectedMonitor: Monitor;
 
-        console.warn(`Monitors size : ${_monitors.length}`);
-
         // Select monitor
         if (monitor !== null) {
             selectedMonitor = _monitors[monitor];
-            console.warn(`Get monitor ${monitor} ${selectedMonitor}`);
         } else if (this._settings?.get_int('monitor-tile-insertion-behavior') === 0) {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
-            console.warn(`(2) Get monitor ${selectedMonitor}`);
         } else {
             let m = global.display.get_current_monitor();
             selectedMonitor = _monitors[m];
-            console.warn(`Insert window in monitor ${m}`);
         }
 
         // Selected monitor index
@@ -1163,7 +1133,6 @@ export class TileWindowManager {
                 });
             });
             
-            console.warn(`Monitors ${mapKey} : ${mapValue.length}`);
             TileWindowManager._workspaces.set(mapKey, mapValue);
         });
 

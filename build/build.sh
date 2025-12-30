@@ -26,6 +26,7 @@ cp schemas/org.gnome.shell.extensions.grimble.gschema.xml ${DEST_FOLDER}/schemas
 cp -r src/ui ${DEST_FOLDER}
 cp src/stylesheet.css ${DEST_FOLDER}
 cp -r dist/* ${DEST_FOLDER}
+cp -r src/configs ${DEST_FOLDER}
 cp LICENSE ${DEST_FOLDER}
 
 rm Grimble/modalSearchEntry.js
