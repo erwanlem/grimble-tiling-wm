@@ -8,6 +8,7 @@ import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
 import ComboRowHandler from './settingsHandlers/comboRowHandler.js';
 import { Tile } from './tile.js';
+import { destroyController } from './keybindingController.js';
 import { loadExecutables, destroy as unloadExecutables } from './autocomplete.js';
 import GLib from 'gi://GLib';
 
@@ -19,12 +20,13 @@ export default class Grimble extends Extension {
   _spinHandler : SpinHandler | null = null;
   _comboHandler : ComboRowHandler | null = null;
 
+  _timeoutId : number | null = null;
+
   enable() {
     this._settings = this.getSettings();
     
     ExtensionTheme.enableWindowTheme();
     Tile.padding = this._settings.get_int('tile-padding');
-
 
     /**
      * When we unlock the session (after a lock, not when starting the system),
@@ -37,7 +39,7 @@ export default class Grimble extends Extension {
      * -> Could problably be improved by waiting for the setting changed signal.
      */
     if (global.display.get_n_monitors() > 1 && TileWindowManager.locked) {
-      GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+      this._timeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
           this._tileWindowManager = new TileWindowManager(this);
           this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this);
           this._switchHandler = new SwitchHandler(this._tileWindowManager, this);
@@ -52,7 +54,6 @@ export default class Grimble extends Extension {
       this._spinHandler = new SpinHandler(this._tileWindowManager, this);
       this._comboHandler = new ComboRowHandler(this._tileWindowManager, this);
     }
-    
 
     loadExecutables();
   }
@@ -63,6 +64,13 @@ export default class Grimble extends Extension {
 
     // Restore theme
     ExtensionTheme.disableWindowTheme();
+
+    if (this._timeoutId) {
+      GLib.Source.remove(this._timeoutId);
+      this._timeoutId = null;
+    }
+
+    destroyController();
 
     this._tileWindowManager?.destroy();
     this._tileWindowManager = null;

@@ -7,7 +7,7 @@ import GLib from 'gi://GLib';
  * @param {string[]} command 
  * @returns 
  */
-export function launchApp(command : string[]) {
+export function launchApp(command: string[]) {
     try {
         Gio.Subprocess.new(
             command,
@@ -23,20 +23,36 @@ export function launchApp(command : string[]) {
 /** Load the configuration stored at `name`.
  * 
  * @param {string} name configuration file path
+ * @param {(a: any) => void} callback a function called when the result is returned
+ * @param {() => void} errorCallback function called to handle errors
  * @returns 
  */
-export function loadConfiguration(name : string) {
-    const file = Gio.File.new_for_path(name);
-    if (!file.query_exists(null))
-        return null;
+export function loadConfiguration(name: string, callback: (a: any) => void, errorCallback: () => void) {
+    const f = Gio.File.new_for_path(name);
 
-    const [success, contents] = file.load_contents(null);
-    if (!success || !contents.length)
-        return null;
+    f.load_contents_async(null, (file, res) => {
+        try {
+            let r = file?.load_contents_finish(res);
 
-    const conf = JSON.parse(new TextDecoder().decode(contents));
+            if (!r || !r[0] || !r[1].length) {
+                errorCallback();
+                return;
+            }
 
-    return conf;
+            const conf = JSON.parse(
+                new TextDecoder().decode(r[1])
+            );
+
+            callback(conf);
+        } catch (e) {
+            if (e instanceof Gio.IOErrorEnum ||
+                (e as any).matches?.(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND)) {
+                errorCallback?.();
+            } else {
+                logError(e);
+            }
+        }
+    });
 }
 
 
@@ -46,7 +62,7 @@ export function loadConfiguration(name : string) {
  * @param {string} name configuration file name
  * @param {Object} obj Object to save
  */
-export function saveConfiguration(name : String, obj : Object) {
+export function saveConfiguration(name: String, obj: Object) {
     const userPath = GLib.get_user_config_dir();
     const parentPath = GLib.build_filenamev([userPath, '/grimble/config']);
     const parent = Gio.File.new_for_path(parentPath);
@@ -59,20 +75,29 @@ export function saveConfiguration(name : String, obj : Object) {
     }
 
     const path = GLib.build_filenamev([parentPath, `/${name}`]);
-    const file = Gio.File.new_for_path(path);
+    const f = Gio.File.new_for_path(path);
 
     try {
-        file.create(Gio.FileCreateFlags.NONE, null);
+        f.create(Gio.FileCreateFlags.NONE, null);
     } catch (e: any) {
         if (e.code !== Gio.IOErrorEnum.EXISTS)
             throw e;
     }
 
-    file.replace_contents(
-        JSON.stringify(obj),
+    const data = new TextEncoder().encode(JSON.stringify(obj));
+
+    f.replace_contents_async(
+        data,
         null,
         false,
         Gio.FileCreateFlags.REPLACE_DESTINATION,
-        null
+        null,
+        (file, res) => {
+        try {
+            file?.replace_contents_finish(res);
+        } catch (e) {
+            logError(e);
+        }
+    }
     );
 }

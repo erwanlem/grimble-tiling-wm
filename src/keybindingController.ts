@@ -12,4 +12,15 @@ export const KeybindingController = GObject.registerClass({
     }
 });
 
-export const keybindingController = new KeybindingController();
+var keybindingController : any = null;
+
+export function getKeybindingController() {
+    if (keybindingController === null)
+        keybindingController = new KeybindingController();
+    return keybindingController;
+}
+
+
+export function destroyController() {
+    keybindingController = null;
+}

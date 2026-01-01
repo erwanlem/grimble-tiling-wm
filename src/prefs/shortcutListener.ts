@@ -12,7 +12,7 @@ import Gtk from 'gi://Gtk';
 import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-import { keybindingController } from '../keybindingController.js';
+import { getKeybindingController } from '../keybindingController.js';
 
 /**
  * A Widget to implement the shortcuts in the preference window.
@@ -135,7 +135,7 @@ export const ShortcutListener = GObject.registerClass({
         this.keybinding = [];
 
         this._setting.set_string('keybinding-config', 'Custom');
-        keybindingController.update("");
+        getKeybindingController().update("");
         
         ShortcutListener.stopListening();
     }
@@ -175,7 +175,7 @@ export const ShortcutListener = GObject.registerClass({
         this.keybinding = ShortcutListener.isAppendingShortcut ? [...this.keybinding, sc] : [sc];
 
         this._setting.set_string('keybinding-config', 'Custom');
-        keybindingController.update("");
+        getKeybindingController().update("");
 
         ShortcutListener.stopListening();
 

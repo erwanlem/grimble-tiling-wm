@@ -7,5 +7,6 @@
   "shell-version": [
     "46", "47", "48", "49"
   ],
-  "gettext-domain": "grimble@lmt.github.io"
+  "gettext-domain": "grimble@lmt.github.io",
+  "version": "1.1.0"
 }

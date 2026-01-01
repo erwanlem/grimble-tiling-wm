@@ -3,7 +3,7 @@ import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import './prefs/shortcutListener.js';
 import {Shortcut, Switches, Radio, Spin, Combo} from './common.js';
-import { keybindingController } from './keybindingController.js';
+import { getKeybindingController } from './keybindingController.js';
 import {saveConfiguration} from './utils.js';
 
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
@@ -54,7 +54,7 @@ export default class GrimblePreferences extends ExtensionPreferences {
                 settings.set_string(key, rowNames[widget.get_selected()]);
             });
 
-            keybindingController.connect('keybinding-changed', () => {
+            getKeybindingController().connect('keybinding-changed', () => {
                 combo.set_selected(rowNames.findIndex(item => 'Custom' === item));
                 const shortcuts = Shortcut.getShortcuts();
                 let o : Record<string, string[]> = {};
