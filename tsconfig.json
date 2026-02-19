@@ -31,6 +31,7 @@
     "src/settingsHandlers/switchHandler.ts",
     "src/settingsHandlers/spinHandler.ts",
     "src/settingsHandlers/comboRowHandler.ts",
+    "src/settingsHandlers/actionRowHandler.ts",
     "src/autocomplete.ts",
     "src/modalSearchEntry.ts",
     "src/keybindingController.ts"

@@ -8,6 +8,18 @@
       <description>Whether to show or hide window header bar</description>
     </key>
 
+    <key name="mouse-follow" type="b">
+      <default>false</default>
+      <summary>Mouse follow focus</summary>
+      <description>If enabled the mouse follows the focused window</description>
+    </key>
+
+    <key name="highlight-focus" type="b">
+      <default>false</default>
+      <summary>Highlight focus</summary>
+      <description>If enabled the focused window is highlighted</description>
+    </key>
+
     <key name="tile-padding" type="i">
       <default>0</default>
       <summary>Tile padding</summary>
@@ -33,6 +45,16 @@
 			<!-- 0: keep fullscreen, 1: quit fullscrenn -->
 			<default>0</default>
 		</key>
+
+    <key name="select-rect-color" type="s">
+      <default>'rgba(255,0,0,1)'</default>
+      <summary>Rect color</summary>
+    </key>
+
+     <key name="focus-rect-size" type="i">
+      <default>1</default>
+      <summary>Rect color</summary>
+    </key>
 
     <key name="keybinding-config" type="s">
       <default>'None'</default>

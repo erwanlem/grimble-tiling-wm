@@ -30,6 +30,13 @@ export default class SwitchHandler {
                 
                 break;
 
+            case "highlight-focus":
+                if (extension.metadata && extension._settings?.get_boolean('highlight-focus'))
+                    this._windowManager.getFocusRect().enable();
+                else if (extension.metadata)
+                    this._windowManager.getFocusRect().disable();
+                break;
+
             default:
                 break;
         }

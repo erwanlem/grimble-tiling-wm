@@ -34,6 +34,41 @@
           </object>
         </child>
 
+        <child>
+          <object class="AdwSwitchRow" id="mouse_follow">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Mouse follow focus</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled the mouse moves automatically on the top left corner of the focused window when changing focus with keyboard.</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwSwitchRow" id="highlight_focus">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Highlight focus</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled the focused window is highlighted by a colored rectangle.</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwActionRow" id="select_rect_color">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Rectangle color</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwSpinRow" id="focus_rect_size">
+            <property name="title" translatable="yes"
+              comments="Translators: This is the name of setting to set tile padding in the 'General' tab">Focus rectangle size</property>
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="lower">1</property>
+                <property name="upper">5</property>
+                <property name="step-increment">1</property>
+                <property name="page-increment">2</property>
+              </object>
+            </property>
+          </object>
+        </child>
+
       </object>
     </child>
 
@@ -135,6 +170,7 @@
         </child>
       </object>
     </child>
+
   </object>
 
 

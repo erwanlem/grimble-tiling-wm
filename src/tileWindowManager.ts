@@ -8,7 +8,9 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Monitor } from './monitor.js';
 import Shell from 'gi://Shell';
 import Mtk from 'gi://Mtk';
-import Grimble from './extension.js'
+import Grimble from './extension.js';
+import { FocusColor } from './theme.js';
+import Clutter from 'gi://Clutter';
 
 import {TopBarSearchEntry} from './topBarSearchEntry.js';
 import {ModalSearchEntry} from './modalSearchEntry.js';
@@ -41,6 +43,8 @@ export class TileWindowManager {
     /**************************************************/
     _settings: Gio.Settings | null;
 
+    _focusColor : FocusColor;
+
     _userResize : Set<Meta.Window>;
 
     static locked = false;
@@ -66,6 +70,11 @@ export class TileWindowManager {
         TileWindowManager._main_monitor = global.display.get_primary_monitor();
 
         this._settings = extension._settings;
+        
+        this._focusColor = new FocusColor(extension._settings);
+        if (this._settings?.get_boolean('highlight-focus')) {
+            this._focusColor.enable();
+        }
 
         this._nMonitors = global.display.get_n_monitors();
 
@@ -145,7 +154,6 @@ export class TileWindowManager {
             }
         });
     }
-
 
 
     public static getMonitors(workspaceIndex : number | undefined = undefined) : Monitor[] {
@@ -230,6 +238,8 @@ export class TileWindowManager {
         global.workspace_manager.disconnect(this._workspaceRemovedSignal);
         global.workspace_manager.disconnect(this._activeWorkspaceSignal);
         global.backend.disconnect(this._monitorChangedSignal);
+
+        this._focusColor.disable();
 
         if (Resize.resizeSourceId !== null)
             GLib.Source.remove(Resize.resizeSourceId);
@@ -924,7 +934,8 @@ export class TileWindowManager {
                         newFocus?.window?.focus(0);
                     break;
             }
-
+            if (this._settings?.get_boolean('mouse-follow'))
+                this.mouseFollowFocus(newFocus?.window)
         } else {
             
             let newFocus = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
@@ -958,10 +969,16 @@ export class TileWindowManager {
                     default:
                         return;
                 }
+                if (this._settings?.get_boolean('mouse-follow'))
+                    this.mouseFollowFocus(newFocus?.window)
             } else {
                 newFocus?.window?.focus(0);
+                if (this._settings?.get_boolean('mouse-follow'))
+                    this.mouseFollowFocus(newFocus?.window)
             }
         }
+
+        
     }
 
 
@@ -1036,6 +1053,32 @@ export class TileWindowManager {
         }
     }
 
+
+    /****** Window focus options ******/
+
+    public getFocusRect() {
+        return this._focusColor;
+    }
+
+    public mouseFollowFocus(win : Meta.Window | null | undefined) {
+        if (!win)
+            return;
+
+        let seat = Clutter.get_default_backend().get_default_seat();
+        let rect = win.get_frame_rect();
+        if (seat !== null) {
+            seat.warp_pointer(
+                rect.x,
+                rect.y
+            )
+        }
+    }
+
+    public updateColorRect() {
+        this._focusColor.updateColor();
+    }
+
+    /*********************************/
 
 
     /** Extension is disabled on screen lock.

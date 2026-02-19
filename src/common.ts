@@ -35,7 +35,8 @@ export class Shortcut {
 export class Switches {
 
     private static _switchList : Array<string> = [
-        
+        'mouse-follow',
+        'highlight-focus'
     ];
 
     public static getSwitches() {
@@ -43,10 +44,22 @@ export class Switches {
     }
 }
 
+export class ActionRow {
+
+    private static _actionRowList : Array<string> = [
+        'select-rect-color'
+    ];
+
+    public static getActionRow() {
+        return ActionRow._actionRowList;
+    }
+}
+
 export class Spin {
 
     private static _spinList : Array<string> = [
         'tile-padding',
+        'focus-rect-size'
     ];
 
     public static getSpins() {

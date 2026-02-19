@@ -7,6 +7,7 @@ import KeybindingHandler from './settingsHandlers/keybindingHandler.js';
 import SwitchHandler from './settingsHandlers/switchHandler.js';
 import SpinHandler from './settingsHandlers/spinHandler.js';
 import ComboRowHandler from './settingsHandlers/comboRowHandler.js';
+import ActionRowHandler from './settingsHandlers/actionRowHandler.js';
 import { Tile } from './tile.js';
 import { destroyController } from './keybindingController.js';
 import { loadExecutables, destroy as unloadExecutables } from './autocomplete.js';
@@ -19,6 +20,7 @@ export default class Grimble extends Extension {
   _switchHandler : SwitchHandler | null = null;
   _spinHandler : SpinHandler | null = null;
   _comboHandler : ComboRowHandler | null = null;
+  _actionRowHandler : ActionRowHandler | null = null;
 
   _timeoutId : number | null = null;
 
@@ -44,6 +46,7 @@ export default class Grimble extends Extension {
           this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this);
           this._switchHandler = new SwitchHandler(this._tileWindowManager, this);
           this._spinHandler = new SpinHandler(this._tileWindowManager, this);
+          this._actionRowHandler = new ActionRowHandler(this._tileWindowManager, this);
           this._comboHandler = new ComboRowHandler(this._tileWindowManager, this);
           return GLib.SOURCE_REMOVE;
       });
@@ -52,6 +55,7 @@ export default class Grimble extends Extension {
       this._keybindingHandler = new KeybindingHandler(this._tileWindowManager, this);
       this._switchHandler = new SwitchHandler(this._tileWindowManager, this);
       this._spinHandler = new SpinHandler(this._tileWindowManager, this);
+      this._actionRowHandler = new ActionRowHandler(this._tileWindowManager, this);
       this._comboHandler = new ComboRowHandler(this._tileWindowManager, this);
     }
 
@@ -81,6 +85,7 @@ export default class Grimble extends Extension {
     this._spinHandler = null;
     this._switchHandler = null;
     this._comboHandler = null;
+    this._actionRowHandler = null;
     this._settings = null;    
   }
 }

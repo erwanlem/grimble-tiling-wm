@@ -1,8 +1,9 @@
 import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
+import Gdk from 'gi://Gdk';
 import './prefs/shortcutListener.js';
-import {Shortcut, Switches, Radio, Spin, Combo} from './common.js';
+import {Shortcut, Switches, Radio, Spin, Combo, ActionRow} from './common.js';
 import { getKeybindingController } from './keybindingController.js';
 import {saveConfiguration} from './utils.js';
 
@@ -33,6 +34,7 @@ export default class GrimblePreferences extends ExtensionPreferences {
         this._bindRadioButtons(builder, settings);
         this._bindSwitches(builder, settings);
         this._bindSpinbuttons(builder, settings);
+        this._bindActionRow(builder, settings);
 
         return page1;
     }
@@ -105,12 +107,54 @@ export default class GrimblePreferences extends ExtensionPreferences {
         });
     }
 
+    private _bindActionRow(builder: any, settings : Gio.Settings) {
+        const actionRow : Array<string> = ActionRow.getActionRow();
+
+        actionRow.forEach(key => {
+            const widget = builder.get_object(key.replaceAll('-', '_'));
+            settings.bind(key, widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+            switch (key) {
+                case "select-rect-color":
+                    const colorButton = new Gtk.ColorDialogButton({
+                        dialog: new Gtk.ColorDialog()
+                    });
+
+                    let rgba = new Gdk.RGBA();
+                    rgba.parse(settings.get_string("select-rect-color"));
+                    colorButton.set_rgba(rgba);
+
+                    colorButton.connect("notify::rgba", () => {
+                        const color = colorButton.get_rgba();
+                        settings.set_string("select-rect-color", color.to_string());
+                    });
+
+                    (widget as Adw.ActionRow).add_suffix(colorButton);
+                    (widget as Adw.ActionRow).activatable_widget = colorButton;
+
+                    settings.bind('highlight-focus', widget, "sensitive", Gio.SettingsBindFlags.DEFAULT);
+
+                    break;
+    
+                default:
+                    break;
+            }
+        });
+    }
+
     private _bindSpinbuttons(builder: any, settings : Gio.Settings) {
         const spinButtons = Spin.getSpins();
 
         spinButtons.forEach(key => {
             const widget = builder.get_object(key.replaceAll('-', '_'));
             settings.bind(key, widget, 'value', Gio.SettingsBindFlags.DEFAULT);
+            switch (key) {
+                case "focus-rect-size":
+                    settings.bind('highlight-focus', widget, "sensitive", Gio.SettingsBindFlags.DEFAULT);
+                    break;
+    
+                default:
+                    break;
+            }
         });
     }
 }

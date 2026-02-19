@@ -25,7 +25,10 @@ export default class SpinHandler {
                     Tile.padding = extension._settings.get_int('tile-padding');
                     this._windowManager.updateMonitors();
                 }
-                
+                break;
+            case "focus-rect-size":
+                if (extension.metadata && extension._settings?.get_int('focus-rect-size'))
+                    this._windowManager.updateColorRect();
                 break;
 
             default:
