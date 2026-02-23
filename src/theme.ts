@@ -119,6 +119,8 @@ export class FocusColor {
             this._lastWindow = win;
 
             global.window_group.set_child_above_sibling(this._colorRect, null);
+        } else {
+            this._colorRect.hide();
         }
     }
 

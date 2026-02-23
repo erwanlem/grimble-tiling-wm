@@ -15,11 +15,16 @@
   "homepage": "https://github.com/erwanlem/grimble-tiling-wm#readme",
   "sideEffects": false,
   "devDependencies": {
-    "eslint": "^9.36.0",
-    "eslint-plugin-jsdoc": "^53.0.1",
+    "@eslint/config-array": "^0.23.2",
+    "@eslint/eslintrc": "^3.3.4",
+    "eslint": "^10.0.2",
+    "eslint-plugin-jsdoc": "^62.7.0",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "@girs/gnome-shell": "^48.0.4"
-  }
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
+}
 }
