@@ -8,6 +8,7 @@
     "target": "ES2022",
     "pretty": true,
     "newLine": "lf",
+    "skipLibCheck": true,
     "lib": [
       "ES2022"
     ],
