@@ -51,6 +51,7 @@ export class FocusColor {
     _focusSignal : number | undefined;
     _posSignal : number | undefined;
     _sizeSignal : number | undefined;
+    _umanagedSignal : number | undefined;
     _lastWindow : Meta.Window | undefined;
     _settings : Gio.Settings|null;
 
@@ -94,6 +95,7 @@ export class FocusColor {
         if (!win) {
             if (this._sizeSignal) this._lastWindow?.disconnect(this._sizeSignal);
             if (this._posSignal) this._lastWindow?.disconnect(this._posSignal);
+            if (this._umanagedSignal) this._lastWindow?.disconnect(this._umanagedSignal);
             this._sizeSignal = undefined;
             this._posSignal = undefined;
             this._colorRect.hide();
@@ -110,17 +112,18 @@ export class FocusColor {
 
             if (this._sizeSignal) this._lastWindow?.disconnect(this._sizeSignal);
             if (this._posSignal) this._lastWindow?.disconnect(this._posSignal);
+            if (this._umanagedSignal) this._lastWindow?.disconnect(this._umanagedSignal);
 
             this._colorRect.set_position(rect.x, rect.y);
             this._colorRect.set_size(rect.width, rect.height);
 
             this._posSignal = win.connect('position-changed', () => this.updateFocusRect());
             this._sizeSignal = win.connect('size-changed', () => this.updateFocusRect());
+            this._umanagedSignal = win.connect('unmanaged', () => this._colorRect.hide());
             this._lastWindow = win;
 
-            global.window_group.set_child_above_sibling(this._colorRect, null);
-        } else {
-            this._colorRect.hide();
+            global.window_group.set_child_above_sibling(
+                this._colorRect, null);
         }
     }
 
@@ -163,10 +166,12 @@ export class FocusColor {
         if (this._focusSignal) {
             if (this._sizeSignal) this._lastWindow?.disconnect(this._sizeSignal);
             if (this._posSignal) this._lastWindow?.disconnect(this._posSignal);
+            if (this._umanagedSignal) this._lastWindow?.disconnect(this._umanagedSignal);
             global.display.disconnect(this._focusSignal);
             this._focusSignal = undefined;
             this._posSignal = undefined;
             this._sizeSignal = undefined;
+            this._umanagedSignal = undefined;
             this._lastWindow = undefined;
             global.window_group.remove_child(this._colorRect);
         }
