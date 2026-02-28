@@ -137,7 +137,7 @@ export class TileWindowManager {
         });
 
         this._activeWorkspaceSignal = global.workspace_manager.connect('active-workspace-changed', () => {
-            this.updateMonitors();
+            //this.updateMonitors();
             this.updateAdjacents();
         });
 
