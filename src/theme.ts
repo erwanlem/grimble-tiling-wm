@@ -124,6 +124,9 @@ export class FocusColor {
 
             global.window_group.set_child_above_sibling(
                 this._colorRect, null);
+        } else {
+            global.window_group.set_child_above_sibling(
+                win.get_compositor_private(), this._colorRect);
         }
     }
 
@@ -144,6 +147,7 @@ export class FocusColor {
             border-color: ${color};
             background-color: transparent;`);
         this.updateFocusRect(this._lastWindow);
+        this.updateFocusRect();
     }
 
     public enable() {
@@ -151,11 +155,18 @@ export class FocusColor {
             Meta.TabList.NORMAL_ALL,
             null
         );
-        if (windows.length >= 2)
+
+        global.window_group.add_child(this._colorRect);
+        this._colorRect.hide();
+
+        if (windows.length >= 2) {
             // If more than two it probably means that there is at least the settings 
             // window and other windows behind it. We try to avoid the settings window.
             this.updateFocusRect(windows[1]);
-        global.window_group.add_child(this._colorRect);
+            // Then we update the setting window to be 
+            // in front of the rectangle
+            this.updateFocusRect();
+        }
 
         this._focusSignal = global.display.connect('notify::focus-window', () => {
             this.updateFocusRect();
