@@ -36,15 +36,15 @@
 
         <child>
           <object class="AdwSwitchRow" id="mouse_follow">
-            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Mouse follow focus</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled the mouse moves automatically on the top left corner of the focused window when changing focus with keyboard.</property>
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Focus-driven cursor</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled, the cursor automatically moves to the top-left corner of the focused window when changing focus using shortcuts.</property>
           </object>
         </child>
 
         <child>
           <object class="AdwSwitchRow" id="highlight_focus">
             <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Highlight focus</property>
-            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled the focused window is highlighted by a colored rectangle.</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled, the focused window is highlighted by a colored rectangle.</property>
           </object>
         </child>
 
