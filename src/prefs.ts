@@ -113,13 +113,15 @@ export default class GrimblePreferences extends ExtensionPreferences {
         actionRow.forEach(key => {
             const widget = builder.get_object(key.replaceAll('-', '_'));
             settings.bind(key, widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+            let colorButton : Gtk.ColorDialogButton;
+            let rgba : Gdk.RGBA;
             switch (key) {
                 case "select-rect-color":
-                    const colorButton = new Gtk.ColorDialogButton({
+                    colorButton = new Gtk.ColorDialogButton({
                         dialog: new Gtk.ColorDialog()
                     });
 
-                    let rgba = new Gdk.RGBA();
+                    rgba = new Gdk.RGBA();
                     rgba.parse(settings.get_string("select-rect-color"));
                     colorButton.set_rgba(rgba);
 
