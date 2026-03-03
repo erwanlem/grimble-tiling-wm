@@ -31,34 +31,36 @@ msgstr "Espaciado entre ventanas"
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:39
 msgid "Focus-driven cursor"
-msgstr ""
+msgstr "Cursor orientado al foco"
 
 #. Translators: This setting is under the preference group 'Appearance' in the 'General' tab
 #: src/ui/prefs.ui:40
 msgid ""
 "If enabled, the cursor automatically moves to the top-left corner of the "
 "focused window when changing focus using shortcuts."
-msgstr ""
+msgstr "Si habilitado, el curso se mueve automáticamente a la esquina superior "
+"izquierda de la ventana enfocada cuando este cambia con el uso de atajos de 
+" teclado"
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:46
 msgid "Highlight focus"
-msgstr ""
+msgstr "Resaltar enfoque"
 
 #. Translators: This setting is under the preference group 'Appearance' in the 'General' tab
 #: src/ui/prefs.ui:47
 msgid "If enabled, the focused window is highlighted by a colored rectangle."
-msgstr ""
+msgstr "Si habilitado, la ventana enfocada es resaltada con un rectángulo coloreado"
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:53
 msgid "Rectangle color"
-msgstr ""
+msgstr "Color del rectángulo"
 
 #. Translators: This is the name of setting to set tile padding in the 'General' tab
 #: src/ui/prefs.ui:60
 msgid "Focus rectangle size"
-msgstr ""
+msgstr "Dimensión del rectángulo"
 
 #. Translators: This is the header for the insertion group in the 'General' tab
 #: src/ui/prefs.ui:78
@@ -99,7 +101,7 @@ msgstr "Óptimo"
 #. Translators: This is an explanation for the 'Best fit' option for the 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:125
 msgid "Selects the least filled monitor."
-msgstr "Selecciona el monitor menos lleno."
+msgstr "Selecciona el monitor menos ocupado."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:134
@@ -122,7 +124,7 @@ msgid ""
 "You can either stay in fullscreen when switching between two windows "
 "(default) or quit the fullscreen mode."
 msgstr ""
-"Puede permanecer en pantalla completa mientras cambie de ventana(opcion por "
+"Puede permanecer en pantalla completa mientras cambie de ventana (opción por "
 "defecto) o abandonar el modo pantalla completa."
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
@@ -333,7 +335,7 @@ msgstr ""
 
 #: src/ui/shortcutListener.ui:14 dist/prefs/shortcutListener.js:102
 msgid "Disabled"
-msgstr "Sin asignar"
+msgstr "Deshabilitado"
 
 #: src/ui/shortcutListener.ui:23
 msgid "Clear the keyboard shortcuts"
