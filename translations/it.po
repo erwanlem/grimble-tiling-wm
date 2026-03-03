@@ -228,7 +228,7 @@ msgstr "Spostamento finestra"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile
 #: src/ui/prefs.ui:286
-msgid "Move tile"finestra
+msgid "Move tile"
 msgstr "Sposta tessera"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab

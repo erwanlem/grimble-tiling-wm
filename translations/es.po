@@ -39,8 +39,8 @@ msgid ""
 "If enabled, the cursor automatically moves to the top-left corner of the "
 "focused window when changing focus using shortcuts."
 msgstr "Si habilitado, el curso se mueve automáticamente a la esquina superior "
-"izquierda de la ventana enfocada cuando este cambia con el uso de atajos de 
-" teclado"
+"izquierda de la ventana enfocada cuando este cambia con el uso de atajos de "
+"teclado"
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:46
