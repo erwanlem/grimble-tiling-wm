@@ -24,22 +24,22 @@ export function resizeE(tile: Tile, rect: Mtk.Rectangle) {
         return;
     }
 
-    let p = tile.findParent(
+    const p = tile.findParent(
         (el: Tile) =>
             el.position.x + el.position.width === tile.position.x + tile.position.width
     );
 
     if (p) {
-        let pos: Position = p.position;
-        let diff = rect.width - tile.position.width;
+        const pos: Position = p.position;
+        const diff = rect.width - tile.position.width;
         pos.width = pos.width + diff;
 
         p.resize(pos);
         p.update();
 
-        let sibling: Tile | null = p.getSibling();
+        const sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let posSib: Position = sibling.position;
+            const posSib: Position = sibling.position;
             posSib.width -= diff;
             posSib.x += diff;
             sibling.resize(posSib);
@@ -70,22 +70,22 @@ export function resizeW(tile: Tile, rect: Mtk.Rectangle) {
         return;
     }
 
-    let p = tile.findParent(
+    const p = tile.findParent(
         (el: Tile) =>
             el.position.x === tile.position.x
     );
 
     if (p) {
-        let pos: Position = p.position;
-        let diff = rect.width - tile.position.width;
+        const pos: Position = p.position;
+        const diff = rect.width - tile.position.width;
         pos.width = pos.width + diff;
         pos.x -= diff;
         p.resize(pos);
         p.update();
 
-        let sibling: Tile | null = p.getSibling();
+        const sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let posSib: Position = sibling.position;
+            const posSib: Position = sibling.position;
             posSib.width -= diff;
             sibling.resize(posSib);
             sibling.update();
@@ -115,21 +115,21 @@ export function resizeS(tile: Tile, rect: Mtk.Rectangle) {
         return;
     }
 
-    let p = tile.findParent(
+    const p = tile.findParent(
         (el: Tile) =>
             el.position.y + el.position.height === tile.position.y + tile.position.height
     );
 
     if (p) {
-        let pos: Position = p.position;
-        let diff = rect.height - pos.height;
+        const pos: Position = p.position;
+        const diff = rect.height - pos.height;
         pos.height = rect.height;
         p.resize(pos);
         p.update();
 
-        let sibling: Tile | null = p.getSibling();
+        const sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let posSib: Position = sibling.position;
+            const posSib: Position = sibling.position;
             posSib.height -= diff;
             posSib.y += diff;
             sibling.resize(posSib);
@@ -160,22 +160,22 @@ export function resizeN(tile: Tile, rect: Mtk.Rectangle) {
         return;
     }
 
-    let p = tile.findParent(
+    const p = tile.findParent(
         (el: Tile) =>
             el.position.y === tile.position.y
     );
 
     if (p) {
-        let pos: Position = p.position;
-        let diff = rect.height - pos.height;
+        const pos: Position = p.position;
+        const diff = rect.height - pos.height;
         pos.height += diff;
         pos.y -= diff;
         p.resize(pos);
         p.update();
 
-        let sibling: Tile | null = p.getSibling();
+        const sibling: Tile | null = p.getSibling();
         if (sibling) {
-            let posSib: Position = sibling.position;
+            const posSib: Position = sibling.position;
             posSib.height -= diff;
             sibling.resize(posSib);
             sibling.update();

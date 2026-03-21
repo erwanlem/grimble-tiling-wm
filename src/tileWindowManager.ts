@@ -79,7 +79,7 @@ export class TileWindowManager {
         this._nMonitors = global.display.get_n_monitors();
 
         for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
-            let _monitors = new Array(this._nMonitors);
+            const _monitors = new Array(this._nMonitors);
             for (let j = 0; j <_monitors.length; j++) {
                 _monitors[j] = new Monitor(j);
             }
@@ -144,7 +144,7 @@ export class TileWindowManager {
         this._monitorChangedSignal = global.backend.get_monitor_manager().connect('monitors-changed', () => {
             const n = global.display.get_n_monitors();
             if (n !== this._nMonitors) {
-                let diff = n - this._nMonitors;
+                const diff = n - this._nMonitors;
                 this._nMonitors = n;
                 if (diff > 0) {
                     this._addMonitors();
@@ -169,7 +169,7 @@ export class TileWindowManager {
     }
 
     private _addMonitors() {
-        let newPrimMonitor = global.display.get_primary_monitor();
+        const newPrimMonitor = global.display.get_primary_monitor();
         TileWindowManager._workspaces.forEach((val, _, __) => {
             let currPrim : Monitor | null = null;
             if (newPrimMonitor !== TileWindowManager._main_monitor)
@@ -194,7 +194,7 @@ export class TileWindowManager {
 
     private _removeMonitors() {
         TileWindowManager._workspaces.forEach((val, _, __) => {
-            let windows = [];
+            const windows = [];
 
             while (val.length !== this._nMonitors) {
                 windows.push(val.pop());
@@ -283,16 +283,15 @@ export class TileWindowManager {
         if (window.get_window_type() !== Meta.WindowType.NORMAL)
             return false;
 
-        let app = Shell.WindowTracker.get_default().get_window_app(window);
+        const app = Shell.WindowTracker.get_default().get_window_app(window);
         if (!app)
             return false;
 
         if (app.get_id().startsWith('window:'))
             return false;
 
-
         for (var [_, value] of TileWindowManager._workspaces) {
-            let containsWindow = value.reduce(
+            const containsWindow = value.reduce(
                 (acc: boolean, val: Monitor) => val.root ? acc || val.root.contains(window) : acc, false
             );
             if (containsWindow)
@@ -304,7 +303,7 @@ export class TileWindowManager {
 
 
     private _onWorkspaceCreated(index : number) {
-        let _monitors = new Array(global.display.get_n_monitors());
+        const _monitors = new Array(global.display.get_n_monitors());
         for (let i = 0; i < _monitors.length; i++) {
             _monitors[i] = new Monitor(i);
         }
@@ -316,7 +315,7 @@ export class TileWindowManager {
 
     private _onWorkspaceRemoved(index : number) {
         TileWindowManager._workspaces.delete(index);
-        let newMap = new Map();
+        const newMap = new Map();
         TileWindowManager._workspaces.forEach((value, key) => {
             if (key > index) {
                 value.forEach(el => el.root?.forEach(t => {t.workspace = key-1;}));
@@ -347,9 +346,9 @@ export class TileWindowManager {
 
 
     private _windowWorkspaceChanged(window : Meta.Window) {
-        let tile : Tile = (window as any).tile;
+        const tile : Tile = (window as any).tile;
         if (tile) {
-            let w = window.get_workspace()?.index();
+            const w = window.get_workspace()?.index();
             if (w !== null) {
                 window.change_workspace_by_index(w, false);
                 if (w !== (window as any).tile.workspace) {
@@ -373,9 +372,9 @@ export class TileWindowManager {
      */
     private configureWindowSignals(window: Meta.Window) {
 
-        let minimizeSignal = window.connect('notify::minimized', () => {
+        const minimizeSignal = window.connect('notify::minimized', () => {
             if (!window.minimized) {
-                let tile : Tile = (window as any).tile;
+                const tile : Tile = (window as any).tile;
                 if (tile.state === TileState.MINIMIZED) {
                     if (TileWindowManager.getMonitors()[tile.monitor].fullscreen) {
                         if (this._settings?.get_int('fullscreen-switch') === 0)
@@ -392,7 +391,7 @@ export class TileWindowManager {
             }
         });
 
-        let maximizeSignal1 = window.connect(
+        const maximizeSignal1 = window.connect(
             'notify::maximized-horizontally',
             () => {
                 if ((window as any).tile.state === TileState.MAXIMIZED) {
@@ -404,7 +403,7 @@ export class TileWindowManager {
                 }
             }
         );
-        let maximizeSignal2 = window.connect(
+        const maximizeSignal2 = window.connect(
             'notify::maximized-vertically',
             () => {
                 if ((window as any).tile.state === TileState.MAXIMIZED) {
@@ -417,17 +416,17 @@ export class TileWindowManager {
             }
         );
 
-        let unmanagedSignal = window.connect('unmanaged', () =>  {
+        const unmanagedSignal = window.connect('unmanaged', () =>  {
             this._removeWindow(window);
             this._removeWindowSignals(window);
         });
 
-        let workspaceChangedSignal = window.connect('workspace-changed', 
+        const workspaceChangedSignal = window.connect('workspace-changed', 
             (w) => this._windowWorkspaceChanged(w)
         );
 
-        let sizeChangedSignal = window.connect('size-changed', (w) => {
-            let tile : Tile = (w as any).tile;
+        const sizeChangedSignal = window.connect('size-changed', (w) => {
+            const tile : Tile = (w as any).tile;
             if (!this._userResize.has(w) 
                 && (tile.position.width !== w.get_frame_rect().width 
                 || tile.position.height !== w.get_frame_rect().height))
@@ -459,7 +458,7 @@ export class TileWindowManager {
     }
 
     private _insertWindow(window: Meta.Window, workspace : number | null = null, monitor : number | null = null) {
-        let _monitors = TileWindowManager._workspaces.get(workspace != null ? workspace : window.get_workspace()?.index());
+        const _monitors = TileWindowManager._workspaces.get(workspace != null ? workspace : window.get_workspace()?.index());
         if (!_monitors)
             return;
 
@@ -471,16 +470,16 @@ export class TileWindowManager {
         } else if (this._settings?.get_int('monitor-tile-insertion-behavior') === 0) {
             selectedMonitor = Monitor.bestFitMonitor(_monitors);
         } else {
-            let m = global.display.get_current_monitor();
+            const m = global.display.get_current_monitor();
             selectedMonitor = _monitors[m];
         }
 
         // Selected monitor index
-        let index = selectedMonitor.index;
+        const index = selectedMonitor.index;
 
         // Now insert tile on selected monitor
         if (selectedMonitor.size() === 0) {
-            let tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), index);
+            const tile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), index);
             tile.workspace = window.get_workspace().index();
 
             (window as any).tile = tile;
@@ -504,7 +503,7 @@ export class TileWindowManager {
         (window as any).tile?.destroy();
 
         // Disconnect signals
-        let s = this._wrappedWindows.get(window);
+        const s = this._wrappedWindows.get(window);
         if (s) {
             window.minimize = s[0];  window.maximize = s[1];
             window.disconnect(s[2]); window.disconnect(s[3]);
@@ -519,13 +518,13 @@ export class TileWindowManager {
     private _removeWindow(window: Meta.Window) {
 
         // get Tile from window
-        let tile: Tile = (window as any).tile;
+        const tile: Tile = (window as any).tile;
 
         // Not found
         if (!tile)
             return;
 
-        let m = tile.monitor;
+        const m = tile.monitor;
         if (TileWindowManager.getMonitors()[m].fullscreen) {
             TileWindowManager.getMonitors()[m].fullscreen = false;
 
@@ -553,12 +552,12 @@ export class TileWindowManager {
     private _onGrab(window: Meta.Window, op: Meta.GrabOp) {
         if (!window) return;
 
-        let tile : Tile = (window as any).tile;
+        const tile : Tile = (window as any).tile;
 
         if (!tile)
             return;
 
-        let m = tile.monitor;
+        const m = tile.monitor;
 
         let rect : Mtk.Rectangle;
         switch (op) {
@@ -689,15 +688,15 @@ export class TileWindowManager {
      * @returns void
      */
     public resizeFocusedWindow(op : Meta.GrabOp, resizeGap : number = 10) {
-        let window = global.display.focusWindow;
+        const window = global.display.focusWindow;
         if (!window)
             return;
 
-        let tile = (window as any).tile;
+        const tile = (window as any).tile;
 
         if (op === Meta.GrabOp.RESIZING_E) {
             if (tile.adjacents[1]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width + resizeGap,
@@ -705,7 +704,7 @@ export class TileWindowManager {
                 });
                 Resize.resizeE(tile, r);
             } else if (tile.adjacents[0]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x + resizeGap, 
                     y: tile.position.y,
                     width: tile.position.width - resizeGap,
@@ -715,7 +714,7 @@ export class TileWindowManager {
             }
         } else if (op === Meta.GrabOp.RESIZING_W) {            
             if (tile.adjacents[0]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x - resizeGap, 
                     y: tile.position.y,
                     width: tile.position.width + resizeGap,
@@ -723,7 +722,7 @@ export class TileWindowManager {
                 });
                 Resize.resizeW(tile, r);
             } else if (tile.adjacents[1]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width - resizeGap,
@@ -733,7 +732,7 @@ export class TileWindowManager {
             }
         } else if (op === Meta.GrabOp.RESIZING_N) {
             if (tile.adjacents[2]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y - resizeGap,
                     width: tile.position.width,
@@ -741,7 +740,7 @@ export class TileWindowManager {
                 });
                 Resize.resizeN(tile, r);
             } else if (tile.adjacents[3]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width,
@@ -751,7 +750,7 @@ export class TileWindowManager {
             }
         } else if (op === Meta.GrabOp.RESIZING_S) {
             if (tile.adjacents[3]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y,
                     width: tile.position.width,
@@ -759,7 +758,7 @@ export class TileWindowManager {
                 });
                 Resize.resizeS(tile, r);
             } else if (tile.adjacents[2]) {
-                let r = new Mtk.Rectangle({
+                const r = new Mtk.Rectangle({
                     x: tile.position.x, 
                     y: tile.position.y + resizeGap,
                     width: tile.position.width,
@@ -778,12 +777,12 @@ export class TileWindowManager {
      * @returns 
      */
     public rotateWindow(window: Meta.Window) {
-        let tile: Tile | undefined = (window as any).tile;
+        const tile: Tile | undefined = (window as any).tile;
 
         if (!tile)
             return;
 
-        let parent = tile.parent;
+        const parent = tile.parent;
 
         if (!parent)
             return;
@@ -828,12 +827,12 @@ export class TileWindowManager {
      * @param {boolean} replace true to stay in fullscreen and just replace the window otherwise false
      * @returns 
      */
-    public maximizeTile(window: Meta.Window, replace = false) {
-        let tile: Tile | undefined = (window as any).tile;
+    public maximizeTile(window: Meta.Window, replace: boolean = false) {
+        const tile: Tile | undefined = (window as any).tile;
         if (!tile)
             return;
 
-        let m = tile.monitor;
+        const m = tile.monitor;
 
         if (TileWindowManager.getMonitors()[tile.monitor].fullscreen) {
             TileWindowManager.getMonitors()[tile.monitor].fullscreen = false;
@@ -873,19 +872,19 @@ export class TileWindowManager {
 
 
     public moveTile(dir : Direction) {
-        let window : Meta.Window | null = global.display.get_focus_window();
+        const window : Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
         
-        let tile : Tile = (window as any).tile;
+        const tile : Tile = (window as any).tile;
         if (!tile.window)
             return;
 
-        let exchangeTile = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
+        const exchangeTile = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
         if (!exchangeTile || !exchangeTile.window)
             return;
 
-        let tmpWindow = exchangeTile.window;
+        const tmpWindow = exchangeTile.window;
         exchangeTile.window = tile.window;
         tile.window = tmpWindow;
 
@@ -897,18 +896,18 @@ export class TileWindowManager {
 
 
     public changeFocus(dir: Direction) {
-        let window: Meta.Window | null = global.display.get_focus_window();
+        const window: Meta.Window | null = global.display.get_focus_window();
         if (!window)
             return;
 
-        let tile: Tile = (window as any).tile;
+        const tile: Tile = (window as any).tile;
         if (!tile.window)
             return;
 
 
         if (TileWindowManager.getMonitors()[tile.monitor].fullscreen === true) {
 
-            let mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
+            const mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
             if (mon === null)
                 return;
             let newFocus;
@@ -940,7 +939,7 @@ export class TileWindowManager {
             
             let newFocus = TileWindowManager.getMonitors()[tile.monitor].closestTile(tile, dir);
             if (newFocus === null) {
-                let mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
+                const mon = TileWindowManager.getMonitors()[tile.monitor].closestMonitor(dir);
 
                 if (mon === null)
                     return;
@@ -1001,9 +1000,9 @@ export class TileWindowManager {
 
 
     public moveToWorkspace(next : boolean) {
-        let window = global.display.get_focus_window();
-        let tile : Tile = (window as any).tile;
-        let current = tile.workspace;
+        const window = global.display.get_focus_window();
+        const tile : Tile = (window as any).tile;
+        const current = tile.workspace;
         if (next) {
             if (current < global.workspaceManager.get_n_workspaces()-1) {
                 tile.workspace = current + 1;
@@ -1026,15 +1025,15 @@ export class TileWindowManager {
 
 
     public moveToNextMonitor() {
-        let window = global.display.get_focus_window();
+        const window = global.display.get_focus_window();
         this._removeWindow(window);
         
-        let tile : Tile = (window as any).tile;
-        let monitors = TileWindowManager.getMonitors();
-        let newMonitorIndex = (tile.monitor + 1) % monitors.length;
-        let newMonitor = monitors[newMonitorIndex];
+        const tile : Tile = (window as any).tile;
+        const monitors = TileWindowManager.getMonitors();
+        const newMonitorIndex = (tile.monitor + 1) % monitors.length;
+        const newMonitor = monitors[newMonitorIndex];
         if (newMonitor.size() === 0) {
-            let newTile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), newMonitorIndex);
+            const newTile = Tile.createTileLeaf(window, new Position(1.0, 0, 0, 0, 0), newMonitorIndex);
             newTile.workspace = window.get_workspace().index();
             (window as any).tile = newTile;
 
@@ -1064,8 +1063,8 @@ export class TileWindowManager {
         if (!win)
             return;
 
-        let seat = Clutter.get_default_backend().get_default_seat();
-        let rect = win.get_frame_rect();
+        const seat = Clutter.get_default_backend().get_default_seat();
+        const rect = win.get_frame_rect();
         if (seat !== null) {
             seat.warp_pointer(
                 rect.x,
@@ -1163,7 +1162,7 @@ export class TileWindowManager {
                 : value
         );
         
-        let map : Map<number, Monitor[]> = new Map(states.windows);
+        const map : Map<number, Monitor[]> = new Map(states.windows);
         map.forEach((mapValue, mapKey, _) => {
             mapValue.forEach((value, index, array) => {
                 // We have to rebuild correct types of each object

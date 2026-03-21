@@ -41,7 +41,7 @@ export class Monitor {
         if (this._root) {
             const area = global.workspace_manager.get_active_workspace().get_work_area_for_monitor(this.index);
             if (area) {
-                let pos = new Position(1.0, 0, 0, area.width, area.height);
+                const pos = new Position(1.0, 0, 0, area.width, area.height);
                 pos.splitProportion = this._root.position.splitProportion;
                 this._root.resize(pos);
             }
@@ -56,7 +56,7 @@ export class Monitor {
     }
 
     private static tileDistance(t1 : Tile, t2 : Tile) : number {
-        let vector = [t1.position.x - t2.position.x, t1.position.y - t2.position.y];
+        const vector = [t1.position.x - t2.position.x, t1.position.y - t2.position.y];
 
         return Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
     }
@@ -74,7 +74,7 @@ export class Monitor {
         };
         
         // We search for the closest tile in a Direction. We recursively iterate the tree
-        let findClosest = (tile : Tile) : BestTile => {
+        const findClosest = (tile : Tile) : BestTile => {
             switch (dir) {
                 case Direction.East:
                     if (tile.leaf && tile.position.x > source.position.x) {
@@ -82,8 +82,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1);
-                        let res2 = findClosest(tile.child2);
+                        const res1 = findClosest(tile.child1);
+                        const res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -101,8 +101,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1);
-                        let res2 = findClosest(tile.child2);
+                        const res1 = findClosest(tile.child1);
+                        const res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -120,8 +120,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1);
-                        let res2 = findClosest(tile.child2);
+                        const res1 = findClosest(tile.child1);
+                        const res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -139,8 +139,8 @@ export class Monitor {
                     } else if (tile.leaf) {
                         return new BestTile();
                     } else if (tile.child1 && tile.child2) {
-                        let res1 = findClosest(tile.child1);
-                        let res2 = findClosest(tile.child2);
+                        const res1 = findClosest(tile.child1);
+                        const res2 = findClosest(tile.child2);
                         if ((res1.distance && res2.distance && res1.distance > res2.distance) 
                             || (res2.distance && !res1.distance)) {
                             return res2;
@@ -158,7 +158,7 @@ export class Monitor {
         }
 
         if (this.root) {
-            let res = findClosest(this.root);
+            const res = findClosest(this.root);
             return res.tile;
         }
 
@@ -171,7 +171,7 @@ export class Monitor {
     }
 
     public static fromObject(obj : Monitor) {
-        let monitor = new Monitor(obj._index);
+        const monitor = new Monitor(obj._index);
         monitor.fullscreen = obj._fullscreenState;
 
         if (!obj._root)
@@ -185,8 +185,8 @@ export class Monitor {
 
 
     public closestMonitor(dir: Direction): number | null {
-        let nMonitors = global.display.get_n_monitors();
-        let _currGeo = global.display.get_monitor_geometry(this.index);
+        const nMonitors = global.display.get_n_monitors();
+        const _currGeo = global.display.get_monitor_geometry(this.index);
         let min = undefined;
         let best: number | null = null;
         
@@ -195,7 +195,7 @@ export class Monitor {
 
                 for (let i = 0; i < nMonitors; i++) {
                     if (this.index !== i) {
-                        let _geometry = global.display.get_monitor_geometry(i);
+                        const _geometry = global.display.get_monitor_geometry(i);
                         if (_geometry.y < _currGeo.y && (min === undefined || _geometry.y > min)) {
                             min = _geometry.y;
                             best = i;
@@ -206,7 +206,7 @@ export class Monitor {
             case Direction.South:
                 for (let i = 0; i < nMonitors; i++) {
                     if (this.index !== i) {
-                        let _geometry = global.display.get_monitor_geometry(i);
+                        const _geometry = global.display.get_monitor_geometry(i);
                         if (_geometry.y > _currGeo.y && (min === undefined || _geometry.y < min)) {
                             min = _geometry.y;
                             best = i;
@@ -218,7 +218,7 @@ export class Monitor {
             case Direction.East:
                 for (let i = 0; i < nMonitors; i++) {
                     if (this.index !== i) {
-                        let _geometry = global.display.get_monitor_geometry(i);
+                        const _geometry = global.display.get_monitor_geometry(i);
                         if (_geometry.x > _currGeo.x && (min === undefined || _geometry.x < min)) {
                             min = _geometry.x;
                             best = i;
@@ -230,7 +230,7 @@ export class Monitor {
             case Direction.West:
                 for (let i = 0; i < nMonitors; i++) {
                     if (this.index !== i) {
-                        let _geometry = global.display.get_monitor_geometry(i);
+                        const _geometry = global.display.get_monitor_geometry(i);
                         if (_geometry.x < _currGeo.x && (!min || _geometry.x > min)) {
                             min = _geometry.x;
                             best = i;
@@ -260,7 +260,7 @@ export class Monitor {
         if (this.fullscreen)
             return this.root.find((t) => t.state === TileState.MAXIMIZED);
 
-        let getTileBis = (t : Tile) : Tile | null => {
+        const getTileBis = (t : Tile) : Tile | null => {
             switch (dir) {
                 case Direction.East:
                     if (t.child2 !== null && t.child1 !== null)

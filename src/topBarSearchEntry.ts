@@ -45,12 +45,12 @@ export class TopBarSearchEntry {
 
 
         this._searchEntry.clutter_text.connect('text-changed', (actor : any) => {
-            let current = actor.get_text();
+            const current = actor.get_text();
 
             if (current.length > 1 && this._searchSuggestion) {
-                let matches = autocomplete(current);
+                const matches = autocomplete(current);
                 if (matches.length > 0 && this._searchEntry) {
-                    let match = matches[0];
+                    const match = matches[0];
                     const ct = this._searchEntry.get_clutter_text();
                     const layout = ct.get_layout();
                     const [textW] = layout.get_pixel_size();
@@ -70,12 +70,12 @@ export class TopBarSearchEntry {
             }
         });
 
-        let completeText = () => {
+        const completeText = () => {
             const typed = this._searchEntry?.get_text();
             const ct = this._searchEntry?.get_clutter_text();
             if (!typed || !ct)
                 return;
-            let full = typed + this._searchSuggestion?.get_text();
+            const full = typed + this._searchSuggestion?.get_text();
             this._searchEntry?.set_text(full);
             ct.set_cursor_position(full.length);
             this._searchSuggestion?.set_text('');
@@ -107,7 +107,7 @@ export class TopBarSearchEntry {
         });
 
         this._searchEntry.clutter_text.connect('activate', (actor : any) => {
-            let query = actor.get_text().trim().toLowerCase();
+            const query = actor.get_text().trim().toLowerCase();
             
             if (query === "") {
                 this.destroy();
@@ -124,7 +124,7 @@ export class TopBarSearchEntry {
 
         this._searchButton.add_child(this._searchContainer);
 
-        let positionInt = settings.get_int('search-entry-position');
+        const positionInt = settings.get_int('search-entry-position');
         let position;
         if (positionInt === 0)
             position = 'left';

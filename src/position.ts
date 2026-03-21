@@ -24,7 +24,7 @@ export class Position {
     split(orientation: Orientation | null = null) {
         let vertical: boolean;
 
-        let newPosition1 = new Position();
+        const newPosition1 = new Position();
         newPosition1.proportion = this.proportion * this.splitProportion;
         newPosition1.x = this.x;
         newPosition1.y = this.y;
@@ -56,7 +56,7 @@ export class Position {
                 break;
         }
 
-        let newPosition2 = new Position(
+        const newPosition2 = new Position(
             this.proportion * (1 - this.splitProportion),
             vertical ? this.x + this.width * this.splitProportion : this.x,
             vertical ? this.y : this.y + this.height * this.splitProportion,
@@ -70,7 +70,7 @@ export class Position {
 
 
     public static fromObject(obj : any) {
-        let pos = new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height, obj.index);
+        const pos = new Position(obj.proportion, obj.x, obj.y, obj.width, obj.height, obj.index);
         pos.splitProportion = obj.splitProportion;
         return pos;
     } 

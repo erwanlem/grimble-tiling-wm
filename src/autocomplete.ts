@@ -14,10 +14,10 @@ var sourceId : number | null = null;
  * @returns void
  */
 export function loadExecutables() {
-    let path = GLib.getenv("PATH");
+    const path = GLib.getenv("PATH");
     if (!path)
         return;
-    let paths = path?.split(":");
+    const paths = path?.split(":");
 
     if (executables === null)
         executables = new Set();
@@ -25,7 +25,7 @@ export function loadExecutables() {
         gnomeExecutables = new Map();
 
     paths.forEach(el => {
-        let dir = Gio.File.new_for_path(el);
+        const dir = Gio.File.new_for_path(el);
         dir.enumerate_children_async(
             'standard::*',
             Gio.FileQueryInfoFlags.NONE,
@@ -35,11 +35,11 @@ export function loadExecutables() {
                 try {
                     if (!source)
                         return;
-                    let e = source.enumerate_children_finish(result);
+                    const e = source.enumerate_children_finish(result);
 
                     let file;
                     while ((file = e.next_file(null)) !== null) {
-                        let name = file.get_name();
+                        const name = file.get_name();
                         if (!executables?.has(name))
                             executables?.add(name);
                     }
@@ -57,8 +57,8 @@ export function loadExecutables() {
 
     sourceId = GLib.idle_add(GLib.PRIORITY_LOW, () => {
         Shell.AppSystem.get_default().get_installed().forEach(app => {
-            let name = app.get_display_name() ?? app.get_name();
-            let exe = app.get_commandline() ?? null;
+            const name = app.get_display_name() ?? app.get_name();
+            const exe = app.get_commandline() ?? null;
             if (!gnomeExecutables?.has(name) && exe)
                 gnomeExecutables?.set(name.toLowerCase(), app);
         });
@@ -75,7 +75,7 @@ export function loadExecutables() {
 export function autocomplete(word : string) : Array<string> {
     word = word.toLowerCase();
 
-    let matches : Array<string> = [];
+    const matches : Array<string> = [];
 
     gnomeExecutables?.forEach((e, w) => w.startsWith(word) && w !== word && e !== null ? matches.push(w) : -1);    
     executables?.forEach(w => w.startsWith(word) && w !== word ? matches.push(w) : -1);

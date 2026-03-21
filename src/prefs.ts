@@ -46,7 +46,7 @@ export default class GrimblePreferences extends ExtensionPreferences {
         const comboRow = Combo.getCombo();
         comboRow.forEach(({ key, rowNames }) => {
             const combo = builder.get_object(key.replaceAll('-', '_'));
-            let lastValue = settings.get_string(key);
+            const lastValue = settings.get_string(key);
             let row = rowNames.findIndex(item => lastValue === item);
             if (row === -1)
                 row = 0;
@@ -59,7 +59,7 @@ export default class GrimblePreferences extends ExtensionPreferences {
             getKeybindingController().connect('keybinding-changed', () => {
                 combo.set_selected(rowNames.findIndex(item => 'Custom' === item));
                 const shortcuts = Shortcut.getShortcuts();
-                let o : Record<string, string[]> = {};
+                const o : Record<string, string[]> = {};
                 for (const p of shortcuts) {
                     o[p] = settings.get_strv(p)??[];
                 }
@@ -67,7 +67,7 @@ export default class GrimblePreferences extends ExtensionPreferences {
             });
         });
 
-        let keys = Shortcut.getShortcuts();
+        const keys = Shortcut.getShortcuts();
         keys.forEach(key => {
             const shortcut = builder.get_object(key.replaceAll('-', '_'));
             (shortcut as any).initialize(key, settings);

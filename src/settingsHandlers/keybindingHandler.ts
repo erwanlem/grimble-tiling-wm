@@ -61,7 +61,7 @@ export default class KeybindingHandler {
 
 
     private enableArrowBinding() {
-        let bindings = ['arrow-up', 'arrow-down', 'arrow-left', 'arrow-right', 'key-escape'];
+        const bindings = ['arrow-up', 'arrow-down', 'arrow-left', 'arrow-right', 'key-escape'];
         bindings.forEach(key => {
             Main.wm.addKeybinding(
                 key,
@@ -74,7 +74,7 @@ export default class KeybindingHandler {
     }
 
     private disableArrowBinding() {
-        let bindings = ['arrow-up', 'arrow-down', 'arrow-left', 'arrow-right', 'key-escape'];
+        const bindings = ['arrow-up', 'arrow-down', 'arrow-left', 'arrow-right', 'key-escape'];
         bindings.forEach(key => Main.wm.removeKeybinding(key));
     }
 
@@ -84,7 +84,7 @@ export default class KeybindingHandler {
         const dir = this._prevArrowTyped[0];
         const time = Math.min(Math.max(t - this._prevArrowTyped[1], 150000), 300000) - 150000;
         this._prevArrowTyped = [direction, t];
-        let gap = dir === direction
+        const gap = dir === direction
                     ? MAX_RESIZE_GAP - ((time * (MAX_RESIZE_GAP - MIN_RESIZE_GAP) / 150000))
                     : MIN_RESIZE_GAP;
         return gap;

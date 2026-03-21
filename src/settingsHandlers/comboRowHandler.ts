@@ -26,7 +26,7 @@ export default class ComboRowHandler {
         switch (key) {
             case "keybinding-config":
                 if (extension.metadata && extension._settings?.get_string('keybinding-config')) {
-                    let conf = extension._settings?.get_string('keybinding-config');
+                    const conf = extension._settings?.get_string('keybinding-config');
 
                     if (conf === "i3") {
                         loadConfiguration(`${extension.path}/configs/i3.json`, (c => {
@@ -71,7 +71,7 @@ export default class ComboRowHandler {
                     } else if (conf === "Custom") {
                         const userPath = GLib.get_user_config_dir();
 
-                        let o : Record<string, string[]> = {};
+                        const o : Record<string, string[]> = {};
                         for (const p of shortcuts) {
                             o[p] = extension._settings.get_strv(p)??[];
                         }

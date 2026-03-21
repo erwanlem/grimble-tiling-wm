@@ -32,7 +32,7 @@ export function loadConfiguration(name: string, callback: (a: any) => void, erro
 
     f.load_contents_async(null, (file, res) => {
         try {
-            let r = file?.load_contents_finish(res);
+            const r = file?.load_contents_finish(res);
 
             if (!r || !r[0] || !r[1].length) {
                 errorCallback();

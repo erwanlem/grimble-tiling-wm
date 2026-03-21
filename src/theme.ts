@@ -77,7 +77,7 @@ export class FocusColor {
 
 
     private updateFocusRect(window : Meta.Window | undefined = undefined) {
-        let windows = global.display.get_tab_list(
+        const windows = global.display.get_tab_list(
             Meta.TabList.NORMAL_ALL,
             null
         );
@@ -102,13 +102,13 @@ export class FocusColor {
             return;
         }
         
-        let app = Shell.WindowTracker.get_default().get_window_app(win);
+        const app = Shell.WindowTracker.get_default().get_window_app(win);
 
         if (win && win.get_window_type() === Meta.WindowType.NORMAL 
                 && app 
                 && !app.get_id().startsWith('window:')) {
             this._colorRect.show();
-            let rect = win.get_frame_rect();
+            const rect = win.get_frame_rect();
 
             if (this._sizeSignal) this._lastWindow?.disconnect(this._sizeSignal);
             if (this._posSignal) this._lastWindow?.disconnect(this._posSignal);
@@ -151,7 +151,7 @@ export class FocusColor {
     }
 
     public enable() {
-        let windows = global.display.get_tab_list(
+        const windows = global.display.get_tab_list(
             Meta.TabList.NORMAL_ALL,
             null
         );

@@ -72,7 +72,7 @@ export class Tile {
      * @returns 
      */
     public static createTileLeaf(window : Meta.Window, position : Position, monitor : number, parent : Tile | null = null) : Tile {
-        let tile = new Tile();
+        const tile = new Tile();
         tile._window = window;
         tile._position = position;
         tile._monitor = monitor;
@@ -100,12 +100,12 @@ export class Tile {
             if (!this._window)
                 throw new Error("A leaf must have a window");
 
-            let newPositions = this._position.split();
-            let c1 = Tile.createTileLeaf(this._window, newPositions[0], this.monitor, this);
+            const newPositions = this._position.split();
+            const c1 = Tile.createTileLeaf(this._window, newPositions[0], this.monitor, this);
             c1._state = this._state;
             (this._window as any).tile = c1;
 
-            let c2 = Tile.createTileLeaf(window, newPositions[1], this.monitor, this);
+            const c2 = Tile.createTileLeaf(window, newPositions[1], this.monitor, this);
             (window as any).tile = c2;
 
             this._window = null;
@@ -134,7 +134,7 @@ export class Tile {
         if (this._window == null || this._child1 || this._child2 || !this._leaf)
             throw new Error("Invalid remove state");
 
-        let parent = this._parent;
+        const parent = this._parent;
         if (!parent)
             return null;
 
@@ -176,7 +176,7 @@ export class Tile {
     public resize(position : Position) {
         this._position = position;
         if (!this._window) {
-            let newPositions = this._position.split(this._orientation);
+            const newPositions = this._position.split(this._orientation);
             this._child1?.resize(newPositions[this._child1.position.index]);
             this._child2?.resize(newPositions[this._child2.position.index]);
         }
@@ -286,7 +286,7 @@ export class Tile {
         if (fn(this)) {
             if (!this._parent)
                 return this;
-            let res = this._parent.findParent(fn);
+            const res = this._parent.findParent(fn);
             if (res)
                 return res;
             else
@@ -306,11 +306,11 @@ export class Tile {
         if (fn(this)) {
             return this;
         } else {
-            let r1 = this.child1?.find(fn);
+            const r1 = this.child1?.find(fn);
             if (r1)
                 return r1;
 
-            let r2 = this.child2?.find(fn);
+            const r2 = this.child2?.find(fn);
             if (r2)
                 return r2;
 
@@ -346,7 +346,7 @@ export class Tile {
     }
 
     public static fromObject(obj : any, parent : Tile | null = null) : Tile {
-        let tile = new Tile();
+        const tile = new Tile();
         if (obj._child1 && obj._child2)
             tile.setChild(Tile.fromObject(obj._child1, tile), Tile.fromObject(obj._child2, tile));
         tile.position = Position.fromObject(obj._position);
@@ -368,12 +368,12 @@ export class Tile {
 
 
     public findAdjacents() {
-        let _monitor = TileWindowManager.getMonitors()[this.monitor];
+        const _monitor = TileWindowManager.getMonitors()[this.monitor];
 
-        let w = _monitor.closestTile(this, Direction.West);
-        let e = _monitor.closestTile(this, Direction.East);
-        let n = _monitor.closestTile(this, Direction.North);
-        let s = _monitor.closestTile(this, Direction.South);
+        const w = _monitor.closestTile(this, Direction.West);
+        const e = _monitor.closestTile(this, Direction.East);
+        const n = _monitor.closestTile(this, Direction.North);
+        const s = _monitor.closestTile(this, Direction.South);
 
         this._adjacents = [w !== null, e !== null, n !== null, s !== null];
     }
