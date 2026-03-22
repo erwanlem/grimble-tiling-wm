@@ -448,8 +448,8 @@ export class TileWindowManager {
     }
 
 
-    private _addNewWindow(window: Meta.Window) {
-        if (!this._isValidWindow(window))
+    private _addNewWindow(window: Meta.Window, force: boolean = false) {
+        if (!force && !this._isValidWindow(window))
             return;
 
         this.configureWindowSignals(window);
@@ -1075,6 +1075,26 @@ export class TileWindowManager {
 
     public updateColorRect() {
         this._focusColor.updateColor();
+    }
+
+
+    public switchFloatingWindow() {
+        const window = global.display.get_focus_window();
+
+        
+        const tracker = Shell.WindowTracker.get_default();
+        const app = tracker.get_window_app(window);
+        console.warn(`App id: ${app.get_id()}\nApp info: ${app.get_app_info()}\nn windows: ${app.get_n_windows()}\nName: ${app.get_name()}`)
+
+        console.warn(`${app.get_app_info().get_display_name()}, ${app.get_app_info().get_name()}, ${app.get_app_info().get_categories()}`)
+
+        if ((window as any).tile === undefined) {
+            this._addNewWindow(window, true);
+        } else {
+            this._removeWindow(window);
+            this._removeWindowSignals(window);
+            (window as any).tile = undefined;
+        }
     }
 
     /*********************************/

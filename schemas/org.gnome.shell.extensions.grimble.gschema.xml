@@ -82,6 +82,11 @@
       <summary>Search bar</summary>
       <description>Custom shortcut</description>
     </key>
+    <key name="keybinding-toggle-tile" type="as">
+      <default>[]</default>
+      <summary>Floating window</summary>
+      <description>Custom shortcut</description>
+    </key>
     <key name="keybinding-open-settings" type="as">
       <default><![CDATA[['<Control><Super>g']]]></default>
       <summary>Grimble settings</summary>

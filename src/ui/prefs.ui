@@ -234,6 +234,13 @@
               comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize">Maximize tile</property>
           </object>
         </child>
+
+        <child>
+          <object class="ShortcutListener" id="keybinding_toggle_tile">
+            <property name="title" translatable="yes"
+              comments="Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to toggle tile/window">Toggle tile/window mode</property>
+          </object>
+        </child>
       </object>
     </child>
 

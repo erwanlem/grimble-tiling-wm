@@ -117,6 +117,10 @@ export default class KeybindingHandler {
                 this._windowManager.createSearchBar();
                 break;
 
+            case 'keybinding-toggle-tile':
+                this._windowManager.switchFloatingWindow();
+                break;
+
             case 'keybinding-refresh':
                 // Unused
                 this._windowManager.refresh();

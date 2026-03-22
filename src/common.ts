@@ -7,6 +7,7 @@ export class Shortcut {
         'keybinding-move',
         'keybinding-close',
         'keybinding-search',
+        'keybinding-toggle-tile',
         'keybinding-open-settings',
         'keybinding-maximize',
         'keybinding-move-left',
