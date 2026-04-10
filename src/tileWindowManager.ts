@@ -22,6 +22,11 @@ export enum Direction {
     East
 }
 
+enum WindowState {
+    Floating = 1,
+    Tiled
+}
+
 
 export class TileWindowManager {
 
@@ -46,6 +51,8 @@ export class TileWindowManager {
     _focusColor : FocusColor;
 
     _userResize : Set<Meta.Window>;
+
+    _customStates : Map<string, WindowState>;
 
     static locked = false;
 
@@ -88,6 +95,7 @@ export class TileWindowManager {
 
         this._wrappedWindows = new Map();
         this._userResize = new Set();
+        this._customStates = this._loadCustomState();
 
         this._sourceId = null;
 
@@ -1199,5 +1207,44 @@ export class TileWindowManager {
         });
 
         this.updateMonitors();
+    }
+
+
+    private _loadCustomState() {
+        return new Map();
+    }
+
+
+    public _saveCustomState() {
+        const userPath = GLib.get_user_config_dir();
+        const parentPath = GLib.build_filenamev([userPath, '/grimble']);
+        const parent = Gio.File.new_for_path(parentPath);
+
+        try {
+            parent.make_directory_with_parents(null);
+        } catch (e: any) {
+            if (e.code !== Gio.IOErrorEnum.EXISTS)
+                throw e;
+        }
+
+        const path = GLib.build_filenamev([parentPath, '/customWindows.json']);
+        const file = Gio.File.new_for_path(path);
+
+        try {
+            file.create(Gio.FileCreateFlags.NONE, null);
+        } catch (e: any) {
+            if (e.code !== Gio.IOErrorEnum.EXISTS)
+                throw e;
+        }
+
+        file.replace_contents(
+            JSON.stringify({
+                windows: Array.from(this._customStates.entries())
+            }),
+            null,
+            false,
+            Gio.FileCreateFlags.REPLACE_DESTINATION,
+            null
+        );
     }
 }
