@@ -1,6 +1,6 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
-
+import Meta from 'gi://Meta';
 
 /** Launch the given app
  * 
@@ -100,4 +100,21 @@ export function saveConfiguration(name: String, obj: Object) {
         }
     }
     );
+}
+
+
+function getWindowFingerprint(win : Meta.Window) {
+    return {
+        wmClass:       win.get_wm_class(),         // e.g. "Gimp"
+        wmInstance:    win.get_wm_class_instance(), // e.g. "gimp"
+        appId:         win.get_gtk_application_id(), // e.g. "org.gimp.GIMP"
+        role:          win.get_role(),              // e.g. "toolbox"
+        windowType:    win.get_window_type(),       // e.g. Meta.WindowType.UTILITY
+        isTransient:   win.get_transient_for() !== null,
+    };
+}
+
+export function getFingerprintKey(win : Meta.Window) {
+    const fp = getWindowFingerprint(win);
+    return `${fp.wmClass}::${fp.role}::${fp.windowType}::${fp.isTransient}`;
 }

@@ -14,6 +14,7 @@ import Clutter from 'gi://Clutter';
 
 import {TopBarSearchEntry} from './topBarSearchEntry.js';
 import {ModalSearchEntry} from './modalSearchEntry.js';
+import {getFingerprintKey} from './utils.js';
 
 export enum Direction {
     North = 1,
@@ -95,7 +96,8 @@ export class TileWindowManager {
 
         this._wrappedWindows = new Map();
         this._userResize = new Set();
-        this._customStates = this._loadCustomState();
+        this._customStates = new Map();
+        this._loadCustomState();
 
         this._sourceId = null;
 
@@ -457,6 +459,10 @@ export class TileWindowManager {
 
 
     private _addNewWindow(window: Meta.Window, force: boolean = false) {
+        console.warn(`New window ${getFingerprintKey(window)} ${this._customStates.get(getFingerprintKey(window))}`);
+        if (this._customStates.get(getFingerprintKey(window)) === WindowState.Floating)
+            return;
+
         if (!force && !this._isValidWindow(window))
             return;
 
@@ -1089,16 +1095,12 @@ export class TileWindowManager {
     public switchFloatingWindow() {
         const window = global.display.get_focus_window();
 
-        
-        const tracker = Shell.WindowTracker.get_default();
-        const app = tracker.get_window_app(window);
-        console.warn(`App id: ${app.get_id()}\nApp info: ${app.get_app_info()}\nn windows: ${app.get_n_windows()}\nName: ${app.get_name()}`)
-
-        console.warn(`${app.get_app_info().get_display_name()}, ${app.get_app_info().get_name()}, ${app.get_app_info().get_categories()}`)
-
+        console.warn(`Save ${getFingerprintKey(window)}`);
         if ((window as any).tile === undefined) {
+            this._customStates.set(getFingerprintKey(window), WindowState.Tiled);
             this._addNewWindow(window, true);
         } else {
+            this._customStates.set(getFingerprintKey(window), WindowState.Floating);
             this._removeWindow(window);
             this._removeWindowSignals(window);
             (window as any).tile = undefined;
@@ -1156,6 +1158,7 @@ export class TileWindowManager {
             Gio.FileCreateFlags.REPLACE_DESTINATION,
             null
         );
+
     }
 
 
@@ -1211,7 +1214,27 @@ export class TileWindowManager {
 
 
     private _loadCustomState() {
-        return new Map();
+        const userPath = GLib.get_user_config_dir();
+        const path = GLib.build_filenamev([userPath, '/grimble/customWindows.json']);
+        const file = Gio.File.new_for_path(path);
+        if (!file.query_exists(null))
+            return new Map();
+
+        try {
+            file.create(Gio.FileCreateFlags.NONE, null);
+        } catch (e: any) {
+            if (e.code !== Gio.IOErrorEnum.EXISTS)
+                throw e;
+        }
+
+        const [success, contents] = file.load_contents(null);
+        if (!success || !contents.length)
+            return;
+
+        //console.warn(`Config file: ${new TextDecoder().decode(contents)}`);
+        const knownWindows = JSON.parse(new TextDecoder().decode(contents));
+
+        this._customStates = new Map(knownWindows.windows);
     }
 
 
@@ -1239,7 +1262,7 @@ export class TileWindowManager {
 
         file.replace_contents(
             JSON.stringify({
-                windows: Array.from(this._customStates.entries())
+                windows: Array.from( this._customStates.entries() )
             }),
             null,
             false,
