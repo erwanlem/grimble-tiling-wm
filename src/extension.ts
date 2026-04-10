@@ -65,7 +65,6 @@ export default class Grimble extends Extension {
 
   disable() {
     unloadExecutables();
-    this._tileWindowManager?._saveCustomState();
     this._tileWindowManager?._saveBeforeSessionLock();
 
     // Restore theme

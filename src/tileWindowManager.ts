@@ -459,6 +459,7 @@ export class TileWindowManager {
 
 
     private _addNewWindow(window: Meta.Window, force: boolean = false) {
+        console.warn(`${getFingerprintKey(window)} ${this._customStates.get(getFingerprintKey(window))}`);
         if (this._customStates.get(getFingerprintKey(window)) === WindowState.Floating)
             return;
 
@@ -1103,6 +1104,7 @@ export class TileWindowManager {
             this._removeWindowSignals(window);
             (window as any).tile = undefined;
         }
+        this._saveCustomState();
     }
 
     /*********************************/
@@ -1257,14 +1259,20 @@ export class TileWindowManager {
                 throw e;
         }
 
-        file.replace_contents(
-            JSON.stringify({
-                windows: Array.from( this._customStates.entries() )
-            }),
-            null,
-            false,
-            Gio.FileCreateFlags.REPLACE_DESTINATION,
-            null
+        const data = new TextEncoder().encode(JSON.stringify({windows: Array.from( this._customStates.entries() )}));
+
+        file.replace_contents_async(
+                data,
+                null,
+                false,
+                Gio.FileCreateFlags.REPLACE_DESTINATION,
+                null,
+                (file, res) => {
+                    try {
+                        file?.replace_contents_finish(res);
+                    } catch (e) {
+                        logError(e);
+                }}
         );
     }
 }
