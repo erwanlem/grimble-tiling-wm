@@ -20,6 +20,12 @@
       <description>If enabled the focused window is highlighted</description>
     </key>
 
+    <key name="hide-close-button" type="b">
+      <default>false</default>
+      <summary>Hide close button</summary>
+      <description>If enabled the close button is hidden</description>
+    </key>
+
     <key name="tile-padding" type="i">
       <default>0</default>
       <summary>Tile padding</summary>

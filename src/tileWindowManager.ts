@@ -459,7 +459,6 @@ export class TileWindowManager {
 
 
     private _addNewWindow(window: Meta.Window, force: boolean = false) {
-        console.warn(`New window ${getFingerprintKey(window)} ${this._customStates.get(getFingerprintKey(window))}`);
         if (this._customStates.get(getFingerprintKey(window)) === WindowState.Floating)
             return;
 
@@ -1095,7 +1094,6 @@ export class TileWindowManager {
     public switchFloatingWindow() {
         const window = global.display.get_focus_window();
 
-        console.warn(`Save ${getFingerprintKey(window)}`);
         if ((window as any).tile === undefined) {
             this._customStates.set(getFingerprintKey(window), WindowState.Tiled);
             this._addNewWindow(window, true);
@@ -1231,7 +1229,6 @@ export class TileWindowManager {
         if (!success || !contents.length)
             return;
 
-        //console.warn(`Config file: ${new TextDecoder().decode(contents)}`);
         const knownWindows = JSON.parse(new TextDecoder().decode(contents));
 
         this._customStates = new Map(knownWindows.windows);

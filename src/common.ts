@@ -37,7 +37,8 @@ export class Switches {
 
     private static _switchList : Array<string> = [
         'mouse-follow',
-        'highlight-focus'
+        'highlight-focus',
+        'hide-close-button'
     ];
 
     public static getSwitches() {

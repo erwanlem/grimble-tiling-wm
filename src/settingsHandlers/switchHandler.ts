@@ -2,6 +2,7 @@ import {Switches} from '../common.js';
 import { TileWindowManager } from '../tileWindowManager.js';
 import { enableWindowTheme } from '../theme.js';
 import Grimble from "../extension.js"
+import {switchCloseButton} from "../theme.js";
 
 export default class SwitchHandler {
     _switchs : Array<string>;
@@ -23,12 +24,11 @@ export default class SwitchHandler {
         switch (key) {
             case "header-bar":
                 if (extension.metadata && extension._settings?.get_boolean('header-bar')) {
-                    enableWindowTheme();
+                    enableWindowTheme(extension._settings.get_boolean('hide-close-button')??false);
                 } else if (extension.metadata) {
-                    enableWindowTheme();
+                    enableWindowTheme(extension._settings?.get_boolean('hide-close-button')??false);
                 }
                 
-                break;
 
             case "highlight-focus":
                 if (extension.metadata && extension._settings?.get_boolean('highlight-focus'))
@@ -36,6 +36,11 @@ export default class SwitchHandler {
                 else if (extension.metadata)
                     this._windowManager.getFocusRect().disable();
                 break;
+            case "hide-close-button":
+                if (extension.metadata && extension._settings?.get_boolean('hide-close-button'))
+                    switchCloseButton(true);
+                else
+                    switchCloseButton(false);
 
             default:
                 break;

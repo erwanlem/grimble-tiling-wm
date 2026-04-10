@@ -42,6 +42,13 @@
         </child>
 
         <child>
+          <object class="AdwSwitchRow" id="hide_close_button">
+            <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Hide close button</property>
+            <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled, the close button is hidden.</property>
+          </object>
+        </child>
+
+        <child>
           <object class="AdwSwitchRow" id="highlight_focus">
             <property name="title" translatable="yes" comments="Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab">Highlight focus</property>
             <property name="subtitle" translatable="yes" comments="Translators: This setting is under the preference group 'Appearance' in the 'General' tab">If enabled, the focused window is highlighted by a colored rectangle.</property>

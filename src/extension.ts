@@ -27,7 +27,8 @@ export default class Grimble extends Extension {
   enable() {
     this._settings = this.getSettings();
     
-    ExtensionTheme.enableWindowTheme();
+    const closeBtn = this._settings.get_boolean('hide-close-button');
+    ExtensionTheme.enableWindowTheme(closeBtn);
     Tile.padding = this._settings.get_int('tile-padding');
 
     /**

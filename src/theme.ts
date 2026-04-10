@@ -13,11 +13,14 @@ export var originalTheme : string | undefined;
 /** Modify gnome settings for Grimble
  * 
  */
-export function enableWindowTheme() {
+export function enableWindowTheme(closeBtn : boolean) {
 
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     //originalLayout = settings.get_string('button-layout');
-    settings.set_string('button-layout', ':');
+    if (closeBtn)
+        settings.set_string('button-layout', ':');
+    else
+        settings.set_string('button-layout', ':close');
 
     settings = new Gio.Settings({ schema: 'org.gnome.mutter' });
     //originalTiling = settings.get_boolean('edge-tiling');
@@ -27,6 +30,16 @@ export function enableWindowTheme() {
     //originalTiling = settings.get_boolean('workspaces-only-on-primary');
     settings.set_boolean('workspaces-only-on-primary', false);
 }
+
+
+export function switchCloseButton(on : boolean) {
+    let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
+    if (on)
+        settings.set_string('button-layout', ':');
+    else
+        settings.set_string('button-layout', ':close');
+}
+
 
 /** Reset Gnome settings
  * 
