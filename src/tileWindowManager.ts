@@ -359,7 +359,7 @@ export class TileWindowManager {
         const tile : Tile = (window as any).tile;
         if (tile) {
             const w = window.get_workspace()?.index();
-            if (w !== null) {
+            if (w !== null && w !== undefined) {
                 window.change_workspace_by_index(w, false);
                 if (w !== (window as any).tile.workspace) {
                     this._removeWindow(window);
@@ -515,6 +515,7 @@ export class TileWindowManager {
 
     private _removeWindowSignals(window : Meta.Window) {
         (window as any).tile?.destroy();
+        (window as any).tile = undefined;
 
         // Disconnect signals
         const s = this._wrappedWindows.get(window);
