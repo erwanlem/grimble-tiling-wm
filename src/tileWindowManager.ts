@@ -393,11 +393,6 @@ export class TileWindowManager {
                             this.maximizeTile(window);
                     }
                 }
-            } else {
-                if ((window as any).tile.state === TileState.MINIMIZED)
-                    return;
-
-                window.unminimize();
             }
         });
 
@@ -409,7 +404,12 @@ export class TileWindowManager {
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
-                    window.unmaximize(Meta.MaximizeFlags.BOTH);
+                    try {
+                        window.unmaximize(Meta.MaximizeFlags.BOTH);
+                    } catch (e) {
+                        // @ts-ignore
+                        window.unmaximize();
+                    }
                 }
             }
         );
@@ -421,7 +421,12 @@ export class TileWindowManager {
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
-                    window.unmaximize(Meta.MaximizeFlags.BOTH);
+                    try {
+                        window.unmaximize(Meta.MaximizeFlags.BOTH);
+                    } catch (e) {
+                        // @ts-ignore
+                        window.unmaximize();
+                    }
                 }
             }
         );
@@ -459,7 +464,6 @@ export class TileWindowManager {
 
 
     private _addNewWindow(window: Meta.Window, force: boolean = false) {
-        console.warn(`${getFingerprintKey(window)} ${this._customStates.get(getFingerprintKey(window))}`);
         if (this._customStates.get(getFingerprintKey(window)) === WindowState.Floating)
             return;
 
@@ -1228,13 +1232,22 @@ export class TileWindowManager {
                 throw e;
         }
 
-        const [success, contents] = file.load_contents(null);
-        if (!success || !contents.length)
-            return;
+        file.load_contents_async(null, (f, res) => {
+            try {
+                const r = f?.load_contents_finish(res);
+    
+                if (!r || !r[0] || !r[1].length) {
+                    return;
+                }
 
-        const knownWindows = JSON.parse(new TextDecoder().decode(contents));
-
-        this._customStates = new Map(knownWindows.windows);
+                const knownWindows = JSON.parse(new TextDecoder().decode(r[1]));
+    
+                this._customStates = new Map(knownWindows.windows);            
+            } catch (e) {
+                logError(e);
+                return;
+            }
+        });
     }
 
 
