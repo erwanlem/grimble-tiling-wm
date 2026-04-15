@@ -12,6 +12,7 @@ export var originalTheme : string | undefined;
 
 /** Modify gnome settings for Grimble
  * 
+ * @param {boolean} closeBtn Load theme with bloseBtn (true) or without (false)
  */
 export function enableWindowTheme(closeBtn : boolean) {
 
@@ -32,6 +33,10 @@ export function enableWindowTheme(closeBtn : boolean) {
 }
 
 
+/**
+ * 
+ * @param {boolean} on Switch value true to enabled, false to disabled
+ */
 export function switchCloseButton(on : boolean) {
     let settings = new Gio.Settings({ schema: 'org.gnome.desktop.wm.preferences' });
     if (on)

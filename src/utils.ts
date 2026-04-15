@@ -102,7 +102,10 @@ export function saveConfiguration(name: String, obj: Object) {
     );
 }
 
-
+/** Get the fingerprint of a window
+ * 
+ * @param {Meta.Window} win window to get fingerprint
+ */
 function getWindowFingerprint(win : Meta.Window) {
     return {
         wmClass:       win.get_wm_class(),         // e.g. "Gimp"

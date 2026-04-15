@@ -28,8 +28,7 @@ export default class SwitchHandler {
                 } else if (extension.metadata) {
                     enableWindowTheme(extension._settings?.get_boolean('hide-close-button')??false);
                 }
-                
-
+                break;
             case "highlight-focus":
                 if (extension.metadata && extension._settings?.get_boolean('highlight-focus'))
                     this._windowManager.getFocusRect().enable();
@@ -41,6 +40,7 @@ export default class SwitchHandler {
                     switchCloseButton(true);
                 else
                     switchCloseButton(false);
+                break;
 
             default:
                 break;

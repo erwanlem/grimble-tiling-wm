@@ -1219,7 +1219,7 @@ export class TileWindowManager {
         const path = GLib.build_filenamev([userPath, '/grimble/customWindows.json']);
         const file = Gio.File.new_for_path(path);
         if (!file.query_exists(null))
-            return new Map();
+            return;
 
         try {
             file.create(Gio.FileCreateFlags.NONE, null);
@@ -1268,9 +1268,9 @@ export class TileWindowManager {
                 false,
                 Gio.FileCreateFlags.REPLACE_DESTINATION,
                 null,
-                (file, res) => {
+                (f, res) => {
                     try {
-                        file?.replace_contents_finish(res);
+                        f?.replace_contents_finish(res);
                     } catch (e) {
                         logError(e);
                 }}
