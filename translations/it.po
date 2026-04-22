@@ -45,12 +45,13 @@ msgstr ""
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:46
 msgid "Hide close button"
-msgstr ""
+msgstr "Nascondi bottone chiusura"
 
 #. Translators: This setting is under the preference group 'Appearance' in the 'General' tab
 #: src/ui/prefs.ui:47
 msgid "If enabled, the close button is hidden."
 msgstr ""
+"Se abilitato, il bottone di chiusura viene nascosto"
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:53
@@ -178,7 +179,7 @@ msgstr "Personalizzato"
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to close tile
 #: src/ui/prefs.ui:223
 msgid "Close tile"
-msgstr "Chiudi finestra"
+msgstr "Chiudi riquadro"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to open search bar
 #: src/ui/prefs.ui:229
@@ -193,17 +194,17 @@ msgstr "Impostazioni di Grimble"
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to maximize
 #: src/ui/prefs.ui:241
 msgid "Maximize tile"
-msgstr "Massimizza finestra"
+msgstr "Massimizza riquadro"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to toggle tile/window
 #: src/ui/prefs.ui:248
 msgid "Toggle tile/window mode"
-msgstr ""
+msgstr "Attiva/disattiva la modalità riquadro/finestra"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:257
 msgid "Tile Focus"
-msgstr "Focus su finestra"
+msgstr "Focus su riquadro"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus
 #: src/ui/prefs.ui:261
@@ -242,12 +243,12 @@ msgstr "Focus giù"
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:296
 msgid "Tile movement"
-msgstr "Spostamento finestra"
+msgstr "Spostamento riquadro"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut move tile
 #: src/ui/prefs.ui:300
 msgid "Move tile"
-msgstr "Sposta finestra"
+msgstr "Sposta riquadro"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:301
@@ -255,8 +256,8 @@ msgid ""
 "Press this shortcut, then use a directional arrow to move a tile. Press "
 "`Escape` to abort."
 msgstr ""
-"Premi questa scorciatoia, poi usa un tasto direzionale per spostare una "
-"finestra. Premi 'Escape' per annullare."
+"Premi questa scorciatoia, poi usa un tasto direzionale per spostare un "
+"riquadro. Premi 'Escape' per annullare."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
 #: src/ui/prefs.ui:307
@@ -301,7 +302,7 @@ msgstr "Ridimensionamento finestre"
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut tile resizing
 #: src/ui/prefs.ui:357
 msgid "Resize tile"
-msgstr "Ridimensiona finestra"
+msgstr "Ridimensiona riquadro"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:358
@@ -309,8 +310,8 @@ msgid ""
 "Press this shortcut, then use directional arrows to resize a tile. Press "
 "`Escape` to abort."
 msgstr ""
-"Premi questa scorciatoia, poi usa i tasti direzionali per ridimensionare una "
-"finestra. Premi 'Escape' per annullare."
+"Premi questa scorciatoia, poi usa i tasti direzionali per ridimensionare un "
+"riquadro. Premi 'Escape' per annullare."
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move left
 #: src/ui/prefs.ui:365
@@ -340,7 +341,7 @@ msgstr "Scorciatoie da tastiera per le azioni su più monitor."
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to move bottom
 #: src/ui/prefs.ui:400
 msgid "Move tile to next monitor"
-msgstr "Sposta la finestra al monitor successivo"
+msgstr "Sposta il riquadro al monitor successivo"
 
 #: src/ui/shortcutListener.ui:11
 msgid ""
