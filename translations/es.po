@@ -46,12 +46,12 @@ msgstr ""
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:46
 msgid "Hide close button"
-msgstr ""
+msgstr "Ocultar el botón de cerrar ventana"
 
 #. Translators: This setting is under the preference group 'Appearance' in the 'General' tab
 #: src/ui/prefs.ui:47
 msgid "If enabled, the close button is hidden."
-msgstr ""
+msgstr "Si habilitado, oculta el botón de cerrar ventana"
 
 #. Translators: This setting is under the preference group 'Multiple monitors' in the 'General' tab
 #: src/ui/prefs.ui:53
@@ -197,17 +197,17 @@ msgstr "Maximizar ventana"
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut to toggle tile/window
 #: src/ui/prefs.ui:248
 msgid "Toggle tile/window mode"
-msgstr ""
+msgstr "Alternar entre el modo mosaico/ventana"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:257
 msgid "Tile Focus"
-msgstr "Foco de ventana"
+msgstr "Enfoque"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus
 #: src/ui/prefs.ui:261
 msgid "Change focus"
-msgstr "Cambiar foco"
+msgstr "Cambiar enfoque"
 
 #. Translators: This is the explanation for the keybinding 'Move tile' in the 'Tile movement' preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:262
@@ -221,22 +221,22 @@ msgstr ""
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus left
 #: src/ui/prefs.ui:268
 msgid "Focus left"
-msgstr "Enfoque a la izquierda"
+msgstr "Enfocar a la izquierda"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus right
 #: src/ui/prefs.ui:274
 msgid "Focus right"
-msgstr "Enfoque a la que derecha"
+msgstr "Enfocar a la que derecha"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus top
 #: src/ui/prefs.ui:280
 msgid "Focus Up"
-msgstr "Enfoque arriba"
+msgstr "Enfocar arriba"
 
 #. Translators: This is a keybinding in the 'General' preference group in the 'Keybindings' tab that set shortcut change focus bottom
 #: src/ui/prefs.ui:286
 msgid "Focus Down"
-msgstr "Enfoque abajo"
+msgstr "Enfocar abajo"
 
 #. Translators: This is a header for a preference group in the 'Keybindings' tab
 #: src/ui/prefs.ui:296
