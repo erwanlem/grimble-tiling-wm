@@ -1149,7 +1149,9 @@ export class TileWindowManager {
 
         file.replace_contents(
             JSON.stringify({
-                windows: Array.from(TileWindowManager._workspaces.entries())
+                windows: Array.from(TileWindowManager._workspaces.entries()),
+                nMonitors: this._nMonitors,
+                customStates: Array.from(this._customStates),
             }, (key, value) => {
                 if (value instanceof Meta.Window)
                     return value.get_id();
@@ -1198,6 +1200,8 @@ export class TileWindowManager {
                 : value
         );
         
+        this._nMonitors = states.nMonitors;
+        this._customStates = new Map(states.customStates);
         const map : Map<number, Monitor[]> = new Map(states.windows);
         map.forEach((mapValue, mapKey, _) => {
             mapValue.forEach((value, index, array) => {
@@ -1212,6 +1216,21 @@ export class TileWindowManager {
             });
             
             TileWindowManager._workspaces.set(mapKey, mapValue);
+        });
+
+        const n = global.display.get_n_monitors();
+        if (n !== this._nMonitors) {
+            const diff = n - this._nMonitors;
+            this._nMonitors = n;
+            if (diff > 0) {
+                this._addMonitors();
+            } else {
+                this._removeMonitors();
+            }
+        }
+
+        TileWindowManager._workspaces.forEach(val => {
+            val.forEach(m => m.updateSize());
         });
 
         this.updateMonitors();

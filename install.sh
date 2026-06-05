@@ -11,6 +11,7 @@ for FILE in translations/*.po; do
     msgfmt -c "$FILE" -o "dist/locale/$LANG/LC_MESSAGES/grimble@lmt.github.io.mo"
 done
 
+rm schemas/gschemas.compiled
 cp metadata.json dist/
 cp -r src/configs dist/
 cp -r schemas dist/

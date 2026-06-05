@@ -66,28 +66,31 @@ export function disableWindowTheme() {
 export class FocusColor {
 
     _colorRect : St.Widget;
+    _visible : boolean;
     _focusSignal : number | undefined;
     _posSignal : number | undefined;
     _sizeSignal : number | undefined;
     _umanagedSignal : number | undefined;
     _lastWindow : Meta.Window | undefined;
     _settings : Gio.Settings|null;
+    _size : number;
 
     constructor(settings : Gio.Settings|null) {
         this._settings = settings;
+        this._visible = true;
         let color;
-        let size;
         if (this._settings) {
             color = this._settings.get_string('select-rect-color');
-            size = this._settings.get_int('focus-rect-size');
+            this._size = this._settings.get_int('focus-rect-size');
         } else {
             color = "black";
-            size = 1;
+            this._size = 1;
         }
         this._colorRect = new St.Widget({
             style: 
-               `border: ${size}px solid;
+               `border: ${this._size}px solid;
                 border-color: ${color};
+                border-radius: 8px;
                 background-color: transparent;`,
             reactive: false,
         });
@@ -124,7 +127,8 @@ export class FocusColor {
 
         if (win && win.get_window_type() === Meta.WindowType.NORMAL 
                 && app 
-                && !app.get_id().startsWith('window:')) {
+                && !app.get_id().startsWith('window:'))
+        {
             this._colorRect.show();
             const rect = win.get_frame_rect();
 
@@ -132,8 +136,8 @@ export class FocusColor {
             if (this._posSignal) this._lastWindow?.disconnect(this._posSignal);
             if (this._umanagedSignal) this._lastWindow?.disconnect(this._umanagedSignal);
 
-            this._colorRect.set_position(rect.x, rect.y);
-            this._colorRect.set_size(rect.width, rect.height);
+            this._colorRect.set_position(rect.x-this._size, rect.y-this._size);
+            this._colorRect.set_size(rect.width+this._size*2, rect.height+this._size*2);
 
             this._posSignal = win.connect('position-changed', () => this.updateFocusRect());
             this._sizeSignal = win.connect('size-changed', () => this.updateFocusRect());
@@ -148,25 +152,31 @@ export class FocusColor {
         }
     }
 
+
+    /**
+     * Used to change border color in the settings
+     */
     public updateColor() {
         let color;
-        let size;
         if (this._settings) {
             color = this._settings.get_string('select-rect-color');
-            size = this._settings.get_int('focus-rect-size');
+            this._size = this._settings.get_int('focus-rect-size');
         }   
         else {
             color = "black";
-            size = 2;
+            this._size = 2;
         }
         
         this._colorRect.set_style(`
-            border: ${size}px solid;
+            border: ${this._size}px solid;
             border-color: ${color};
+            border-radius: 8px;
             background-color: transparent;`);
         this.updateFocusRect(this._lastWindow);
         this.updateFocusRect();
     }
+
+
 
     public enable() {
         const windows = global.display.get_tab_list(
