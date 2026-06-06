@@ -5,7 +5,7 @@
   "url": "https://github.com/erwanlem/grimble-tiling-wm",
   "settings-schema": "org.gnome.shell.extensions.grimble",
   "shell-version": [
-    "46", "47", "48", "49"
+    "46", "47", "48", "49", "50"
   ],
   "gettext-domain": "grimble@lmt.github.io"
 }

@@ -3,6 +3,9 @@ import Meta from 'gi://Meta';
 import { Direction, TileWindowManager } from './tileWindowManager.js';
 import GLib from 'gi://GLib';
 
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+const [major, minor] = Config.PACKAGE_VERSION.split('.').map(s => Number(s));
+
 export enum Orientation {
     Vertical = 1,
     Horizontal,
@@ -26,19 +29,19 @@ export class Tile {
 
     _position: Position;
     _window: Meta.Window | null;
-    _state : TileState;
+    _state: TileState;
     _orientation: Orientation;
-    _updateSource : number | null;
+    _updateSource: number | null;
 
-    _workspace : number;
+    _workspace: number;
 
     _nr_tiles: number;
-    _monitor : number | undefined;
-    _adjacents : boolean[];
+    _monitor: number | undefined;
+    _adjacents: boolean[];
 
     public static padding = 0;
     static id_count = 0;
-    static fullscreen : number | undefined;
+    static fullscreen: number | undefined;
 
     private constructor() {
         this.id = Tile.id_count++;
@@ -71,7 +74,7 @@ export class Tile {
      * @param {Tile | null} parent 
      * @returns 
      */
-    public static createTileLeaf(window : Meta.Window, position : Position, monitor : number, parent : Tile | null = null) : Tile {
+    public static createTileLeaf(window: Meta.Window, position: Position, monitor: number, parent: Tile | null = null): Tile {
         const tile = new Tile();
         tile._window = window;
         tile._position = position;
@@ -168,12 +171,12 @@ export class Tile {
         return parent;
     }
 
-    
+
     /** Update tile position and its children size
      * 
      * @param {Position} position 
      */
-    public resize(position : Position) {
+    public resize(position: Position) {
         this._position = position;
         if (!this._window) {
             const newPositions = this._position.split(this._orientation);
@@ -182,14 +185,14 @@ export class Tile {
         }
     }
 
-    public forEach(fn : (el : Tile) => void) {
+    public forEach(fn: (el: Tile) => void) {
         fn(this);
         this._child1?.forEach(fn);
         this._child2?.forEach(fn);
     }
 
     public update() {
-        
+
         if (this._window) {
 
             if (!this._window.isAlive)
@@ -210,11 +213,11 @@ export class Tile {
                 this.state = TileState.ALONE_MAXIMIZED;
 
                 if (this._window.maximized_horizontally || this._window.maximized_vertically) {
-                    try {
-                        this._window.unmaximize(Meta.MaximizeFlags.BOTH);
-                    } catch (e) {
+                    if (major >= 49) {
                         // @ts-ignore
                         this._window.unmaximize();
+                    } else {
+                        this._window.unmaximize(Meta.MaximizeFlags.BOTH);
                     }
                 }
 
@@ -231,17 +234,17 @@ export class Tile {
 
                 this._window?.move_resize_frame(
                     true,
-                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
-                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
-                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
-                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
+                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding / 2 : Tile.padding),
+                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding / 2 : Tile.padding),
+                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding * 2),
+                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding * 2));
 
                 if (this._updateSource !== null)
                     GLib.Source.remove(this._updateSource);
                 this._updateSource = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                     this._window?.move_frame(true,
-                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
-                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding / 2 : Tile.padding),
+                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding / 2 : Tile.padding));
                     this._updateSource = null;
                     return GLib.SOURCE_REMOVE;
                 });
@@ -250,11 +253,11 @@ export class Tile {
                 this.state = TileState.DEFAULT;
 
                 if (this._window.maximized_horizontally || this._window.maximized_vertically) {
-                    try {
-                        this._window.unmaximize(Meta.MaximizeFlags.BOTH);
-                    } catch (e) {
+                    if (major >= 49) {
                         // @ts-ignore
                         this._window.unmaximize();
+                    } else {
+                        this._window.unmaximize(Meta.MaximizeFlags.BOTH);
                     }
                 }
 
@@ -266,17 +269,17 @@ export class Tile {
 
                 this._window?.move_resize_frame(
                     true,
-                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
-                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding),
-                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding*2),
-                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding*2));
+                    area.x + this._position.x + (this._adjacents[0] ? Tile.padding / 2 : Tile.padding),
+                    area.y + this._position.y + (this._adjacents[2] ? Tile.padding / 2 : Tile.padding),
+                    this._position.width - (this._adjacents[1] ? Tile.padding * 1.5 : Tile.padding * 2),
+                    this._position.height - (this._adjacents[3] ? Tile.padding * 1.5 : Tile.padding * 2));
 
                 if (this._updateSource !== null)
                     GLib.Source.remove(this._updateSource);
                 this._updateSource = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
                     this._window?.move_frame(true,
-                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding/2 : Tile.padding),
-                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding/2 : Tile.padding));
+                        area.x + this._position.x + (this._adjacents[0] ? Tile.padding / 2 : Tile.padding),
+                        area.y + this._position.y + (this._adjacents[2] ? Tile.padding / 2 : Tile.padding));
                     this._updateSource = null;
                     return GLib.SOURCE_REMOVE;
                 });
@@ -294,7 +297,7 @@ export class Tile {
      * @param {(el : Tile) => boolean} fn 
      * @returns 
      */
-    public findParent(fn : (el : Tile) => boolean) : Tile | null {
+    public findParent(fn: (el: Tile) => boolean): Tile | null {
         if (fn(this)) {
             if (!this._parent)
                 return this;
@@ -314,7 +317,7 @@ export class Tile {
      * @param {(el : Tile) => boolean} fn
      * @returns 
      */
-    public find(fn : (el : Tile) => boolean) : Tile | null {
+    public find(fn: (el: Tile) => boolean): Tile | null {
         if (fn(this)) {
             return this;
         } else {
@@ -341,11 +344,11 @@ export class Tile {
     }
 
 
-    public contains(window : Meta.Window) : boolean {
+    public contains(window: Meta.Window): boolean {
         if (this._window?.get_id() === window.get_id())
             return true;
-        return this.child1?.contains(window) || this.child2?.contains(window) 
-                ? true : false;
+        return this.child1?.contains(window) || this.child2?.contains(window)
+            ? true : false;
     }
 
     public addToChild() {
@@ -357,7 +360,7 @@ export class Tile {
         }
     }
 
-    public static fromObject(obj : any, parent : Tile | null = null) : Tile {
+    public static fromObject(obj: any, parent: Tile | null = null): Tile {
         const tile = new Tile();
         if (obj._child1 && obj._child2)
             tile.setChild(Tile.fromObject(obj._child1, tile), Tile.fromObject(obj._child2, tile));
@@ -390,7 +393,7 @@ export class Tile {
         this._adjacents = [w !== null, e !== null, n !== null, s !== null];
     }
 
-    private setChild(child1 : Tile, child2 : Tile) {
+    private setChild(child1: Tile, child2: Tile) {
         this._child1 = child1;
         this._child2 = child2;
     }
@@ -407,7 +410,7 @@ export class Tile {
     /***********************/
     /* GETTERS AND SETTERS */
 
-    public set orientation(o : Orientation) {
+    public set orientation(o: Orientation) {
         this._orientation = o;
     }
 
@@ -419,7 +422,7 @@ export class Tile {
         this._parent = p;
     }
 
-    public get parent() : Tile | null {
+    public get parent(): Tile | null {
         return this._parent;
     }
 
@@ -427,7 +430,7 @@ export class Tile {
         return this._nr_tiles;
     }
 
-    private set nr_tiles(n : number) {
+    private set nr_tiles(n: number) {
         this._nr_tiles = n;
     }
 
@@ -451,11 +454,11 @@ export class Tile {
         this._window = w;
     }
 
-    public get window() : Meta.Window | null {
+    public get window(): Meta.Window | null {
         return this._window;
     }
 
-    public set state(value : TileState) {
+    public set state(value: TileState) {
         this._state = value;
     }
 
@@ -463,27 +466,27 @@ export class Tile {
         return this._state;
     }
 
-    public set monitor(m : number) {
+    public set monitor(m: number) {
         this._monitor = m;
     }
 
-    public get monitor() : number {
+    public get monitor(): number {
         return this._monitor ? this._monitor : 0;
     }
 
-    public get adjacents() : boolean[] {
+    public get adjacents(): boolean[] {
         return this._adjacents;
     }
 
-    private set adjacents(adj : Array<boolean>) {
+    private set adjacents(adj: Array<boolean>) {
         this._adjacents = adj;
     }
 
-    public set workspace(w : number) {
+    public set workspace(w: number) {
         this._workspace = w;
     }
 
-    public get workspace() : number {
+    public get workspace(): number {
         return this._workspace;
     }
 
@@ -491,7 +494,7 @@ export class Tile {
         return this._leaf;
     }
 
-    private set leaf(b : boolean) {
+    private set leaf(b: boolean) {
         this._leaf = b;
     }
 }

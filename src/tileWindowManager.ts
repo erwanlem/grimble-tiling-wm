@@ -16,6 +16,10 @@ import {TopBarSearchEntry} from './topBarSearchEntry.js';
 import {ModalSearchEntry} from './modalSearchEntry.js';
 import {getFingerprintKey} from './utils.js';
 
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+const [major, minor] = Config.PACKAGE_VERSION.split('.').map(s => Number(s));
+
+
 export enum Direction {
     North = 1,
     South,
@@ -404,11 +408,11 @@ export class TileWindowManager {
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
-                    try {
-                        window.unmaximize(Meta.MaximizeFlags.BOTH);
-                    } catch (e) {
+                    if (major >= 49) {
                         // @ts-ignore
                         window.unmaximize();
+                    } else {
+                        window.unmaximize(Meta.MaximizeFlags.BOTH);
                     }
                 }
             }
@@ -421,11 +425,11 @@ export class TileWindowManager {
                 }
 
                 if (window.maximized_horizontally || window.maximized_vertically) {
-                    try {
-                        window.unmaximize(Meta.MaximizeFlags.BOTH);
-                    } catch (e) {
+                    if (major >= 49) {
                         // @ts-ignore
                         window.unmaximize();
+                    } else {
+                        window.unmaximize(Meta.MaximizeFlags.BOTH);
                     }
                 }
             }
@@ -1188,18 +1192,23 @@ export class TileWindowManager {
                 throw e;
         }
 
-        const [success, contents] = file.load_contents(null);
-        if (!success || !contents.length)
-            return;
-
         const openWindows = global.display.list_all_windows();
 
-        const states = JSON.parse(new TextDecoder().decode(contents),
+        file.load_contents_async(null, (f, content) => {
+            try {
+                const r = f?.load_contents_finish(content);
+    
+                if (!r || !r[0] || !r[1].length) {
+                    return;
+                }
+
+                const states = JSON.parse(new TextDecoder().decode(r[1]),
             (key, value) => key === "_window" && typeof value === "number"
                 ? openWindows.find((val: Meta.Window) => val.get_id() === value)
                 : value
         );
-        
+
+
         this._nMonitors = states.nMonitors;
         this._customStates = new Map(states.customStates);
         const map : Map<number, Monitor[]> = new Map(states.windows);
@@ -1234,6 +1243,13 @@ export class TileWindowManager {
         });
 
         this.updateMonitors();
+          
+            } catch (e) {
+                logError(e);
+                return;
+            }
+        });
+
     }
 
 

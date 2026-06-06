@@ -87,10 +87,10 @@ export class FocusColor {
             this._size = 1;
         }
         this._colorRect = new St.Widget({
-            style: 
+            style:
                `border: ${this._size}px solid;
                 border-color: ${color};
-                border-radius: 8px;
+                border-radius: ${10+this._size}px;
                 background-color: transparent;`,
             reactive: false,
         });
@@ -170,7 +170,7 @@ export class FocusColor {
         this._colorRect.set_style(`
             border: ${this._size}px solid;
             border-color: ${color};
-            border-radius: 8px;
+            border-radius: ${10+this._size}px;
             background-color: transparent;`);
         this.updateFocusRect(this._lastWindow);
         this.updateFocusRect();
