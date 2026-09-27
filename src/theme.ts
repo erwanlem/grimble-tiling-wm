@@ -100,7 +100,7 @@ export class FocusColor {
     private updateFocusRect(window : Meta.Window | undefined = undefined) {
         const windows = global.display.get_tab_list(
             Meta.TabList.NORMAL_ALL,
-            null
+            global.workspace_manager.get_active_workspace()
         );
 
         if (windows.length === 0) {
